@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="assets/TauricResearch.png" style="width: 60%; height: auto;">
 </p>
 
@@ -25,7 +25,9 @@
 
 ---
 
-# TradingAgents: Multi-Agents LLM Financial Trading Framework 
+# TradingAgents-CN
+
+> A-share focused fork of TradingAgents with a Chinese dashboard, structured outputs, overnight scanning, next-open validation, and Windows-friendly deployment.
 
 ## This Repository
 
@@ -39,8 +41,13 @@ This repository is a modified public distribution based on the original
   - Overnight scanner, validation, and historical review
   - Structured decision outputs and Windows-friendly deployment
 
-For attribution and release notes, see [NOTICE](NOTICE).  
-For a friend-friendly deployment guide, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Quick links:
+
+- Attribution and modification notice: [NOTICE](NOTICE)
+- Deployment guide: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- Chinese deployment guide: [docs/DEPLOYMENT_ZH.md](docs/DEPLOYMENT_ZH.md)
+- First public release notes: [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md)
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 > **TradingAgents** is now publicly available. We have received numerous inquiries about the work, and we would like to express our thanks for the enthusiasm in our community.
 >
@@ -138,6 +145,8 @@ If you are using the A-share overnight scanner, you can optionally configure QVe
 ```bash
 export QVERIS_API_KEYS=key1,key2,key3,key4
 ```
+
+For a Windows-friendly setup flow, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 `QVERIS_API_KEY` is also supported as a single-key fallback. QVeris is only used as a supplement source in the current dashboard implementation and does not replace the existing Akshare/Sina routes.
 
 You will need the OpenAI API for all the agents.
@@ -232,3 +241,5 @@ Please reference our work if you find *TradingAgents* provides you with some hel
       url={https://arxiv.org/abs/2412.20138}, 
 }
 ```
+
+
