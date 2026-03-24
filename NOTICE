@@ -1,0 +1,19 @@
+TradingAgents-CN
+Copyright (c) 2026 Contributors
+
+This repository is a modified and extended distribution based on the
+TradingAgents open-source project from TauricResearch:
+https://github.com/TauricResearch/TradingAgents
+
+This repository is not an official release of TauricResearch.
+
+Major modifications in this distribution include:
+- Chinese dashboard and local one-click startup flow for Windows
+- A-share oriented single-stock analysis workflow
+- Overnight scanner, review, validation, and dashboard integration
+- Structured factor snapshots and rule-constrained decision summaries
+- Optional QVeris supplement routes for A-share overnight scanning
+- Additional deployment scripts, tests, and compatibility fixes
+
+This repository continues to be distributed under the Apache License 2.0.
+See the LICENSE file for the full license text.
