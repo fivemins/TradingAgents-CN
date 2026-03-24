@@ -46,6 +46,7 @@ Quick links:
 - Attribution and modification notice: [NOTICE](NOTICE)
 - Deployment guide: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 - Chinese deployment guide: [docs/DEPLOYMENT_ZH.md](docs/DEPLOYMENT_ZH.md)
+- GitHub metadata guide: [docs/GITHUB_METADATA.md](docs/GITHUB_METADATA.md)
 - First public release notes: [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 
