@@ -27,6 +27,7 @@ class GraphSetup:
         invest_judge_memory,
         risk_manager_memory,
         conditional_logic: ConditionalLogic,
+        structured_decision_node,
     ):
         """Initialize with required components."""
         self.quick_thinking_llm = quick_thinking_llm
@@ -39,6 +40,7 @@ class GraphSetup:
         self.invest_judge_memory = invest_judge_memory
         self.risk_manager_memory = risk_manager_memory
         self.conditional_logic = conditional_logic
+        self.structured_decision_node = structured_decision_node
 
     def setup_graph(
         self, selected_analysts=["market", "social", "news", "fundamentals"]
@@ -122,6 +124,7 @@ class GraphSetup:
         # Add other nodes
         workflow.add_node("Bull Researcher", bull_researcher_node)
         workflow.add_node("Bear Researcher", bear_researcher_node)
+        workflow.add_node("Structured Decision", self.structured_decision_node)
         workflow.add_node("Research Manager", research_manager_node)
         workflow.add_node("Trader", trader_node)
         workflow.add_node("Risky Analyst", risky_analyst)
@@ -153,7 +156,9 @@ class GraphSetup:
                 next_analyst = f"{selected_analysts[i+1].capitalize()} Analyst"
                 workflow.add_edge(current_clear, next_analyst)
             else:
-                workflow.add_edge(current_clear, "Bull Researcher")
+                workflow.add_edge(current_clear, "Structured Decision")
+
+        workflow.add_edge("Structured Decision", "Bull Researcher")
 
         # Add remaining edges
         workflow.add_conditional_edges(

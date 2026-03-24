@@ -2,7 +2,7 @@ from .finnhub_utils import get_data_in_range
 from .googlenews_utils import getNewsData
 from .yfin_utils import YFinanceUtils
 from .reddit_utils import fetch_top_from_category
-from .stockstats_utils import StockstatsUtils
+from .technical_indicators_utils import TechnicalIndicatorsUtils
 from .yfin_utils import YFinanceUtils
 
 from .interface import (
@@ -18,8 +18,8 @@ from .interface import (
     get_simfin_cashflow,
     get_simfin_income_statements,
     # Technical analysis functions
-    get_stock_stats_indicators_window,
-    get_stockstats_indicator,
+    get_technical_indicators_window,
+    get_technical_indicator,
     # Market data functions
     get_YFin_data_window,
     get_YFin_data,
@@ -38,8 +38,9 @@ __all__ = [
     "get_simfin_cashflow",
     "get_simfin_income_statements",
     # Technical analysis functions
-    "get_stock_stats_indicators_window",
-    "get_stockstats_indicator",
+    "TechnicalIndicatorsUtils",
+    "get_technical_indicators_window",
+    "get_technical_indicator",
     # Market data functions
     "get_YFin_data_window",
     "get_YFin_data",

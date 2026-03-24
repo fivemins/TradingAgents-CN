@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard-ui/package-lock.json
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run backend tests
+        run: python -m unittest discover -s tests
+
+      - name: Install frontend dependencies
+        working-directory: dashboard-ui
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: dashboard-ui
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npm --prefix dashboard-ui exec playwright install --with-deps chromium
+
+      - name: Run UI smoke
+        run: python scripts/run_ui_smoke.py

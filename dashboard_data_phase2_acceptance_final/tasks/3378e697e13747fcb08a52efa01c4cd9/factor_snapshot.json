@@ -1,0 +1,313 @@
+{
+  "strategy": "a_share_balanced_v3_overnight",
+  "market_region": "cn_a",
+  "symbol": "300750.SZ",
+  "display_symbol": "300750",
+  "trade_date": "2025-03-20",
+  "composite_score": 57.99,
+  "confidence": 0.74,
+  "recommended_action": "HOLD",
+  "scores": {
+    "technical": {
+      "score": 54.65,
+      "confidence": 0.88,
+      "summary": "技术面综合 54.7 分，趋势 中性，动量 偏弱，20 日波动率约 1.99% 。",
+      "subscores": {
+        "trend_strength": {
+          "score": 62.8,
+          "value": {
+            "last_close": 262.15,
+            "sma20": 263.2,
+            "sma60": 260.83
+          },
+          "summary": "收盘价相对均线的结构中性。",
+          "weight": 0.35
+        },
+        "momentum": {
+          "score": 34.42,
+          "value": {
+            "return20_pct": -4.86,
+            "return60_pct": -3.41
+          },
+          "summary": "20 日与 60 日动量整体偏弱。",
+          "weight": 0.3
+        },
+        "volatility_state": {
+          "score": 79.33,
+          "value": {
+            "volatility20_pct": 1.99
+          },
+          "summary": "20 日波动率处于偏强区间。",
+          "weight": 0.2
+        },
+        "volume_confirmation": {
+          "score": 43.19,
+          "value": {
+            "volume_ratio_5_20": 1.12
+          },
+          "summary": "量价配合用于确认短期趋势是否有成交支持。",
+          "weight": 0.15
+        }
+      },
+      "top_positive_signals": [
+        {
+          "signal": "波动状态",
+          "value": "20 日波动率 1.99%，处于可控区间",
+          "impact": "positive",
+          "source": "price_history",
+          "weight": 0.1173
+        },
+        {
+          "signal": "趋势强弱",
+          "value": "均线结构改善，最新收盘 262.15",
+          "impact": "positive",
+          "source": "price_history",
+          "weight": 0.0896
+        }
+      ],
+      "top_negative_signals": [
+        {
+          "signal": "近期动量",
+          "value": "20 日收益率 -4.86%，60 日收益率 -3.41%",
+          "impact": "negative",
+          "source": "price_history",
+          "weight": 0.0935
+        }
+      ],
+      "confidence_drivers": [
+        "近 60 个交易日行情可用",
+        "量能数据可用于验证趋势",
+        "短期波动率可稳定计算"
+      ]
+    },
+    "sentiment": {
+      "score": 50.95,
+      "confidence": 0.43,
+      "summary": "300750 的情绪面综合 51.0 分，热度 中性，筹码结构 中性。",
+      "subscores": {
+        "attention_heat": {
+          "score": 50.0,
+          "value": {
+            "hot_rank": null
+          },
+          "summary": "个股热度排名越靠前，短期关注度越强。",
+          "weight": 0.4
+        },
+        "holder_concentration": {
+          "score": 50.0,
+          "value": {
+            "holder_change_pct": 0.0
+          },
+          "summary": "股东户数下降通常意味着筹码更集中，上升则反映交易拥挤风险。",
+          "weight": 0.35
+        },
+        "sentiment_balance": {
+          "score": 53.8,
+          "value": {
+            "positive_hits": 6,
+            "negative_hits": 5
+          },
+          "summary": "情绪报告关键词仅作辅助，用于修正公众讨论方向。",
+          "weight": 0.25
+        }
+      },
+      "top_positive_signals": [],
+      "top_negative_signals": [],
+      "confidence_drivers": [
+        "情绪报告可用于关键词平衡修正"
+      ]
+    },
+    "news": {
+      "score": 57.5,
+      "confidence": 0.63,
+      "summary": "新闻/公告维度 57.5 分，公司事件 中性，研报覆盖 偏强。",
+      "subscores": {
+        "company_events": {
+          "score": 50.0,
+          "value": {
+            "positive_events": 0,
+            "negative_events": 0,
+            "regulatory_events": 0
+          },
+          "summary": "公司事件与公告优先级高于泛宏观新闻。",
+          "weight": 0.5
+        },
+        "broker_coverage": {
+          "score": 68.0,
+          "value": {
+            "broker_report_count": 465
+          },
+          "summary": "研报覆盖采用对数缩放，只反映研究关注度，不直接主导结论。",
+          "weight": 0.25
+        },
+        "news_tone": {
+          "score": 62.0,
+          "value": {
+            "positive_hits": 8,
+            "negative_hits": 0
+          },
+          "summary": "新闻文本语义只做小权重修正。",
+          "weight": 0.25
+        }
+      },
+      "top_positive_signals": [
+        {
+          "signal": "券商覆盖",
+          "value": "近期研报覆盖 465 条（已对数缩放）",
+          "impact": "positive",
+          "source": "broker_research",
+          "weight": 0.09
+        },
+        {
+          "signal": "新闻语义",
+          "value": "正面关键词 8，负面关键词 0",
+          "impact": "positive",
+          "source": "news_report",
+          "weight": 0.06
+        }
+      ],
+      "top_negative_signals": [],
+      "confidence_drivers": [
+        "存在券商研报覆盖数据",
+        "新闻分析报告可用于语义修正"
+      ]
+    },
+    "fundamentals": {
+      "score": 58.68,
+      "confidence": 0.83,
+      "summary": "300750 的基本面综合 58.7 分，盈利能力 中性，成长性 偏强。",
+      "subscores": {
+        "profitability": {
+          "score": 61.98,
+          "value": {
+            "roe_pct": 24.91,
+            "gross_margin_pct": 26.2728
+          },
+          "summary": "盈利质量由 ROE 与毛利率共同决定。",
+          "weight": 0.35
+        },
+        "growth": {
+          "score": 74.25,
+          "value": {
+            "revenue_growth_pct": 9.756,
+            "profit_growth_pct": 42.2834
+          },
+          "summary": "增长项关注营收与利润的同比增速。",
+          "weight": 0.3
+        },
+        "balance_sheet": {
+          "score": 36.07,
+          "value": {
+            "debt_ratio_pct": 61.9393
+          },
+          "summary": "资产负债率越低，资产负债表韧性通常越强。",
+          "weight": 0.2
+        },
+        "valuation": {
+          "score": 50.0,
+          "value": {
+            "trailing_pe": null
+          },
+          "summary": "估值仅作轻权重修正，不直接主导结论。",
+          "weight": 0.15
+        }
+      },
+      "top_positive_signals": [
+        {
+          "signal": "成长性",
+          "value": "营收增速 9.76%，利润增速 42.28%",
+          "impact": "positive",
+          "source": "financial_indicators",
+          "weight": 0.1455
+        },
+        {
+          "signal": "盈利能力",
+          "value": "ROE 24.91%，毛利率 26.27%",
+          "impact": "positive",
+          "source": "financial_indicators",
+          "weight": 0.0839
+        }
+      ],
+      "top_negative_signals": [
+        {
+          "signal": "资产负债表",
+          "value": "资产负债率 61.94%，杠杆压力偏高",
+          "impact": "negative",
+          "source": "financial_indicators",
+          "weight": 0.0557
+        }
+      ],
+      "confidence_drivers": [
+        "盈利能力指标齐全",
+        "营收与利润增速可用",
+        "资产负债率可用于稳健性判断"
+      ]
+    },
+    "overnight_tail": {
+      "score": 70.07,
+      "confidence": 0.8,
+      "summary": "隔夜尾盘因子 70.1 分，真实尾盘作为单票深度分析的辅助证据。",
+      "subscores": {
+        "tail_signal_strength": {
+          "score": 62.12,
+          "value": {
+            "tail_strength": 18.0,
+            "tail_return_pct": 0.78,
+            "last10_return_pct": 0.28,
+            "close_at_high_ratio": 0.9,
+            "tail_amount_ratio": 0.17
+          },
+          "summary": "隔夜扫描中的尾盘强度与收盘结构，作为短期延续性的辅助信号。",
+          "weight": 0.55
+        },
+        "scan_alignment": {
+          "score": 78.68,
+          "value": {
+            "quick_score": 74.0,
+            "total_score": 81.2
+          },
+          "summary": "扫描阶段的候选总分和预筛分，反映其在隔夜规则引擎中的相对位置。",
+          "weight": 0.3
+        },
+        "tail_quality": {
+          "score": 82.0,
+          "value": {
+            "quality": "real",
+            "provider_route": {
+              "spot": "akshare_spot",
+              "index": "akshare_index",
+              "history": "akshare_daily",
+              "tail": "akshare_minute",
+              "risk": "akshare_news"
+            },
+            "source": "frozen-minute"
+          },
+          "summary": "真实尾盘分钟数据优先，代理尾盘只做轻量参考。",
+          "weight": 0.15
+        }
+      },
+      "top_positive_signals": [
+        {
+          "signal": "尾盘来源",
+          "value": "真实尾盘 / total_score 81.2",
+          "impact": "positive",
+          "source": "overnight_scan",
+          "weight": 0.0482
+        },
+        {
+          "signal": "尾盘收益",
+          "value": "14:30 后涨幅 0.78%",
+          "impact": "positive",
+          "source": "overnight_scan",
+          "weight": 0.0242
+        }
+      ],
+      "top_negative_signals": [],
+      "confidence_drivers": [
+        "候选分层: formal",
+        "尾盘质量: 真实尾盘",
+        "尾盘来源: frozen-minute"
+      ]
+    }
+  }
+}

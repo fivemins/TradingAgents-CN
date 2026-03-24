@@ -1,0 +1,101 @@
+{
+  "task_id": "3378e697e13747fcb08a52efa01c4cd9",
+  "ticker": "300750.SZ",
+  "analysis_date": "2025-03-20",
+  "market_region": "cn_a",
+  "analysts": [
+    "market",
+    "social",
+    "news",
+    "fundamentals"
+  ],
+  "research_depth": 1,
+  "llm_provider": "ark",
+  "quick_think_llm": "doubao-seed-2.0-lite",
+  "deep_think_llm": "doubao-seed-2.0-pro",
+  "online_tools": true,
+  "status": "succeeded",
+  "stage": "completed",
+  "progress_message": "Analysis completed successfully.",
+  "config_snapshot": {
+    "llm_provider": "ark",
+    "llm_base_url": "https://ark.cn-beijing.volces.com/api/coding/v3",
+    "quick_think_llm": "doubao-seed-2.0-lite",
+    "deep_think_llm": "doubao-seed-2.0-pro",
+    "online_tools": true,
+    "market_region": "cn_a",
+    "security_profile": {
+      "user_ticker": "300750",
+      "market_region": "cn_a",
+      "normalized_ticker": "300750.SZ",
+      "exchange": "SZSE",
+      "yfinance_symbol": "300750.SZ",
+      "akshare_symbol": "300750",
+      "eastmoney_symbol": "300750.SZ",
+      "display_symbol": "300750"
+    },
+    "max_debate_rounds": 1,
+    "max_risk_discuss_rounds": 1,
+    "max_recur_limit": 100,
+    "source_context": {
+      "type": "overnight_scan",
+      "scan_id": "282e656a94514c028d9ea6b3d17e91c1",
+      "trade_date": "2025-03-20",
+      "mode": "strict",
+      "ticker": "300750.SZ",
+      "name": "300750"
+    },
+    "overnight_context": {
+      "scan_id": "282e656a94514c028d9ea6b3d17e91c1",
+      "scan_trade_date": "2025-03-20",
+      "scan_mode": "strict",
+      "source_name": "300750",
+      "bucket": "formal",
+      "quality": "real",
+      "quick_score": 74.0,
+      "total_score": 81.2,
+      "factor_breakdown": {
+        "trend_strength": 21.0,
+        "tail_strength": 18.0,
+        "relative_strength": 15.0
+      },
+      "tail_metrics": {
+        "source": "frozen-minute",
+        "quality": "real",
+        "tail_return_pct": 0.78,
+        "tail_amount_ratio": 0.17,
+        "last10_return_pct": 0.28,
+        "close_at_high_ratio": 0.9,
+        "auction_strength": 0.26,
+        "rows": 31,
+        "note": "",
+        "provider_chain": [
+          "frozen-minute"
+        ]
+      },
+      "provider_route": {
+        "spot": "akshare_spot",
+        "index": "akshare_index",
+        "history": "akshare_daily",
+        "tail": "akshare_minute",
+        "risk": "akshare_news"
+      },
+      "evaluation_config_version": "overnight_phase2_v1",
+      "evaluation_config_hash": "4395250d30cf"
+    }
+  },
+  "structured_summary": {
+    "composite_score": 57.99,
+    "confidence": 0.74,
+    "recommended_action": "HOLD",
+    "primary_driver": "fundamentals: \u6210\u957f\u6027 - \u8425\u6536\u589e\u901f 9.76%\uff0c\u5229\u6da6\u589e\u901f 42.28%",
+    "primary_risk": "technical: \u8fd1\u671f\u52a8\u91cf - 20 \u65e5\u6536\u76ca\u7387 -4.86%\uff0c60 \u65e5\u6536\u76ca\u7387 -3.41%"
+  },
+  "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_final\\tasks\\3378e697e13747fcb08a52efa01c4cd9",
+  "decision": "HOLD",
+  "error_message": null,
+  "created_at": "2026-03-23T09:50:29.932532+00:00",
+  "started_at": "2026-03-23T09:50:29.959950+00:00",
+  "finished_at": "2026-03-23T10:01:38.483021+00:00",
+  "pid": 9999
+}

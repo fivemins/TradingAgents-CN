@@ -1,5 +1,6 @@
 # gets data/stats
 
+import logging
 import yfinance as yf
 from typing import Annotated, Callable, Any, Optional
 from pandas import DataFrame
@@ -7,6 +8,9 @@ import pandas as pd
 from functools import wraps
 
 from .utils import save_output, SavePathType, decorate_all_methods
+
+
+logger = logging.getLogger(__name__)
 
 
 def init_ticker(func: Callable) -> Callable:
@@ -67,7 +71,7 @@ class YFinanceUtils:
         company_info_df = DataFrame([company_info])
         if save_path:
             company_info_df.to_csv(save_path)
-            print(f"Company info for {ticker.ticker} saved to {save_path}")
+            logger.info("Company info for %s saved to %s", ticker.ticker, save_path)
         return company_info_df
 
     def get_stock_dividends(
@@ -79,7 +83,7 @@ class YFinanceUtils:
         dividends = ticker.dividends
         if save_path:
             dividends.to_csv(save_path)
-            print(f"Dividends for {ticker.ticker} saved to {save_path}")
+            logger.info("Dividends for %s saved to %s", ticker.ticker, save_path)
         return dividends
 
     def get_income_stmt(symbol: Annotated[str, "ticker symbol"]) -> DataFrame:

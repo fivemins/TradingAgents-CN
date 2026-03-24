@@ -1,0 +1,7 @@
+{
+  "decision": "BUY",
+  "score": 79.81,
+  "confidence": 0.77,
+  "summary": "The weighted factor score is comfortably above the buy threshold.",
+  "source": "deterministic_factor_snapshot_v1"
+}

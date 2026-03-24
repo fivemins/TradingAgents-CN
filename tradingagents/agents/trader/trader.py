@@ -1,6 +1,4 @@
 import functools
-import time
-import json
 
 
 def create_trader(llm, memory):
@@ -11,26 +9,48 @@ def create_trader(llm, memory):
         sentiment_report = state["sentiment_report"]
         news_report = state["news_report"]
         fundamentals_report = state["fundamentals_report"]
+        structured_decision = state.get("structured_decision", {})
 
-        curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
+        curr_situation = (
+            f"{market_research_report}\n\n{sentiment_report}\n\n"
+            f"{news_report}\n\n{fundamentals_report}"
+        )
         past_memories = memory.get_memories(curr_situation, n_matches=2)
 
-        past_memory_str = ""
         if past_memories:
-            for i, rec in enumerate(past_memories, 1):
-                past_memory_str += rec["recommendation"] + "\n\n"
+            past_memory_str = "".join(
+                record["recommendation"] + "\n\n" for record in past_memories
+            )
         else:
             past_memory_str = "No past memories found."
 
         context = {
             "role": "user",
-            "content": f"Based on a comprehensive analysis by a team of analysts, here is an investment plan tailored for {company_name}. This plan incorporates insights from current technical market trends, macroeconomic indicators, and social media sentiment. Use this plan as a foundation for evaluating your next trading decision.\n\nProposed Investment Plan: {investment_plan}\n\nLeverage these insights to make an informed and strategic decision.",
+            "content": (
+                f"Based on the research team's work, here is an investment plan for {company_name}.\n\n"
+                f"Proposed investment plan:\n{investment_plan}\n\n"
+                "Structured reference:\n"
+                f"- Suggested action: {structured_decision.get('decision', '')}\n"
+                f"- Summary: {structured_decision.get('summary', '')}\n"
+                f"- Drivers: {structured_decision.get('primary_drivers', [])}\n"
+                f"- Risks: {structured_decision.get('risk_flags', [])}\n\n"
+                "Use the structured reference as your baseline, but adjust the execution stance if the debate implies a better practical action."
+            ),
         }
 
         messages = [
             {
                 "role": "system",
-                "content": f"""You are a trading agent analyzing market data to make investment decisions. Based on your analysis, provide a specific recommendation to buy, sell, or hold. End with a firm decision and always conclude your response with 'FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL**' to confirm your recommendation. Do not forget to utilize lessons from past decisions to learn from your mistakes. Here is some reflections from similar situatiosn you traded in and the lessons learned: {past_memory_str}""",
+                "content": (
+                "You are a trading agent converting research into an execution-ready recommendation. "
+                "Treat the structured factor conclusion as a strong baseline, not a hard lock. "
+                "If you lean away from it, explain why the live debate or risk context justifies that change. "
+                "Make the plan practical with position logic, risks, and monitoring points. "
+                "Default to Simplified Chinese in your output. Keep ticker symbols, company English names, model names, and "
+                "the final BUY/HOLD/SELL token in English, but write the rest of the recommendation in Chinese. "
+                "End with 'FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL**'. "
+                f"Past lessons: {past_memory_str}"
+            ),
             },
             context,
         ]

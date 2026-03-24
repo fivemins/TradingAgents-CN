@@ -144,6 +144,16 @@ def select_shallow_thinking_agent(provider) -> str:
             ("Gemini 2.0 Flash - Next generation features, speed, and thinking", "gemini-2.0-flash"),
             ("Gemini 2.5 Flash - Adaptive thinking, cost efficiency", "gemini-2.5-flash-preview-05-20"),
         ],
+        "ark": [
+            ("Doubao Seed 2.0 Lite - Fast general-purpose Ark model", "doubao-seed-2.0-lite"),
+            ("Doubao Seed Code - Coding-focused Ark model", "doubao-seed-code"),
+            ("Doubao Seed 2.0 Code - Strong coding-focused Ark model", "doubao-seed-2.0-code"),
+            ("Doubao Seed 2.0 Pro - Strong general-purpose Ark model", "doubao-seed-2.0-pro"),
+            ("Kimi K2.5 - Capable long-context reasoning model", "kimi-k2.5"),
+            ("DeepSeek V3.2 - Strong general reasoning model", "deepseek-v3.2"),
+            ("GLM 4.7 - General reasoning model", "glm-4.7"),
+            ("MiniMax M2.5 - General-purpose model", "minimax-m2.5"),
+        ],
         "openrouter": [
             ("Meta: Llama 4 Scout", "meta-llama/llama-4-scout:free"),
             ("Meta: Llama 3.3 8B Instruct - A lightweight and ultra-fast variant of Llama 3.3 70B", "meta-llama/llama-3.3-8b-instruct:free"),
@@ -207,6 +217,16 @@ def select_deep_thinking_agent(provider) -> str:
             ("Gemini 2.5 Flash - Adaptive thinking, cost efficiency", "gemini-2.5-flash-preview-05-20"),
             ("Gemini 2.5 Pro", "gemini-2.5-pro-preview-06-05"),
         ],
+        "ark": [
+            ("Doubao Seed 2.0 Pro - Strong general-purpose Ark model", "doubao-seed-2.0-pro"),
+            ("Kimi K2.5 - Strong long-context reasoning model", "kimi-k2.5"),
+            ("DeepSeek V3.2 - Strong general reasoning model", "deepseek-v3.2"),
+            ("Doubao Seed Code - Coding-focused Ark model", "doubao-seed-code"),
+            ("Doubao Seed 2.0 Code - Strong coding-focused Ark model", "doubao-seed-2.0-code"),
+            ("GLM 4.7 - General reasoning model", "glm-4.7"),
+            ("Doubao Seed 2.0 Lite - Lightweight Ark model", "doubao-seed-2.0-lite"),
+            ("MiniMax M2.5 - General-purpose model", "minimax-m2.5"),
+        ],
         "openrouter": [
             ("DeepSeek V3 - a 685B-parameter, mixture-of-experts model", "deepseek/deepseek-chat-v3-0324:free"),
             ("Deepseek - latest iteration of the flagship chat model family from the DeepSeek team.", "deepseek/deepseek-chat-v3-0324:free"),
@@ -240,12 +260,12 @@ def select_deep_thinking_agent(provider) -> str:
     return choice
 
 def select_llm_provider() -> tuple[str, str]:
-    """Select the OpenAI api url using interactive selection."""
-    # Define OpenAI api options with their corresponding endpoints
+    """Select the LLM provider and its base URL using interactive selection."""
     BASE_URLS = [
         ("OpenAI", "https://api.openai.com/v1"),
         ("Anthropic", "https://api.anthropic.com/"),
         ("Google", "https://generativelanguage.googleapis.com/v1"),
+        ("Ark", "https://ark.cn-beijing.volces.com/api/coding/v3"),
         ("Openrouter", "https://openrouter.ai/api/v1"),
         ("Ollama", "http://localhost:11434/v1"),        
     ]
@@ -267,7 +287,7 @@ def select_llm_provider() -> tuple[str, str]:
     ).ask()
     
     if choice is None:
-        console.print("\n[red]no OpenAI backend selected. Exiting...[/red]")
+        console.print("\n[red]No LLM backend selected. Exiting...[/red]")
         exit(1)
     
     display_name, url = choice

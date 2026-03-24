@@ -1,0 +1,21 @@
+{
+  "decision": "HOLD",
+  "score": 62.35,
+  "confidence": 0.77,
+  "summary": "综合得分 62.35，介于 45 和 65 之间，信号仍偏混合。",
+  "source": "balanced_factor_snapshot_v2",
+  "threshold_policy": {
+    "style": "balanced",
+    "buy_at_or_above": 65.0,
+    "sell_at_or_below": 45.0,
+    "min_confidence_for_directional_call": 0.5
+  },
+  "primary_drivers": [
+    "technical: 趋势强弱 - 最新收盘 1604.00，位于 SMA20 1529.98 与 SMA60 1491.58 上方",
+    "fundamentals: 盈利能力 - ROE 24.64%，毛利率 91.29%",
+    "fundamentals: 资产负债表 - 资产负债率 12.81%，财务结构稳健"
+  ],
+  "risk_flags": [
+    "sentiment: 股东户数变化 - 股东户数变动 39.02%"
+  ]
+}

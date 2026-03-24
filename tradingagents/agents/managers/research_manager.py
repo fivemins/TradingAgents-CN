@@ -1,7 +1,3 @@
-import time
-import json
-
-
 def create_research_manager(llm, memory):
     def research_manager_node(state) -> dict:
         history = state["investment_debate_state"].get("history", "")
@@ -9,33 +5,50 @@ def create_research_manager(llm, memory):
         sentiment_report = state["sentiment_report"]
         news_report = state["news_report"]
         fundamentals_report = state["fundamentals_report"]
-
         investment_debate_state = state["investment_debate_state"]
+        structured_decision = state.get("structured_decision", {})
 
-        curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
+        curr_situation = (
+            f"{market_research_report}\n\n{sentiment_report}\n\n"
+            f"{news_report}\n\n{fundamentals_report}"
+        )
         past_memories = memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
-        for i, rec in enumerate(past_memories, 1):
-            past_memory_str += rec["recommendation"] + "\n\n"
+        for record in past_memories:
+            past_memory_str += record["recommendation"] + "\n\n"
 
-        prompt = f"""As the portfolio manager and debate facilitator, your role is to critically evaluate this round of debate and make a definitive decision: align with the bear analyst, the bull analyst, or choose Hold only if it is strongly justified based on the arguments presented.
+        prompt = f"""As the portfolio manager and debate facilitator, evaluate this debate round and produce a trader-ready investment plan.
 
-Summarize the key points from both sides concisely, focusing on the most compelling evidence or reasoning. Your recommendation—Buy, Sell, or Hold—must be clear and actionable. Avoid defaulting to Hold simply because both sides have valid points; commit to a stance grounded in the debate's strongest arguments.
+You are also given a structured factor conclusion. Treat it as a strong reference frame, but not an unbreakable rule.
 
-Additionally, develop a detailed investment plan for the trader. This should include:
+Structured reference:
+- Suggested action: {structured_decision.get("decision", "")}
+- Summary: {structured_decision.get("summary", "")}
+- Primary drivers: {structured_decision.get("primary_drivers", [])}
+- Primary risks: {structured_decision.get("risk_flags", [])}
 
-Your Recommendation: A decisive stance supported by the most convincing arguments.
-Rationale: An explanation of why these arguments lead to your conclusion.
-Strategic Actions: Concrete steps for implementing the recommendation.
-Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
+Instructions:
+1. Use the structured conclusion as your starting point.
+2. If the live debate materially contradicts it, call that out explicitly.
+3. Keep the plan practical for the trader, including execution conditions and invalidation signals.
+4. Do not force agreement when the evidence is mixed; surface uncertainty honestly.
+5. Default to Simplified Chinese in your output. Keep ticker symbols, company English names, model names, and necessary English abbreviations such as BUY/HOLD/SELL in English, but write the rest of the plan in Chinese.
 
-Here are your past reflections on mistakes:
-\"{past_memory_str}\"
+Your output should include:
+- a directional plan for the trader
+- the strongest arguments from both sides of the debate
+- execution conditions or monitoring points
+- key caveats that could weaken the thesis
 
-Here is the debate:
-Debate History:
+Take into account your past mistakes on similar situations and use them to refine the plan.
+
+Past reflections:
+{past_memory_str}
+
+Debate history:
 {history}"""
+
         response = llm.invoke(prompt)
 
         new_investment_debate_state = {

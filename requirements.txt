@@ -2,11 +2,12 @@ typing-extensions
 langchain-openai
 langchain-experimental
 pandas
+pyarrow
 yfinance
 praw
 feedparser
-stockstats
 eodhd
+fastapi
 langgraph
 chromadb
 setuptools
@@ -24,3 +25,4 @@ rich
 questionary
 langchain_anthropic
 langchain-google-genai
+uvicorn

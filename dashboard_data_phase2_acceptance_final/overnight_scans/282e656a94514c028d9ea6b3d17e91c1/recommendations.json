@@ -1,0 +1,105 @@
+{
+  "formal_recommendations": [
+    {
+      "ticker": "600519.SS",
+      "name": "Kweichow Moutai",
+      "pool": "主板",
+      "quality": "real",
+      "latest": 108.6,
+      "pct": 2.45,
+      "amount": 1800000000.0,
+      "turnover": 2.5,
+      "quick_score": 78.0,
+      "total_score": 84.5,
+      "factor_breakdown": {
+        "trend_strength": 24.0,
+        "tail_strength": 20.0,
+        "relative_strength": 16.0
+      },
+      "tail_metrics": {
+        "source": "frozen-minute",
+        "quality": "real",
+        "tail_return_pct": 0.95,
+        "tail_amount_ratio": 0.2,
+        "last10_return_pct": 0.4,
+        "close_at_high_ratio": 0.95,
+        "auction_strength": 0.33,
+        "rows": 31,
+        "note": "",
+        "provider_chain": [
+          "frozen-minute"
+        ]
+      },
+      "filter_reason": "通过",
+      "excluded_from_final": ""
+    },
+    {
+      "ticker": "300750.SZ",
+      "name": "CATL",
+      "pool": "创业板",
+      "quality": "real",
+      "latest": 84.2,
+      "pct": 2.68,
+      "amount": 1200000000.0,
+      "turnover": 3.2,
+      "quick_score": 74.0,
+      "total_score": 81.2,
+      "factor_breakdown": {
+        "trend_strength": 21.0,
+        "tail_strength": 18.0,
+        "relative_strength": 15.0
+      },
+      "tail_metrics": {
+        "source": "frozen-minute",
+        "quality": "real",
+        "tail_return_pct": 0.78,
+        "tail_amount_ratio": 0.17,
+        "last10_return_pct": 0.28,
+        "close_at_high_ratio": 0.9,
+        "auction_strength": 0.26,
+        "rows": 31,
+        "note": "",
+        "provider_chain": [
+          "frozen-minute"
+        ]
+      },
+      "filter_reason": "通过",
+      "excluded_from_final": ""
+    },
+    {
+      "ticker": "000001.SZ",
+      "name": "Ping An Bank",
+      "pool": "主板",
+      "quality": "real",
+      "latest": 11.3,
+      "pct": 1.8,
+      "amount": 950000000.0,
+      "turnover": 1.8,
+      "quick_score": 68.0,
+      "total_score": 76.4,
+      "factor_breakdown": {
+        "trend_strength": 18.0,
+        "tail_strength": 16.0,
+        "relative_strength": 13.0
+      },
+      "tail_metrics": {
+        "source": "frozen-minute",
+        "quality": "real",
+        "tail_return_pct": 0.62,
+        "tail_amount_ratio": 0.14,
+        "last10_return_pct": 0.18,
+        "close_at_high_ratio": 0.86,
+        "auction_strength": 0.21,
+        "rows": 31,
+        "note": "",
+        "provider_chain": [
+          "frozen-minute"
+        ]
+      },
+      "filter_reason": "通过",
+      "excluded_from_final": ""
+    }
+  ],
+  "watchlist": [],
+  "excluded_examples": []
+}

@@ -1,0 +1,86 @@
+{
+  "review_id": "6478ef3b55dd4be98552d233bb22fcba",
+  "end_trade_date": "2025-03-19",
+  "market_region": "cn_a",
+  "window_days": 60,
+  "mode": "strict",
+  "return_basis": "next_open",
+  "status": "succeeded",
+  "progress_message": "Overnight review completed successfully.",
+  "summary_json": {
+    "end_trade_date": "2025-03-19",
+    "market_region": "cn_a",
+    "window_days": 60,
+    "mode": "strict",
+    "return_basis": "next_open",
+    "candidate_count": 0,
+    "days_evaluated": 3,
+    "days_with_formal_picks": 0,
+    "avg_next_open_return": null,
+    "median_next_open_return": null,
+    "positive_pick_rate": null,
+    "avg_daily_equal_weight_return": null,
+    "avg_benchmark_next_open_return": null,
+    "avg_excess_return": null,
+    "best_day": null,
+    "worst_day": null,
+    "has_valid_samples": false,
+    "headline_message": "No valid formal recommendation samples were produced in the selected window.",
+    "regime_breakdown": [],
+    "pool_breakdown": [],
+    "tail_quality_breakdown": [],
+    "data_quality": {
+      "status": "ok",
+      "message": "Historical review used saved universe snapshots for every replay day."
+    },
+    "provider_route": {
+      "spot": "akshare_spot",
+      "index": "akshare_index",
+      "history": "akshare_daily",
+      "tail": "akshare_minute",
+      "risk": "akshare_news"
+    },
+    "bias_flags": [],
+    "universe_snapshot_date": "2025-03-19",
+    "survivorship_bias": false,
+    "evaluation_config_version": "overnight_phase2_v1",
+    "evaluation_config_hash": "4395250d30cf",
+    "audit": {
+      "mode": "strict",
+      "return_basis": "next_open",
+      "window_days": 60,
+      "universe_count": 3,
+      "history_loaded": 3,
+      "history_failed": 0,
+      "missing_real_tail_count": 0,
+      "missing_next_open_count": 0,
+      "survivorship_bias": false,
+      "provider_route": {
+        "spot": "akshare_spot",
+        "index": "akshare_index",
+        "history": "akshare_daily",
+        "tail": "akshare_minute",
+        "risk": "akshare_news"
+      },
+      "universe_snapshot_dates": {
+        "2025-03-17": "2025-03-17",
+        "2025-03-18": "2025-03-18",
+        "2025-03-19": "2025-03-19"
+      },
+      "notes": [
+        "historical_review_prefers_saved_universe_snapshots",
+        "All replay dates used saved universe snapshots.",
+        "Strict mode only counts formal recommendations with real tail minute data.",
+        "Candidates without next-trading-day open data are excluded from return statistics."
+      ],
+      "evaluation_config_version": "overnight_phase2_v1",
+      "evaluation_config_hash": "4395250d30cf"
+    }
+  },
+  "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_final\\overnight_reviews\\6478ef3b55dd4be98552d233bb22fcba",
+  "error_message": null,
+  "created_at": "2026-03-23T10:11:55.527527+00:00",
+  "started_at": "2026-03-23T10:11:55.548522+00:00",
+  "finished_at": "2026-03-23T10:11:55.675558+00:00",
+  "pid": 9999
+}

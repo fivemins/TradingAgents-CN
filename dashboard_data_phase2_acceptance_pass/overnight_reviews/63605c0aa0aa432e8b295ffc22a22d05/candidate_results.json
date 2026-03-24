@@ -1,0 +1,326 @@
+[
+  {
+    "trade_date": "2025-03-17",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "600519.SS",
+    "name": "Kweichow Moutai",
+    "quality": "real",
+    "quick_score": 78.0,
+    "total_score": 84.5,
+    "factor_breakdown": {
+      "trend_strength": 24.0,
+      "tail_strength": 20.0,
+      "relative_strength": 16.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.95,
+      "tail_amount_ratio": 0.2,
+      "last10_return_pct": 0.4,
+      "close_at_high_ratio": 0.95,
+      "auction_strength": 0.33,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-18",
+    "scan_close_price": 105.2,
+    "next_open_return": 0.2852,
+    "benchmark_next_open_return": 0.15,
+    "excess_return": 0.1352,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-17",
+    "category": "formal",
+    "pool": "gem",
+    "ticker": "300750.SZ",
+    "name": "CATL",
+    "quality": "real",
+    "quick_score": 74.0,
+    "total_score": 81.2,
+    "factor_breakdown": {
+      "trend_strength": 21.0,
+      "tail_strength": 18.0,
+      "relative_strength": 15.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.78,
+      "tail_amount_ratio": 0.17,
+      "last10_return_pct": 0.28,
+      "close_at_high_ratio": 0.9,
+      "auction_strength": 0.26,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-18",
+    "scan_close_price": 81.8,
+    "next_open_return": 0.2445,
+    "benchmark_next_open_return": 0.15,
+    "excess_return": 0.0945,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-17",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "000001.SZ",
+    "name": "Ping An Bank",
+    "quality": "real",
+    "quick_score": 68.0,
+    "total_score": 76.4,
+    "factor_breakdown": {
+      "trend_strength": 18.0,
+      "tail_strength": 16.0,
+      "relative_strength": 13.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.62,
+      "tail_amount_ratio": 0.14,
+      "last10_return_pct": 0.18,
+      "close_at_high_ratio": 0.86,
+      "auction_strength": 0.21,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-18",
+    "scan_close_price": 27.95,
+    "next_open_return": 0.3578,
+    "benchmark_next_open_return": 0.15,
+    "excess_return": 0.2078,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-18",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "600519.SS",
+    "name": "Kweichow Moutai",
+    "quality": "real",
+    "quick_score": 78.0,
+    "total_score": 84.5,
+    "factor_breakdown": {
+      "trend_strength": 24.0,
+      "tail_strength": 20.0,
+      "relative_strength": 16.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.95,
+      "tail_amount_ratio": 0.2,
+      "last10_return_pct": 0.4,
+      "close_at_high_ratio": 0.95,
+      "auction_strength": 0.33,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-19",
+    "scan_close_price": 106.4,
+    "next_open_return": 0.188,
+    "benchmark_next_open_return": -0.05,
+    "excess_return": 0.238,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-18",
+    "category": "formal",
+    "pool": "gem",
+    "ticker": "300750.SZ",
+    "name": "CATL",
+    "quality": "real",
+    "quick_score": 74.0,
+    "total_score": 81.2,
+    "factor_breakdown": {
+      "trend_strength": 21.0,
+      "tail_strength": 18.0,
+      "relative_strength": 15.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.78,
+      "tail_amount_ratio": 0.17,
+      "last10_return_pct": 0.28,
+      "close_at_high_ratio": 0.9,
+      "auction_strength": 0.26,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-19",
+    "scan_close_price": 83.1,
+    "next_open_return": 0.1203,
+    "benchmark_next_open_return": -0.05,
+    "excess_return": 0.1703,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-18",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "000001.SZ",
+    "name": "Ping An Bank",
+    "quality": "real",
+    "quick_score": 68.0,
+    "total_score": 76.4,
+    "factor_breakdown": {
+      "trend_strength": 18.0,
+      "tail_strength": 16.0,
+      "relative_strength": 13.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.62,
+      "tail_amount_ratio": 0.14,
+      "last10_return_pct": 0.18,
+      "close_at_high_ratio": 0.86,
+      "auction_strength": 0.21,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-19",
+    "scan_close_price": 28.45,
+    "next_open_return": 0.3515,
+    "benchmark_next_open_return": -0.05,
+    "excess_return": 0.4015,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-19",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "600519.SS",
+    "name": "Kweichow Moutai",
+    "quality": "real",
+    "quick_score": 78.0,
+    "total_score": 84.5,
+    "factor_breakdown": {
+      "trend_strength": 24.0,
+      "tail_strength": 20.0,
+      "relative_strength": 16.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.95,
+      "tail_amount_ratio": 0.2,
+      "last10_return_pct": 0.4,
+      "close_at_high_ratio": 0.95,
+      "auction_strength": 0.33,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-20",
+    "scan_close_price": 107.7,
+    "next_open_return": 0.1857,
+    "benchmark_next_open_return": 0.1,
+    "excess_return": 0.0857,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-19",
+    "category": "formal",
+    "pool": "gem",
+    "ticker": "300750.SZ",
+    "name": "CATL",
+    "quality": "real",
+    "quick_score": 74.0,
+    "total_score": 81.2,
+    "factor_breakdown": {
+      "trend_strength": 21.0,
+      "tail_strength": 18.0,
+      "relative_strength": 15.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.78,
+      "tail_amount_ratio": 0.17,
+      "last10_return_pct": 0.28,
+      "close_at_high_ratio": 0.9,
+      "auction_strength": 0.26,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-20",
+    "scan_close_price": 84.0,
+    "next_open_return": 0.3571,
+    "benchmark_next_open_return": 0.1,
+    "excess_return": 0.2571,
+    "counted_in_performance": true
+  },
+  {
+    "trade_date": "2025-03-19",
+    "category": "formal",
+    "pool": "main",
+    "ticker": "000001.SZ",
+    "name": "Ping An Bank",
+    "quality": "real",
+    "quick_score": 68.0,
+    "total_score": 76.4,
+    "factor_breakdown": {
+      "trend_strength": 18.0,
+      "tail_strength": 16.0,
+      "relative_strength": 13.0
+    },
+    "tail_metrics": {
+      "source": "frozen-minute",
+      "quality": "real",
+      "tail_return_pct": 0.62,
+      "tail_amount_ratio": 0.14,
+      "last10_return_pct": 0.18,
+      "close_at_high_ratio": 0.86,
+      "auction_strength": 0.21,
+      "rows": 31,
+      "note": "",
+      "provider_chain": [
+        "frozen-minute"
+      ]
+    },
+    "filter_reason": "通过",
+    "next_trade_date": "2025-03-20",
+    "scan_close_price": 28.95,
+    "next_open_return": 0.1727,
+    "benchmark_next_open_return": 0.1,
+    "excess_return": 0.0727,
+    "counted_in_performance": true
+  }
+]

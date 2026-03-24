@@ -1,0 +1,128 @@
+{
+  "security_profile": {
+    "user_ticker": "000001.SZ",
+    "market_region": "cn_a",
+    "normalized_ticker": "000001.SZ",
+    "exchange": "SZSE",
+    "yfinance_symbol": "000001.SZ",
+    "akshare_symbol": "000001",
+    "eastmoney_symbol": "000001.SZ",
+    "display_symbol": "000001"
+  },
+  "technical": [
+    {
+      "signal": "last_close",
+      "value": 11.49,
+      "source": "price_history"
+    },
+    {
+      "signal": "sma20",
+      "value": 11.6105,
+      "source": "price_history"
+    },
+    {
+      "signal": "sma60",
+      "value": 11.5553,
+      "source": "price_history"
+    },
+    {
+      "signal": "return20_pct",
+      "value": -1.29,
+      "source": "price_history"
+    },
+    {
+      "signal": "return60_pct",
+      "value": -1.37,
+      "source": "price_history"
+    },
+    {
+      "signal": "volatility20_pct",
+      "value": 1.17,
+      "source": "price_history"
+    },
+    {
+      "signal": "below_sma20",
+      "source": "price_history",
+      "impact": "negative"
+    },
+    {
+      "signal": "below_sma60",
+      "source": "price_history",
+      "impact": "negative"
+    },
+    {
+      "signal": "stable_volatility",
+      "source": "price_history",
+      "impact": "positive"
+    },
+    {
+      "signal": "volume_ratio_5_20",
+      "value": 1.68,
+      "source": "price_history"
+    }
+  ],
+  "sentiment": [
+    {
+      "signal": "holder_change_pct",
+      "value": -11.37,
+      "source": "eastmoney_shareholders"
+    },
+    {
+      "signal": "keyword_balance",
+      "positive_hits": 17,
+      "negative_hits": 4,
+      "source": "sentiment_report"
+    }
+  ],
+  "news": [
+    {
+      "signal": "broker_report_count",
+      "value": 225,
+      "source": "broker_research"
+    },
+    {
+      "signal": "keyword_balance",
+      "positive_hits": 6,
+      "negative_hits": 2,
+      "source": "news_report"
+    }
+  ],
+  "fundamentals": [
+    {
+      "signal": "roe",
+      "value": 9.15,
+      "source": "financial_indicators"
+    },
+    {
+      "signal": "revenue_growth",
+      "value": -3.2,
+      "source": "financial_indicators"
+    },
+    {
+      "signal": "profit_growth",
+      "value": -4.21,
+      "source": "financial_indicators"
+    },
+    {
+      "signal": "debt_ratio",
+      "value": 90.7,
+      "source": "financial_indicators"
+    },
+    {
+      "signal": "holder_market_value",
+      "value": 505935.16,
+      "source": "eastmoney_shareholders"
+    },
+    {
+      "signal": "broker_report_count",
+      "value": 225,
+      "source": "broker_research"
+    },
+    {
+      "signal": "keyword_balance",
+      "positive_hits": 6,
+      "negative_hits": 3,
+      "source": "fundamentals_report"
+    }
+  ]
+}

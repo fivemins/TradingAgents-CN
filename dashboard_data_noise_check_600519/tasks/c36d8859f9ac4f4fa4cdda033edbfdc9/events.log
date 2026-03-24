@@ -1,0 +1,384 @@
+2026-03-23 19:00:51 [SYSTEM] Runner started.
+2026-03-23 19:00:55 [SYSTEM] Runner started.
+2026-03-23 19:01:00 [RISK] Risk review started.
+2026-03-23 19:01:00 [MESSAGE] 600519.SS
+2026-03-23 19:01:04 [RISK] Risk review started.
+2026-03-23 19:01:04 [MESSAGE] 600519.SS
+2026-03-23 19:01:07 [RESEARCH] Research debate started.
+2026-03-23 19:01:10 [MESSAGE] # Stock data for 600519.SS from 2023-01-01 to 2025-03-20 # Total records: 533 # Data retrieved on: 2026-03-23 19:01:10 Date,Open,High,Low,Close,Volume,Dividends,Stock Splits 2023-01-03,1567.91,1574.46,1545.1,1566.83,2603380,0.0,0.0 2023-01-04,1566.82,1574.7,1554.14,1562.3,2041575,0.0,0.0 2023-01-05,1573.16,1631.13,1569.54,1631.13,4794285,0.0,0.0 2023-01-06,1635.76,1641.0,1618.45,1633.64,2490375,0.0,0.0 2023-01-09,1661.92,1675.49,1637.3,1667.54,3097723,0.0,0.0 2023-01-10,1665.6,1688.64,1657.84,16
+2026-03-23 19:01:11 [RESEARCH] Research debate started.
+2026-03-23 19:01:13 [MESSAGE] # Stock data for 600519.SS from 2024-03-20 to 2025-03-20 # Total records: 241 # Data retrieved on: 2026-03-23 19:01:13 Date,Open,High,Low,Close,Volume,Dividends,Stock Splits 2024-03-20,1584.45,1594.05,1581.54,1590.26,1524925,0.0,0.0 2024-03-21,1588.86,1599.0,1585.51,1589.7,1659597,0.0,0.0 2024-03-22,1586.01,1589.69,1570.17,1582.58,2545614,0.0,0.0 2024-03-25,1579.97,1580.18,1563.26,1571.1,2447285,0.0,0.0 2024-03-26,1569.66,1593.23,1569.66,1589.97,2806907,0.0,0.0 2024-03-27,1585.98,1592.49,1580.4,
+2026-03-23 19:01:17 [MESSAGE] ## close_10_ema values from 2024-03-20 to 2025-03-20: 2024-03-20: 1588.5255136452838 2024-03-21: 1588.7389589626187 2024-03-22: 1587.6197838955516 2024-03-25: 1584.6170923634058 2024-03-26: 1585.5902319976162 2024-03-27: 1584.9843819327086 2024-03-28: 1584.5968851111368 2024-03-29: 1584.4929548281457 2024-04-01: 1587.5249087088237 2024-04-02: 1588.7642319478443 2024-04-03: 1589.9676324246568 2024-04-08: 1582.7580966286964 2024-04-09: 1576.1084533496155 2024-04-10: 1568.2594776340607 2024-04-11:
+2026-03-23 19:01:22 [MESSAGE] ## close_50_sma values from 2024-03-20 to 2025-03-20: 2024-03-20: 1551.554873046875 2024-03-21: 1551.8339306640626 2024-03-22: 1552.4357666015626 2024-03-25: 1552.9129565429687 2024-03-26: 1554.12779296875 2024-03-27: 1555.2440258789063 2024-03-28: 1556.362861328125 2024-03-29: 1557.4108178710937 2024-04-01: 1558.8669409179688 2024-04-02: 1560.2434423828124 2024-04-03: 1561.6513793945312 2024-04-08: 1563.319404296875 2024-04-09: 1564.2747143554689 2024-04-10: 1564.5161889648436 2024-04-11: 1564.
+2026-03-23 19:01:23 [MESSAGE] ## close_10_ema values from 2024-07-13 to 2025-03-20: 2024-07-15: 1393.2589657351782 2024-07-16: 1394.7397796711118 2024-07-17: 1400.3361203346028 2024-07-18: 1404.2434468220613 2024-07-19: 1412.2929337635046 2024-07-22: 1414.2834630295151 2024-07-23: 1408.316396953126 2024-07-24: 1400.8482922869327 2024-07-25: 1393.0928721339108 2024-07-26: 1385.3146670442225 2024-07-29: 1374.7782511966934 2024-07-30: 1363.0450428825218 2024-07-31: 1360.5730304692224 2024-08-01: 1352.4877529123185 2024-08-02: 1
+2026-03-23 19:01:27 [MESSAGE] ## close_50_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1491.8283447265626 2024-07-16: 1487.1099072265624 2024-07-17: 1482.6914770507813 2024-07-18: 1478.3113623046875 2024-07-19: 1474.6133056640624 2024-07-22: 1470.7263891601563 2024-07-23: 1466.6175024414063 2024-07-24: 1462.2989501953125 2024-07-25: 1457.8362646484375 2024-07-26: 1453.13224609375 2024-07-29: 1447.7739208984376 2024-07-30: 1442.18484375 2024-07-31: 1437.4542504882813 2024-08-01: 1432.1923779296876 2024-08-02: 1427.02
+2026-03-23 19:01:29 [MESSAGE] ## close_200_sma values from 2024-03-20 to 2025-03-20: 2024-03-20: 1597.696812133789 2024-03-21: 1597.9425122070313 2024-03-22: 1598.1999096679688 2024-03-25: 1598.4069787597657 2024-03-26: 1598.8021527099609 2024-03-27: 1599.337142944336 2024-03-28: 1599.8433197021484 2024-03-29: 1600.198313598633 2024-04-01: 1600.664383544922 2024-04-02: 1601.0873040771485 2024-04-03: 1601.5882952880859 2024-04-08: 1601.7865124511718 2024-04-09: 1601.9731353759767 2024-04-10: 1601.9576763916016 2024-04-11: 160
+2026-03-23 19:01:32 [MESSAGE] ## close_200_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1557.8297113037108 2024-07-16: 1556.468942260742 2024-07-17: 1555.2343627929688 2024-07-18: 1554.1500610351563 2024-07-19: 1552.9821380615235 2024-07-22: 1551.698232421875 2024-07-23: 1550.2189630126952 2024-07-24: 1548.786332397461 2024-07-25: 1547.0757592773436 2024-07-26: 1545.4022003173827 2024-07-29: 1543.689213256836 2024-07-30: 1541.8998284912109 2024-07-31: 1540.3774975585939 2024-08-01: 1538.7875274658204 2024-08-02: 153
+2026-03-23 19:01:37 [MESSAGE] ## macd values from 2024-07-13 to 2025-03-20: 2024-07-15: -27.0097702201208 2024-07-16: -24.550745976135204 2024-07-17: -20.420579146361433 2024-07-18: -17.24659752174034 2024-07-19: -12.434263651597576 2024-07-22: -10.53843738026012 2024-07-23: -12.265585212574706 2024-07-24: -14.613565571562958 2024-07-25: -17.0084198509378 2024-07-26: -19.31956484226407 2024-07-29: -22.74076373817411 2024-07-30: -26.527636459018368 2024-07-31: -26.064915993088334 2024-08-01: -28.065347296747404 2024-08-02: -2
+2026-03-23 19:01:38 [MESSAGE] ## macd values from 2024-03-20 to 2025-03-20: 2024-03-20: 11.038319144218576 2024-03-21: 10.44151900326824 2024-03-22: 9.28729340472978 2024-03-25: 7.361482434025902 2024-03-26: 7.2736154540803 2024-03-27: 6.506736863745573 2024-03-28: 5.8792270000965345 2024-03-29: 5.414090861730529 2024-04-01: 6.355536194447723 2024-04-02: 6.4760630080184 2024-04-03: 6.579793968167223 2024-04-08: 2.990933186150187 2024-04-09: -0.18440585227358497 2024-04-10: -3.7267643115008013 2024-04-11: -6.458156248317664 2
+2026-03-23 19:01:41 [MESSAGE] ## rsi values from 2024-07-13 to 2025-03-20: 2024-07-15: 43.83784915159477 2024-07-16: 44.13304772748537 2024-07-17: 50.59093009523992 2024-07-18: 49.644498775787824 2024-07-19: 56.04402122462242 2024-07-22: 49.61362186279616 2024-07-23: 41.199202327451005 2024-07-24: 38.78733772916041 2024-07-25: 37.2916369863234 2024-07-26: 35.989915147383925 2024-07-29: 32.43897440239445 2024-07-30: 30.056609872664275 2024-07-31: 40.78235845210696 2024-08-01: 35.75936751769277 2024-08-02: 35.663706586435914 2
+2026-03-23 19:01:45 [MESSAGE] ## rsi values from 2024-03-20 to 2025-03-20: 2024-03-20: 54.605161833801944 2024-03-21: 54.41845039824771 2024-03-22: 51.97805840959664 2024-03-25: 48.22149607108049 2024-03-26: 54.09349855605434 2024-03-27: 51.52136197479964 2024-03-28: 51.71218381149293 2024-03-29: 52.11201438107648 2024-04-01: 57.63705285637221 2024-04-02: 54.91945914777404 2024-04-03: 55.26604022163397 2024-04-08: 40.69119318286592 2024-04-09: 39.65897996906975 2024-04-10: 36.464201144100244 2024-04-11: 36.47197196644602 202
+2026-03-23 19:01:49 [MESSAGE] ## boll values from 2024-07-13 to 2025-03-20: 2024-07-15: 1399.837451171875 2024-07-16: 1399.1432067871094 2024-07-17: 1399.1621948242187 2024-07-18: 1399.0392456054688 2024-07-19: 1401.6322265625 2024-07-22: 1402.6979858398438 2024-07-23: 1401.195458984375 2024-07-24: 1398.8597900390625 2024-07-25: 1396.011407470703 2024-07-26: 1393.8656188964844 2024-07-29: 1391.8546569824218 2024-07-30: 1386.5989135742188 2024-07-31: 1382.861834716797 2024-08-01: 1378.1344787597657 2024-08-02: 1373.3734069824
+2026-03-23 19:01:53 [MESSAGE] ## boll values from 2024-03-20 to 2025-03-20: 2024-03-20: 1581.9095825195313 2024-03-21: 1581.473321533203 2024-03-22: 1580.8807861328125 2024-03-25: 1580.6031311035156 2024-03-26: 1581.5235656738282 2024-03-27: 1582.4281799316407 2024-03-28: 1582.7369995117188 2024-03-29: 1583.5667236328125 2024-04-01: 1585.6610473632813 2024-04-02: 1586.5396118164062 2024-04-03: 1588.1469848632812 2024-04-08: 1587.3577209472655 2024-04-09: 1586.9293701171875 2024-04-10: 1584.7662109375 2024-04-11: 1580.2547790
+2026-03-23 19:01:54 [MESSAGE] ## boll_ub values from 2024-07-13 to 2025-03-20: 2024-07-15: 1444.411912117225 2024-07-16: 1443.133098843502 2024-07-17: 1443.1996368207099 2024-07-18: 1442.794176870765 2024-07-19: 1450.6254759988526 2024-07-22: 1452.6363420478408 2024-07-23: 1451.8203957370474 2024-07-24: 1451.2844358688326 2024-07-25: 1450.8420189604253 2024-07-26: 1452.3894169594155 2024-07-29: 1456.6128433538993 2024-07-30: 1459.832160168754 2024-07-31: 1455.6447657235992 2024-08-01: 1455.4579170392517 2024-08-02: 1453.9255
+2026-03-23 19:01:58 [MESSAGE] ## boll_lb values from 2024-07-13 to 2025-03-20: 2024-07-15: 1355.262990226525 2024-07-16: 1355.1533147307168 2024-07-17: 1355.1247528277274 2024-07-18: 1355.2843143401724 2024-07-19: 1352.6389771261472 2024-07-22: 1352.7596296318468 2024-07-23: 1350.5705222317024 2024-07-24: 1346.4351442092925 2024-07-25: 1341.1807959809807 2024-07-26: 1335.3418208335534 2024-07-29: 1327.0964706109444 2024-07-30: 1313.3656669796837 2024-07-31: 1310.0789037099946 2024-08-01: 1300.8110404802796 2024-08-02: 1292.8
+2026-03-23 19:02:04 [MESSAGE] ## boll_ub values from 2024-03-20 to 2025-03-20: 2024-03-20: 1617.4056170905633 2024-03-21: 1616.3233082152785 2024-03-22: 1615.2018814176254 2024-03-25: 1615.1571218221075 2024-03-26: 1616.04407959553 2024-03-27: 1615.967764888071 2024-03-28: 1616.1671693319445 2024-03-29: 1616.2118581434297 2024-04-01: 1617.0984264285548 2024-04-02: 1617.912820538207 2024-04-03: 1617.7363503417819 2024-04-08: 1620.09754800738 2024-04-09: 1621.6307961832931 2024-04-10: 1626.884321741192 2024-04-11: 1624.3292048
+2026-03-23 19:02:11 [MESSAGE] ## boll_lb values from 2024-03-20 to 2025-03-20: 2024-03-20: 1546.4135479484994 2024-03-21: 1546.6233348511275 2024-03-22: 1546.5596908479997 2024-03-25: 1546.0491403849237 2024-03-26: 1547.0030517521263 2024-03-27: 1548.8885949752103 2024-03-28: 1549.306829691493 2024-03-29: 1550.9215891221952 2024-04-01: 1554.2236682980079 2024-04-02: 1555.1664030946056 2024-04-03: 1558.5576193847805 2024-04-08: 1554.617893887151 2024-04-09: 1552.227944051082 2024-04-10: 1542.6481001338082 2024-04-11: 1536.180
+2026-03-23 19:02:26 [MARKET] Market analysis report generated.
+2026-03-23 19:02:26 [MESSAGE] # Technical Analysis Report for 600519.SS (Kweichow Moutai) ## Analysis Date: 2025-03-20 ### Period Covered: 2024-03-20 to 2025-03-20 --- ## 1. Trend Analysis (Moving Averages) ### Long-term Trend (200 SMA) The 200-day simple moving average (close_200_sma) has been gradually declining from ~1558 in July 2024 to ~1424.6 as of March 2025. However, the decline has flattened out completely in the last 3 weeks, and the current closing price (1577.33) is **152.7 points above** the 200 SMA. This indica
+2026-03-23 19:02:26 [MESSAGE] Continue
+2026-03-23 19:02:36 [MARKET] Market analysis report generated.
+2026-03-23 19:02:36 [MESSAGE] # Technical Analysis Report for 600519.SS (Kweichow Moutai) as of 2025-03-20 ## Overall Trend Summary Over the past 12 months (March 2024 to March 2025), 600519.SS has experienced a full cycle of downtrend, a major breakout rally, a correction, and a new bullish recovery. From March 2024 to September 2024, the stock trended downwards from ~1600 to a low of ~1200, driven by broad market profit-taking. In late September 2024, a strong bullish impulse pushed the price back up to ~1650, followed by
+2026-03-23 19:02:36 [MESSAGE] Continue
+2026-03-23 19:02:52 [MESSAGE] # A-share attention and sentiment snapshot for 600519.SS This report favors public attention, holder concentration, and short-term company event signals over Reddit-style social data. ## Shareholder count trend | 股东户数统计截止日 | 区间涨跌幅 | 股东户数-本次 | 股东户数-上次 | 股东户数-增减 | 股东户数-增减比例 | 户均持股市值 | 户均持股数量 | 总市值 | 总股本 | 股本变动 | 股本变动原因 | 股东户数公告日期 | 代码 | 名称 | |:---------------------|-------------:|----------------:|----------------:|----------------:|--------------------:|---------------:|---------------:|---------
+2026-03-23 19:02:55 [MESSAGE] # A-share attention and sentiment snapshot for 600519.SS This report favors public attention, holder concentration, and short-term company event signals over Reddit-style social data. ## Shareholder count trend | 股东户数统计截止日 | 区间涨跌幅 | 股东户数-本次 | 股东户数-上次 | 股东户数-增减 | 股东户数-增减比例 | 户均持股市值 | 户均持股数量 | 总市值 | 总股本 | 股本变动 | 股本变动原因 | 股东户数公告日期 | 代码 | 名称 | |:---------------------|-------------:|----------------:|----------------:|----------------:|--------------------:|---------------:|---------------:|---------
+2026-03-23 19:03:29 [SOCIAL] Sentiment analysis report generated.
+2026-03-23 19:03:29 [MESSAGE] # Comprehensive Sentiment and Fundamental Analysis Report: 600519.SS (Guizhou Kweichow Moutai) Report Period: Past week ending 2025-03-20 ## 1. Background 600519.SS (Guizhou Moutai) is the world's largest high-end baijiu (Chinese liquor) producer, and a core blue-chip holding in the China A-share market. This analysis draws on official shareholder data, domestic social media discussion trends, recent corporate news, and market sentiment to derive actionable insights for traders and investors. ##
+2026-03-23 19:03:29 [MESSAGE] Continue
+2026-03-23 19:03:34 [SOCIAL] Sentiment analysis report generated.
+2026-03-23 19:03:34 [MESSAGE] # Comprehensive Sentiment & News Analysis Report: 600519.SS (Kweichow Moutai) Analysis Period: March 13 – March 20, 2025 | Current Date: 2025-03-20 ## 1. Executive Summary 600519.SS (Kweichow Moutai), China's leading premium baijiu manufacturer and the largest market-cap stock in the A-share market, has enjoyed a strongly positive week of sentiment and news flow over the past 7 days. A better-than-expected 2024 annual earnings report, resolution of regulatory tax overhang, and evidence of sustai
+2026-03-23 19:03:34 [MESSAGE] Continue
+2026-03-23 19:04:07 [MESSAGE] # A-share company and policy-sensitive news snapshot for 600519.SS For CN A-shares, corporate events and broker research are treated as more decision-relevant than generic overseas macro headlines. ## Recent broker research headlines | 序号 | 股票代码 | 股票简称 | 报告名称 | 东财评级 | 机构 | 近一月个股研报数 | 2025-盈利预测-收益 | 2025-盈利预测-市盈率 | 2026-盈利预测-收益 | 2026-盈利预测-市盈率 | 2027-盈利预测-收益 | 2027-盈利预测-市盈率 | 行业 | 日期 | 报告PDF链接 | |-------:|-----------:|:-----------|:-----------------------------------------------|:-----------|:---
+2026-03-23 19:04:12 [MESSAGE] # A-share company and policy-sensitive news snapshot for 600519.SS For CN A-shares, corporate events and broker research are treated as more decision-relevant than generic overseas macro headlines. ## Recent broker research headlines | 序号 | 股票代码 | 股票简称 | 报告名称 | 东财评级 | 机构 | 近一月个股研报数 | 2025-盈利预测-收益 | 2025-盈利预测-市盈率 | 2026-盈利预测-收益 | 2026-盈利预测-市盈率 | 2027-盈利预测-收益 | 2027-盈利预测-市盈率 | 行业 | 日期 | 报告PDF链接 | |-------:|-----------:|:-----------|:-----------------------------------------------|:-----------|:---
+2026-03-23 19:04:25 [NEWS] News analysis report generated.
+2026-03-23 19:04:25 [MESSAGE] # 600519.SS (Kweichow Moutai) Weekly News & Impact Analysis (As of 2025-03-20) ### Key News Summary Over the past week, the main information flow for Kweichow Moutai comes from concentrated broker research reports, all focusing on the company's ongoing marketing and channel transformation, with overall positive judgment on the company's future growth potential: 1. **Core Research Consensus**: Most institutions maintain a "Buy" rating, with one institution giving an "Overweight" rating. The core
+2026-03-23 19:04:25 [MESSAGE] Continue
+2026-03-23 19:04:36 [NEWS] News analysis report generated.
+2026-03-23 19:04:36 [MESSAGE] # 600519.SS (Guizhou Moutai) Weekly News Trading Analysis (2025-03-13 to 2025-03-20) ## Core News Summary Over the past week, broker research on Guizhou Moutai has centered on the company's ongoing marketing and channel transformation, with broadly bullish consensus on its growth outlook. Within the 7-day window, two formal research reports were released, following 3 additional reports earlier in the month, all focused on evaluating the progress of the company's market-oriented reform. ## Impact
+2026-03-23 19:04:36 [MESSAGE] Continue
+2026-03-23 19:05:41 [MESSAGE] # A-share fundamentals snapshot for 600519.SS - Analysis date: 2025-03-20 ## Financial analysis indicators | SECUCODE | SECURITY_CODE | SECURITY_NAME_ABBR | ORG_CODE | ORG_TYPE | REPORT_DATE | REPORT_TYPE | REPORT_DATE_NAME | SECURITY_TYPE_CODE | NOTICE_DATE | UPDATE_DATE | CURRENCY | EPSJB | EPSKCJB | EPSXS | BPS | MGZBGJ | MGWFPLR | MGJYXJJE | TOTALOPERATEREVE | MLR | PARENTNETPROFIT | KCFJCXSYJLR | TOTALOPERATEREVETZ | PARENTNETPROFITTZ | KCFJCXSYJLRTZ | YYZSRGDHBZC | NETPROFITRPHBZC | KFJLRG
+2026-03-23 19:05:58 [MESSAGE] # A-share fundamentals snapshot for 600519.SS - Analysis date: 2025-03-20 ## Financial analysis indicators | SECUCODE | SECURITY_CODE | SECURITY_NAME_ABBR | ORG_CODE | ORG_TYPE | REPORT_DATE | REPORT_TYPE | REPORT_DATE_NAME | SECURITY_TYPE_CODE | NOTICE_DATE | UPDATE_DATE | CURRENCY | EPSJB | EPSKCJB | EPSXS | BPS | MGZBGJ | MGWFPLR | MGJYXJJE | TOTALOPERATEREVE | MLR | PARENTNETPROFIT | KCFJCXSYJLR | TOTALOPERATEREVETZ | PARENTNETPROFITTZ | KCFJCXSYJLRTZ | YYZSRGDHBZC | NETPROFITRPHBZC | KFJLRG
+2026-03-23 19:06:13 [FUNDAMENTALS] Fundamentals report generated.
+2026-03-23 19:06:13 [MESSAGE] # Fundamental Analysis Report: Kweichow Moutai (600519.SS) Analysis Date: 2025-03-20 ## 1. Company Profile Kweichow Moutai is the world's largest premium liquor company, leading the high-end sauce-flavored Baijiu market in China. It possesses irreplaceable brand equity, unique production工艺, and strong pricing power, making it a core blue-chip holding in the A-share consumer staples sector. ## 2. Core Financial Performance Analysis Based on the latest published financial reports (up to 2025 Q3),
+2026-03-23 19:06:13 [MESSAGE] Continue
+2026-03-23 19:06:33 [FUNDAMENTALS] Fundamentals report generated.
+2026-03-23 19:06:33 [MESSAGE] # Fundamental Analysis Report: 600519.SS (Kweichow Moutai) Analysis Date: 2025-03-20 ## 1. Company Profile 600519.SS (Kweichow Moutai) is China's leading premium sauce-aroma Baijiu producer, with a centuries-old brand and unrivaled market moat in the high-end liquor segment. It is recognized as a core blue-chip stock in the A-share consumer sector, with stable profit margins and strong pricing power backed by its brand equity. ## 2. Core Financial Analysis (Latest 2024-2025 Reports) Based on the
+2026-03-23 19:06:33 [MESSAGE] Continue
+2026-03-23 19:07:47 [MESSAGE] Continue
+2026-03-23 19:07:51 [MESSAGE] Continue
+2026-03-23 19:08:30 [RESEARCH] Bull and bear researchers are debating the thesis.
+2026-03-23 19:08:30 [MESSAGE] Continue
+2026-03-23 19:08:36 [RESEARCH] Bull and bear researchers are debating the thesis.
+2026-03-23 19:08:36 [MESSAGE] Continue
+2026-03-23 19:09:25 [RESEARCH] Bull and bear researchers are debating the thesis.
+2026-03-23 19:09:25 [MESSAGE] Continue
+2026-03-23 19:09:25 [RESEARCH] Bull and bear researchers are debating the thesis.
+2026-03-23 19:09:25 [MESSAGE] Continue
+2026-03-23 19:10:03 [RESEARCH] Research manager finalized the investment debate.
+2026-03-23 19:10:03 [MESSAGE] Continue
+2026-03-23 19:10:15 [RESEARCH] Research manager finalized the investment debate.
+2026-03-23 19:10:15 [MESSAGE] Continue
+2026-03-23 19:10:31 [TRADER] Trader synthesized an investment plan.
+2026-03-23 19:10:31 [MESSAGE] ### Position Logic & Execution Plan The baseline recommendation from the mixed 62.51 signal is HOLD, but we adjust for one critical updated detail: the latest close of 1604 has already hit the pre-defined 1600 near-term resistance profit-taking threshold. Combined with the extremely unfavorable current risk-reward (only ~1.5% additional near-term upside vs 10-15% downside if catalysts miss) and the clear negative sentiment signal of a 39% jump in retail shareholders, partial profit taking is imm
+2026-03-23 19:10:35 [TRADER] Trader synthesized an investment plan.
+2026-03-23 19:10:35 [MESSAGE] ### Alignment & Adjustment Check The baseline HOLD recommendation from the structured reference is retained. The key material update (a recent 3% sequential drop in shareholder count, offsetting the prior 39% longer-term increase cited as a major sentiment risk) reduces near-term downside from retail dilution, but does not shift the overall mixed signal enough to justify a directional change. The composite score of 62.38 remains just 2.62 points below the 65 bullish threshold, and strong bear ca
+2026-03-23 19:10:59 [RISK] Risky analyst updated the risk discussion.
+2026-03-23 19:10:59 [MESSAGE] ### Position Logic & Execution Plan The baseline recommendation from the mixed 62.51 signal is HOLD, but we adjust for one critical updated detail: the latest close of 1604 has already hit the pre-defined 1600 near-term resistance profit-taking threshold. Combined with the extremely unfavorable current risk-reward (only ~1.5% additional near-term upside vs 10-15% downside if catalysts miss) and the clear negative sentiment signal of a 39% jump in retail shareholders, partial profit taking is imm
+2026-03-23 19:11:11 [RISK] Risky analyst updated the risk discussion.
+2026-03-23 19:11:11 [MESSAGE] ### Alignment & Adjustment Check The baseline HOLD recommendation from the structured reference is retained. The key material update (a recent 3% sequential drop in shareholder count, offsetting the prior 39% longer-term increase cited as a major sentiment risk) reduces near-term downside from retail dilution, but does not shift the overall mixed signal enough to justify a directional change. The composite score of 62.38 remains just 2.62 points below the 65 bullish threshold, and strong bear ca
+2026-03-23 19:11:31 [RISK] Risky analyst updated the risk discussion.
+2026-03-23 19:11:31 [MESSAGE] ### Position Logic & Execution Plan The baseline recommendation from the mixed 62.51 signal is HOLD, but we adjust for one critical updated detail: the latest close of 1604 has already hit the pre-defined 1600 near-term resistance profit-taking threshold. Combined with the extremely unfavorable current risk-reward (only ~1.5% additional near-term upside vs 10-15% downside if catalysts miss) and the clear negative sentiment signal of a 39% jump in retail shareholders, partial profit taking is imm
+2026-03-23 19:11:45 [RISK] Risky analyst updated the risk discussion.
+2026-03-23 19:11:45 [MESSAGE] ### Alignment & Adjustment Check The baseline HOLD recommendation from the structured reference is retained. The key material update (a recent 3% sequential drop in shareholder count, offsetting the prior 39% longer-term increase cited as a major sentiment risk) reduces near-term downside from retail dilution, but does not shift the overall mixed signal enough to justify a directional change. The composite score of 62.38 remains just 2.62 points below the 65 bullish threshold, and strong bear ca
+2026-03-23 19:12:12 [ERROR] APIConnectionError: Connection error.
+2026-03-23 19:12:12 [ERROR] APIConnectionError: Connection error.
+2026-03-23 19:12:12 [TRACEBACK] Traceback (most recent call last):
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\http_proxy.py", line 316, in handle_request
+    stream = stream.start_tls(**kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\http11.py", line 376, in start_tls
+    return self._stream.start_tls(ssl_context, server_hostname, timeout)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_backends\sync.py", line 154, in start_tls
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\25781\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1005, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\25781\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\TradingAgents-CN\dashboard_api\runner.py", line 105, in run_task
+    for chunk in graph.graph.stream(init_state, **args):
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\main.py", line 2725, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 96, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "D:\TradingAgents-CN\tradingagents\agents\risk_mgmt\neutral_debator.py", line 35, in neutral_node
+    response = llm.invoke(prompt)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 402, in invoke
+    self.generate_prompt(
+    ~~~~~~~~~~~~~~~~~~~~^
+        [self._convert_input(input)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ).generations[0][0],
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1149, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 958, in generate
+    self._generate_with_cache(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        m,
+        ^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1261, in _generate_with_cache
+    result = self._generate(
+        messages, stop=stop, run_manager=run_manager, **kwargs
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1492, in _generate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1487, in _generate
+    raw_response = self.client.with_raw_response.create(**payload)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_legacy_response.py", line 367, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ~~~~^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_utils\_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1297, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1037, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+During task with name 'Neutral Analyst' and id '038f94e1-4238-3ce8-a1f3-9a5140b9e89e'
+2026-03-23 19:12:12 [TRACEBACK] Traceback (most recent call last):
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\http_proxy.py", line 316, in handle_request
+    stream = stream.start_tls(**kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_sync\http11.py", line 376, in start_tls
+    return self._stream.start_tls(ssl_context, server_hostname, timeout)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_backends\sync.py", line 154, in start_tls
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\25781\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1005, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\25781\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\TradingAgents-CN\dashboard_api\runner.py", line 105, in run_task
+    for chunk in graph.graph.stream(init_state, **args):
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\main.py", line 2725, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 96, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "D:\TradingAgents-CN\tradingagents\agents\risk_mgmt\neutral_debator.py", line 35, in neutral_node
+    response = llm.invoke(prompt)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 402, in invoke
+    self.generate_prompt(
+    ~~~~~~~~~~~~~~~~~~~~^
+        [self._convert_input(input)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ).generations[0][0],
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1149, in generate_prompt
+    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 958, in generate
+    self._generate_with_cache(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        m,
+        ^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1261, in _generate_with_cache
+    result = self._generate(
+        messages, stop=stop, run_manager=run_manager, **kwargs
+    )
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1492, in _generate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1487, in _generate
+    raw_response = self.client.with_raw_response.create(**payload)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_legacy_response.py", line 367, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ~~~~^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_utils\_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1297, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\openai\_base_client.py", line 1037, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+During task with name 'Neutral Analyst' and id '94e69367-12a4-78ba-0ac1-c1d69a56477e'

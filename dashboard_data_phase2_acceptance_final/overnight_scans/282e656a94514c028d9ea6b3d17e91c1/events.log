@@ -1,0 +1,7 @@
+2026-03-23 17:38:55 [SYSTEM] Overnight scan runner started.
+2026-03-23 17:38:55 [SCAN] 正在评估市场环境。
+2026-03-23 17:38:55 [SCAN] 正在加载A股动态股票池。
+2026-03-23 17:38:55 [SCAN] 正在加载风险事件过滤。
+2026-03-23 17:38:55 [SCAN] 正在补充日线与尾盘分时数据。
+2026-03-23 17:38:55 [SCAN] 正在计算综合评分与榜单。
+2026-03-23 17:38:55 [SYSTEM] Overnight scan completed with 3 formal recommendations.

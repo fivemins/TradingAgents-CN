@@ -12,6 +12,12 @@ from dateutil.relativedelta import relativedelta
 from langchain_openai import ChatOpenAI
 import tradingagents.dataflows.interface as interface
 from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.dataflows.a_share_support import (
+    build_a_share_fundamentals_report,
+    build_a_share_news_report,
+    build_a_share_sentiment_report,
+)
+from tradingagents.market_utils import build_security_profile
 from langchain_core.messages import HumanMessage
 
 
@@ -163,7 +169,7 @@ class Toolkit:
 
     @staticmethod
     @tool
-    def get_stockstats_indicators_report(
+    def get_technical_indicators_report(
         symbol: Annotated[str, "ticker symbol of the company"],
         indicator: Annotated[
             str, "technical indicator to get the analysis and report of"
@@ -184,15 +190,15 @@ class Toolkit:
             str: A formatted dataframe containing the stock stats indicators for the specified ticker symbol and indicator.
         """
 
-        result_stockstats = interface.get_stock_stats_indicators_window(
+        result_indicators = interface.get_technical_indicators_window(
             symbol, indicator, curr_date, look_back_days, False
         )
 
-        return result_stockstats
+        return result_indicators
 
     @staticmethod
     @tool
-    def get_stockstats_indicators_report_online(
+    def get_technical_indicators_report_online(
         symbol: Annotated[str, "ticker symbol of the company"],
         indicator: Annotated[
             str, "technical indicator to get the analysis and report of"
@@ -213,11 +219,11 @@ class Toolkit:
             str: A formatted dataframe containing the stock stats indicators for the specified ticker symbol and indicator.
         """
 
-        result_stockstats = interface.get_stock_stats_indicators_window(
+        result_indicators = interface.get_technical_indicators_window(
             symbol, indicator, curr_date, look_back_days, True
         )
 
-        return result_stockstats
+        return result_indicators
 
     @staticmethod
     @tool
@@ -379,6 +385,42 @@ class Toolkit:
         openai_news_results = interface.get_stock_news_openai(ticker, curr_date)
 
         return openai_news_results
+
+    @staticmethod
+    @tool
+    def get_a_share_company_sentiment(
+        ticker: Annotated[str, "A-share stock code or normalized ticker"],
+        curr_date: Annotated[str, "Current date in yyyy-mm-dd format"],
+    ):
+        """
+        Retrieve CN A-share attention and sentiment evidence using local-market data sources.
+        """
+        profile = build_security_profile(ticker, "cn_a")
+        return build_a_share_sentiment_report(profile, curr_date)
+
+    @staticmethod
+    @tool
+    def get_a_share_company_news(
+        ticker: Annotated[str, "A-share stock code or normalized ticker"],
+        curr_date: Annotated[str, "Current date in yyyy-mm-dd format"],
+    ):
+        """
+        Retrieve CN A-share company-event and broker-research news.
+        """
+        profile = build_security_profile(ticker, "cn_a")
+        return build_a_share_news_report(profile, curr_date)
+
+    @staticmethod
+    @tool
+    def get_a_share_company_fundamentals(
+        ticker: Annotated[str, "A-share stock code or normalized ticker"],
+        curr_date: Annotated[str, "Current date in yyyy-mm-dd format"],
+    ):
+        """
+        Retrieve CN A-share fundamentals using local-market structured sources.
+        """
+        profile = build_security_profile(ticker, "cn_a")
+        return build_a_share_fundamentals_report(profile, curr_date)
 
     @staticmethod
     @tool

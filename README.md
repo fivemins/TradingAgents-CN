@@ -119,6 +119,12 @@ You will also need the FinnHub API for financial data. All of our code is implem
 export FINNHUB_API_KEY=$YOUR_FINNHUB_API_KEY
 ```
 
+If you are using the A-share overnight scanner, you can optionally configure QVeris as a supplemental live data source for market index and spot snapshots:
+```bash
+export QVERIS_API_KEYS=key1,key2,key3,key4
+```
+`QVERIS_API_KEY` is also supported as a single-key fallback. QVeris is only used as a supplement source in the current dashboard implementation and does not replace the existing Akshare/Sina routes.
+
 You will need the OpenAI API for all the agents.
 ```bash
 export OPENAI_API_KEY=$YOUR_OPENAI_API_KEY

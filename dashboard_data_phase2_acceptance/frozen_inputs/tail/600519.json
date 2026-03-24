@@ -1,0 +1,15 @@
+{
+  "has_real_tail_data": true,
+  "source": "frozen-minute",
+  "tail_return_pct": 0.95,
+  "tail_amount_ratio": 0.2,
+  "last10_return_pct": 0.4,
+  "close_at_high_ratio": 0.95,
+  "auction_strength": 0.33,
+  "rows": 31,
+  "note": "",
+  "quality": "real",
+  "provider_chain": [
+    "frozen-minute"
+  ]
+}

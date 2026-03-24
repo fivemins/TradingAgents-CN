@@ -20,7 +20,6 @@ setup(
         "numpy>=1.24.0",
         "pandas>=2.0.0",
         "praw>=7.7.0",
-        "stockstats>=0.5.4",
         "yfinance>=0.2.31",
         "typer>=0.9.0",
         "rich>=13.0.0",

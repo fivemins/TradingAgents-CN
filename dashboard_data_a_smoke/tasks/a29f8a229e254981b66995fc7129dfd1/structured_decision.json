@@ -1,0 +1,7 @@
+{
+  "decision": "HOLD",
+  "score": 52.27,
+  "confidence": 0.74,
+  "summary": "Signals are mixed after weighting the four factor blocks.",
+  "source": "deterministic_factor_snapshot_v1"
+}

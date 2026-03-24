@@ -30,11 +30,11 @@ Latest World Affairs Report: {news_report}
 Company Fundamentals Report: {fundamentals_report}
 Here is the current conversation history: {history} Here are the last arguments from the conservative analyst: {current_safe_response} Here are the last arguments from the neutral analyst: {current_neutral_response}. If there are no responses from the other viewpoints, do not halluncinate and just present your point.
 
-Engage actively by addressing any specific concerns raised, refuting the weaknesses in their logic, and asserting the benefits of risk-taking to outpace market norms. Maintain a focus on debating and persuading, not just presenting data. Challenge each counterpoint to underscore why a high-risk approach is optimal. Output conversationally as if you are speaking without any special formatting."""
+Engage actively by addressing any specific concerns raised, refuting the weaknesses in their logic, and asserting the benefits of risk-taking to outpace market norms. Maintain a focus on debating and persuading, not just presenting data. Challenge each counterpoint to underscore why a high-risk approach is optimal. Output conversationally as if you are speaking without any special formatting. Default to Simplified Chinese in your output. Keep ticker symbols, company English names, and necessary English abbreviations in English, but write the argument itself in Chinese."""
 
         response = llm.invoke(prompt)
 
-        argument = f"Risky Analyst: {response.content}"
+        argument = f"激进风险分析师：{response.content}"
 
         new_risk_debate_state = {
             "history": history + "\n" + argument,

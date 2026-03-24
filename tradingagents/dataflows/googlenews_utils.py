@@ -1,3 +1,4 @@
+import logging
 import json
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +12,9 @@ from tenacity import (
     retry_if_exception_type,
     retry_if_result,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def is_rate_limited(response):
@@ -88,7 +92,7 @@ def getNewsData(query, start_date, end_date):
                         }
                     )
                 except Exception as e:
-                    print(f"Error processing result: {e}")
+                    logger.warning("Failed to parse Google News result: %s", e)
                     # If one of the fields is not found, skip this result
                     continue
 
@@ -102,7 +106,7 @@ def getNewsData(query, start_date, end_date):
             page += 1
 
         except Exception as e:
-            print(f"Failed after multiple retries: {e}")
+            logger.warning("Google News scraping stopped after retries: %s", e)
             break
 
     return news_results

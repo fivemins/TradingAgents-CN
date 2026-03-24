@@ -50,6 +50,10 @@ class RiskDebateState(TypedDict):
 class AgentState(MessagesState):
     company_of_interest: Annotated[str, "Company that we are interested in trading"]
     trade_date: Annotated[str, "What date we are trading at"]
+    market_region: Annotated[str, "Target market region for the analysis"]
+    security_profile: Annotated[
+        dict, "Normalized security identifiers used by downstream tools"
+    ]
 
     sender: Annotated[str, "Agent that sent this message"]
 
@@ -60,6 +64,8 @@ class AgentState(MessagesState):
         str, "Report from the News Researcher of current world affairs"
     ]
     fundamentals_report: Annotated[str, "Report from the Fundamentals Researcher"]
+    source_context: Annotated[dict, "Upstream source metadata such as overnight scan origin"]
+    overnight_context: Annotated[dict, "Persisted overnight scan candidate context"]
 
     # researcher team discussion step
     investment_debate_state: Annotated[
@@ -74,3 +80,8 @@ class AgentState(MessagesState):
         RiskDebateState, "Current state of the debate on evaluating risk"
     ]
     final_trade_decision: Annotated[str, "Final decision made by the Risk Analysts"]
+    factor_snapshot: Annotated[dict, "Structured factor summary for the company"]
+    evidence_snapshot: Annotated[dict, "Structured evidence supporting the factors"]
+    structured_decision: Annotated[
+        dict, "Deterministic decision generated from the structured factor snapshot"
+    ]

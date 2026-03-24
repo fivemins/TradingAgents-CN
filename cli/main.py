@@ -22,6 +22,7 @@ from rich.rule import Rule
 
 from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.market_utils import build_security_profile
 from cli.models import AnalystType
 from cli.utils import *
 
@@ -32,6 +33,10 @@ app = typer.Typer(
     help="TradingAgents CLI: Multi-Agents LLM Financial Trading Framework",
     add_completion=True,  # Enable shell completion
 )
+
+
+def derive_recur_limit(research_depth: int) -> int:
+    return max(100, research_depth * 60)
 
 
 # Create a deque to store recent messages with a maximum length
@@ -425,29 +430,41 @@ def get_user_selections():
             box_content += f"\n[dim]Default: {default}[/dim]"
         return Panel(box_content, border_style="blue", padding=(1, 2))
 
-    # Step 1: Ticker symbol
+    # Step 1: Market region
     console.print(
         create_question_box(
-            "Step 1: Ticker Symbol", "Enter the ticker symbol to analyze", "SPY"
+            "Step 1: Market Region", "Choose the target market region", "cn_a"
         )
     )
-    selected_ticker = get_ticker()
+    selected_market_region = get_market_region()
 
-    # Step 2: Analysis date
+    # Step 2: Ticker symbol
+    default_ticker = "600519" if selected_market_region == "cn_a" else "SPY"
+    console.print(
+        create_question_box(
+            "Step 2: Ticker Symbol",
+            "Enter the ticker symbol to analyze. Use 6-digit codes for A-shares.",
+            default_ticker,
+        )
+    )
+    selected_ticker = get_ticker(default_ticker)
+    security_profile = build_security_profile(selected_ticker, selected_market_region)
+
+    # Step 3: Analysis date
     default_date = datetime.datetime.now().strftime("%Y-%m-%d")
     console.print(
         create_question_box(
-            "Step 2: Analysis Date",
+            "Step 3: Analysis Date",
             "Enter the analysis date (YYYY-MM-DD)",
             default_date,
         )
     )
     analysis_date = get_analysis_date()
 
-    # Step 3: Select analysts
+    # Step 4: Select analysts
     console.print(
         create_question_box(
-            "Step 3: Analysts Team", "Select your LLM analyst agents for the analysis"
+            "Step 4: Analysts Team", "Select your LLM analyst agents for the analysis"
         )
     )
     selected_analysts = select_analysts()
@@ -455,33 +472,35 @@ def get_user_selections():
         f"[green]Selected analysts:[/green] {', '.join(analyst.value for analyst in selected_analysts)}"
     )
 
-    # Step 4: Research depth
+    # Step 5: Research depth
     console.print(
         create_question_box(
-            "Step 4: Research Depth", "Select your research depth level"
+            "Step 5: Research Depth", "Select your research depth level"
         )
     )
     selected_research_depth = select_research_depth()
 
-    # Step 5: OpenAI backend
+    # Step 6: LLM backend
     console.print(
         create_question_box(
-            "Step 5: OpenAI backend", "Select which service to talk to"
+            "Step 6: LLM Backend", "Select which service to talk to"
         )
     )
     selected_llm_provider, backend_url = select_llm_provider()
     
-    # Step 6: Thinking agents
+    # Step 7: Thinking agents
     console.print(
         create_question_box(
-            "Step 6: Thinking Agents", "Select your thinking agents for analysis"
+            "Step 7: Thinking Agents", "Select your thinking agents for analysis"
         )
     )
     selected_shallow_thinker = select_shallow_thinking_agent(selected_llm_provider)
     selected_deep_thinker = select_deep_thinking_agent(selected_llm_provider)
 
     return {
-        "ticker": selected_ticker,
+        "ticker": security_profile.normalized_ticker,
+        "market_region": selected_market_region,
+        "security_profile": security_profile.to_dict(),
         "analysis_date": analysis_date,
         "analysts": selected_analysts,
         "research_depth": selected_research_depth,
@@ -492,9 +511,14 @@ def get_user_selections():
     }
 
 
-def get_ticker():
+def get_market_region():
+    """Get market region from user input."""
+    return typer.prompt("", default="cn_a").strip().lower()
+
+
+def get_ticker(default="SPY"):
     """Get ticker symbol from user input."""
-    return typer.prompt("", default="SPY")
+    return typer.prompt("", default=default)
 
 
 def get_analysis_date():
@@ -739,10 +763,13 @@ def run_analysis():
     config = DEFAULT_CONFIG.copy()
     config["max_debate_rounds"] = selections["research_depth"]
     config["max_risk_discuss_rounds"] = selections["research_depth"]
+    config["max_recur_limit"] = derive_recur_limit(selections["research_depth"])
     config["quick_think_llm"] = selections["shallow_thinker"]
     config["deep_think_llm"] = selections["deep_thinker"]
     config["backend_url"] = selections["backend_url"]
+    config["llm_base_url"] = selections["backend_url"]
     config["llm_provider"] = selections["llm_provider"].lower()
+    config["market_region"] = selections["market_region"]
 
     # Initialize the graph
     graph = TradingAgentsGraph(

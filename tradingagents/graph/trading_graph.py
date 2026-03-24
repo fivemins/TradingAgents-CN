@@ -21,6 +21,13 @@ from tradingagents.agents.utils.agent_states import (
     RiskDebateState,
 )
 from tradingagents.dataflows.interface import set_config
+from tradingagents.provider_utils import (
+    OPENAI_COMPATIBLE_PROVIDERS,
+    get_llm_api_key,
+    get_llm_base_url,
+)
+from tradingagents.market_utils import build_security_profile
+from tradingagents.structured_snapshot import build_structured_analysis
 
 from .conditional_logic import ConditionalLogic
 from .setup import GraphSetup
@@ -58,15 +65,40 @@ class TradingAgentsGraph:
         )
 
         # Initialize LLMs
-        if self.config["llm_provider"].lower() == "openai" or self.config["llm_provider"] == "ollama" or self.config["llm_provider"] == "openrouter":
-            self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
-            self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
-        elif self.config["llm_provider"].lower() == "anthropic":
-            self.deep_thinking_llm = ChatAnthropic(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
-            self.quick_thinking_llm = ChatAnthropic(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
-        elif self.config["llm_provider"].lower() == "google":
-            self.deep_thinking_llm = ChatGoogleGenerativeAI(model=self.config["deep_think_llm"])
-            self.quick_thinking_llm = ChatGoogleGenerativeAI(model=self.config["quick_think_llm"])
+        llm_provider = self.config["llm_provider"].lower()
+        llm_base_url = get_llm_base_url(self.config)
+        llm_api_key = get_llm_api_key(self.config)
+
+        if llm_provider in OPENAI_COMPATIBLE_PROVIDERS:
+            openai_kwargs = {"base_url": llm_base_url}
+            if llm_api_key:
+                openai_kwargs["api_key"] = llm_api_key
+            self.deep_thinking_llm = ChatOpenAI(
+                model=self.config["deep_think_llm"], **openai_kwargs
+            )
+            self.quick_thinking_llm = ChatOpenAI(
+                model=self.config["quick_think_llm"], **openai_kwargs
+            )
+        elif llm_provider == "anthropic":
+            anthropic_kwargs = {"base_url": llm_base_url}
+            if llm_api_key:
+                anthropic_kwargs["api_key"] = llm_api_key
+            self.deep_thinking_llm = ChatAnthropic(
+                model=self.config["deep_think_llm"], **anthropic_kwargs
+            )
+            self.quick_thinking_llm = ChatAnthropic(
+                model=self.config["quick_think_llm"], **anthropic_kwargs
+            )
+        elif llm_provider == "google":
+            google_kwargs = {}
+            if llm_api_key:
+                google_kwargs["google_api_key"] = llm_api_key
+            self.deep_thinking_llm = ChatGoogleGenerativeAI(
+                model=self.config["deep_think_llm"], **google_kwargs
+            )
+            self.quick_thinking_llm = ChatGoogleGenerativeAI(
+                model=self.config["quick_think_llm"], **google_kwargs
+            )
         else:
             raise ValueError(f"Unsupported LLM provider: {self.config['llm_provider']}")
         
@@ -83,7 +115,10 @@ class TradingAgentsGraph:
         self.tool_nodes = self._create_tool_nodes()
 
         # Initialize components
-        self.conditional_logic = ConditionalLogic()
+        self.conditional_logic = ConditionalLogic(
+            max_debate_rounds=int(self.config["max_debate_rounds"]),
+            max_risk_discuss_rounds=int(self.config["max_risk_discuss_rounds"]),
+        )
         self.graph_setup = GraphSetup(
             self.quick_thinking_llm,
             self.deep_thinking_llm,
@@ -95,9 +130,13 @@ class TradingAgentsGraph:
             self.invest_judge_memory,
             self.risk_manager_memory,
             self.conditional_logic,
+            self.create_structured_decision_node(),
         )
 
-        self.propagator = Propagator()
+        self.propagator = Propagator(
+            max_recur_limit=int(self.config["max_recur_limit"]),
+            market_region=str(self.config.get("market_region", "cn_a")),
+        )
         self.reflector = Reflector(self.quick_thinking_llm)
         self.signal_processor = SignalProcessor(self.quick_thinking_llm)
 
@@ -109,6 +148,15 @@ class TradingAgentsGraph:
         # Set up the graph
         self.graph = self.graph_setup.setup_graph(selected_analysts)
 
+    def create_structured_decision_node(self):
+        """Create a graph node that snapshots factor scores before debate starts."""
+
+        def structured_decision_node(state: Dict[str, Any]) -> Dict[str, Any]:
+            structured_payload = build_structured_analysis(state, self.config)
+            return structured_payload
+
+        return structured_decision_node
+
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:
         """Create tool nodes for different data sources."""
         return {
@@ -116,16 +164,17 @@ class TradingAgentsGraph:
                 [
                     # online tools
                     self.toolkit.get_YFin_data_online,
-                    self.toolkit.get_stockstats_indicators_report_online,
+                    self.toolkit.get_technical_indicators_report_online,
                     # offline tools
                     self.toolkit.get_YFin_data,
-                    self.toolkit.get_stockstats_indicators_report,
+                    self.toolkit.get_technical_indicators_report,
                 ]
             ),
             "social": ToolNode(
                 [
                     # online tools
                     self.toolkit.get_stock_news_openai,
+                    self.toolkit.get_a_share_company_sentiment,
                     # offline tools
                     self.toolkit.get_reddit_stock_info,
                 ]
@@ -134,6 +183,7 @@ class TradingAgentsGraph:
                 [
                     # online tools
                     self.toolkit.get_global_news_openai,
+                    self.toolkit.get_a_share_company_news,
                     self.toolkit.get_google_news,
                     # offline tools
                     self.toolkit.get_finnhub_news,
@@ -144,6 +194,7 @@ class TradingAgentsGraph:
                 [
                     # online tools
                     self.toolkit.get_fundamentals_openai,
+                    self.toolkit.get_a_share_company_fundamentals,
                     # offline tools
                     self.toolkit.get_finnhub_company_insider_sentiment,
                     self.toolkit.get_finnhub_company_insider_transactions,
@@ -180,6 +231,8 @@ class TradingAgentsGraph:
             # Standard mode without tracing
             final_state = self.graph.invoke(init_agent_state, **args)
 
+        final_state = self.enrich_final_state(final_state, company_name, trade_date)
+
         # Store current state for reflection
         self.curr_state = final_state
 
@@ -187,17 +240,51 @@ class TradingAgentsGraph:
         self._log_state(trade_date, final_state)
 
         # Return decision and processed signal
-        return final_state, self.process_signal(final_state["final_trade_decision"])
+        return final_state, self.process_signal(
+            final_state["final_trade_decision"],
+            final_state.get("structured_decision"),
+        )
+
+    def enrich_final_state(
+        self,
+        final_state: Dict[str, Any],
+        company_name: str,
+        trade_date: str,
+    ) -> Dict[str, Any]:
+        """Attach normalized identifiers and structured factor snapshots."""
+        market_region = final_state.get("market_region") or self.config.get(
+            "market_region", "cn_a"
+        )
+        security_profile = build_security_profile(company_name, market_region)
+        final_state["company_of_interest"] = security_profile.normalized_ticker
+        final_state["trade_date"] = str(trade_date)
+        final_state["market_region"] = security_profile.market_region
+        final_state["security_profile"] = security_profile.to_dict()
+
+        structured_payload = build_structured_analysis(final_state, self.config)
+        final_state.update(structured_payload)
+        final_signal = final_state.get("final_trade_decision")
+        if final_signal:
+            final_state["final_trade_decision"] = self.signal_processor.rewrite_signal(
+                final_signal,
+                final_state.get("structured_decision"),
+            )
+        return final_state
 
     def _log_state(self, trade_date, final_state):
         """Log the final state to a JSON file."""
         self.log_states_dict[str(trade_date)] = {
             "company_of_interest": final_state["company_of_interest"],
             "trade_date": final_state["trade_date"],
+            "market_region": final_state.get("market_region", ""),
+            "security_profile": final_state.get("security_profile", {}),
             "market_report": final_state["market_report"],
             "sentiment_report": final_state["sentiment_report"],
             "news_report": final_state["news_report"],
             "fundamentals_report": final_state["fundamentals_report"],
+            "factor_snapshot": final_state.get("factor_snapshot", {}),
+            "evidence_snapshot": final_state.get("evidence_snapshot", {}),
+            "structured_decision": final_state.get("structured_decision", {}),
             "investment_debate_state": {
                 "bull_history": final_state["investment_debate_state"]["bull_history"],
                 "bear_history": final_state["investment_debate_state"]["bear_history"],
@@ -249,6 +336,6 @@ class TradingAgentsGraph:
             self.curr_state, returns_losses, self.risk_manager_memory
         )
 
-    def process_signal(self, full_signal):
+    def process_signal(self, full_signal, structured_decision: dict | None = None):
         """Process a signal to extract the core decision."""
-        return self.signal_processor.process_signal(full_signal)
+        return self.signal_processor.process_signal(full_signal, structured_decision)

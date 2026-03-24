@@ -1,0 +1,43 @@
+{
+  "mode": "strict",
+  "pool_source": "akshare_spot",
+  "notes": [
+    "historical_trade_date_uses_current_live_universe",
+    "历史日期扫描仍使用当前活跃A股池，结果仅供研究参考。"
+  ],
+  "risk_event_summary": {
+    "matched_events": 0,
+    "risk_codes": 0,
+    "scanned_days": 0
+  },
+  "quality_counts": {
+    "real": 3,
+    "proxy": 0,
+    "missing": 0
+  },
+  "history_loaded": 3,
+  "tail_requested": 3,
+  "tail_loaded": 3,
+  "tail_proxy": 0,
+  "formal_threshold": 75.0,
+  "watchlist_threshold": 60.0,
+  "formal_limit": 10,
+  "data_quality": {
+    "status": "ok",
+    "message": "Strict scan completed with live spot and minute routing.",
+    "real_tail_loaded": 3,
+    "proxy_tail_loaded": 0,
+    "missing_tail": 0
+  },
+  "provider_route": {
+    "spot": "akshare_spot",
+    "index": "akshare_index",
+    "history": "akshare_daily",
+    "tail": "akshare_minute",
+    "risk": "akshare_news"
+  },
+  "universe_snapshot_date": "2025-03-20",
+  "snapshot_path": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_final\\overnight_cache\\universe\\2025-03-20.parquet",
+  "evaluation_config_version": "overnight_phase2_v1",
+  "evaluation_config_hash": "4395250d30cf"
+}

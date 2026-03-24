@@ -1,0 +1,57 @@
+{
+  "task_id": "1217e79fbf9c4e2c9bbd70fee8597ce4",
+  "ticker": "600519.SS",
+  "analysis_date": "2025-03-20",
+  "market_region": "cn_a",
+  "analysts": [
+    "market",
+    "social",
+    "news",
+    "fundamentals"
+  ],
+  "research_depth": 1,
+  "llm_provider": "ark",
+  "quick_think_llm": "doubao-seed-2.0-lite",
+  "deep_think_llm": "doubao-seed-2.0-pro",
+  "online_tools": true,
+  "status": "succeeded",
+  "stage": "completed",
+  "progress_message": "Analysis completed successfully.",
+  "config_snapshot": {
+    "llm_provider": "ark",
+    "llm_base_url": "https://ark.cn-beijing.volces.com/api/coding/v3",
+    "quick_think_llm": "doubao-seed-2.0-lite",
+    "deep_think_llm": "doubao-seed-2.0-pro",
+    "online_tools": true,
+    "market_region": "cn_a",
+    "security_profile": {
+      "user_ticker": "600519",
+      "market_region": "cn_a",
+      "normalized_ticker": "600519.SS",
+      "exchange": "SSE",
+      "yfinance_symbol": "600519.SS",
+      "akshare_symbol": "600519",
+      "eastmoney_symbol": "600519.SH",
+      "display_symbol": "600519"
+    },
+    "max_debate_rounds": 1,
+    "max_risk_discuss_rounds": 1,
+    "max_recur_limit": 100,
+    "source_context": null,
+    "overnight_context": null
+  },
+  "structured_summary": {
+    "composite_score": 62.07,
+    "confidence": 0.77,
+    "recommended_action": "HOLD",
+    "primary_driver": "technical: \u8d8b\u52bf\u5f3a\u5f31 - \u6700\u65b0\u6536\u76d8 1604.00\uff0c\u4f4d\u4e8e SMA20 1529.98 \u4e0e SMA60 1491.58 \u4e0a\u65b9",
+    "primary_risk": "sentiment: \u80a1\u4e1c\u6237\u6570\u53d8\u5316 - \u80a1\u4e1c\u6237\u6570\u53d8\u52a8 39.02%"
+  },
+  "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_noise_check_600519_retry\\tasks\\1217e79fbf9c4e2c9bbd70fee8597ce4",
+  "decision": "HOLD",
+  "error_message": null,
+  "created_at": "2026-03-23T11:18:33.972984+00:00",
+  "started_at": "2026-03-23T11:18:38.158686+00:00",
+  "finished_at": "2026-03-23T11:30:03.876508+00:00",
+  "pid": 47800
+}

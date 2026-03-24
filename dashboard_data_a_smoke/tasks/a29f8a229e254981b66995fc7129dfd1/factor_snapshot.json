@@ -1,0 +1,147 @@
+{
+  "market_region": "cn_a",
+  "symbol": "000001.SZ",
+  "display_symbol": "000001",
+  "trade_date": "2025-03-20",
+  "composite_score": 52.27,
+  "confidence": 0.74,
+  "recommended_action": "HOLD",
+  "scores": {
+    "technical": {
+      "score": 30.14,
+      "confidence": 0.77,
+      "summary": "Technical score is driven by price versus moving averages and recent returns. Last close is 11.49, 20-day return is -1.29%, and 20-day volatility is 1.17%.",
+      "evidence": [
+        {
+          "signal": "last_close",
+          "value": 11.49,
+          "source": "price_history"
+        },
+        {
+          "signal": "sma20",
+          "value": 11.6105,
+          "source": "price_history"
+        },
+        {
+          "signal": "sma60",
+          "value": 11.5553,
+          "source": "price_history"
+        },
+        {
+          "signal": "return20_pct",
+          "value": -1.29,
+          "source": "price_history"
+        },
+        {
+          "signal": "return60_pct",
+          "value": -1.37,
+          "source": "price_history"
+        },
+        {
+          "signal": "volatility20_pct",
+          "value": 1.17,
+          "source": "price_history"
+        },
+        {
+          "signal": "below_sma20",
+          "source": "price_history",
+          "impact": "negative"
+        },
+        {
+          "signal": "below_sma60",
+          "source": "price_history",
+          "impact": "negative"
+        },
+        {
+          "signal": "stable_volatility",
+          "source": "price_history",
+          "impact": "positive"
+        },
+        {
+          "signal": "volume_ratio_5_20",
+          "value": 1.68,
+          "source": "price_history"
+        }
+      ]
+    },
+    "sentiment": {
+      "score": 68.0,
+      "confidence": 0.65,
+      "summary": "Sentiment score combines public attention, shareholder-count trend, and report tone for 000001.SZ.",
+      "evidence": [
+        {
+          "signal": "holder_change_pct",
+          "value": -11.37,
+          "source": "eastmoney_shareholders"
+        },
+        {
+          "signal": "keyword_balance",
+          "positive_hits": 17,
+          "negative_hits": 4,
+          "source": "sentiment_report"
+        }
+      ]
+    },
+    "news": {
+      "score": 64.0,
+      "confidence": 0.6,
+      "summary": "News score reflects company-event density, broker coverage, and the tone of the news analyst report.",
+      "evidence": [
+        {
+          "signal": "broker_report_count",
+          "value": 225,
+          "source": "broker_research"
+        },
+        {
+          "signal": "keyword_balance",
+          "positive_hits": 6,
+          "negative_hits": 2,
+          "source": "news_report"
+        }
+      ]
+    },
+    "fundamentals": {
+      "score": 62.4,
+      "confidence": 0.85,
+      "summary": "Fundamental score for 000001.SZ uses financial indicators, valuation, and report tone.",
+      "evidence": [
+        {
+          "signal": "roe",
+          "value": 9.15,
+          "source": "financial_indicators"
+        },
+        {
+          "signal": "revenue_growth",
+          "value": -3.2,
+          "source": "financial_indicators"
+        },
+        {
+          "signal": "profit_growth",
+          "value": -4.21,
+          "source": "financial_indicators"
+        },
+        {
+          "signal": "debt_ratio",
+          "value": 90.7,
+          "source": "financial_indicators"
+        },
+        {
+          "signal": "holder_market_value",
+          "value": 505935.16,
+          "source": "eastmoney_shareholders"
+        },
+        {
+          "signal": "broker_report_count",
+          "value": 225,
+          "source": "broker_research"
+        },
+        {
+          "signal": "keyword_balance",
+          "positive_hits": 6,
+          "negative_hits": 3,
+          "source": "fundamentals_report"
+        }
+      ]
+    }
+  }
+}

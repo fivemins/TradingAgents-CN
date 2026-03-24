@@ -1,0 +1,66 @@
+{
+  "scan_id": "282e656a94514c028d9ea6b3d17e91c1",
+  "trade_date": "2025-03-20",
+  "market_region": "cn_a",
+  "mode": "strict",
+  "status": "succeeded",
+  "progress_message": "Overnight scan completed successfully.",
+  "summary_json": {
+    "trade_date": "2025-03-20",
+    "market_region": "cn_a",
+    "mode": "strict",
+    "market_ok": true,
+    "market_message": "Frozen regime: constructive | 当前 v1 历史扫描仍使用现行活跃股票池，仅供研究参考。",
+    "benchmark_pct": 0.4,
+    "formal_count": 3,
+    "watchlist_count": 0,
+    "universe_count": 3,
+    "passed_filters": 3,
+    "failed_filters": 0,
+    "tail_quality_counts": {
+      "real": 3,
+      "proxy": 0,
+      "missing": 0
+    },
+    "data_quality": {
+      "status": "ok",
+      "message": "Strict scan completed with live spot and minute routing.",
+      "real_tail_loaded": 3,
+      "proxy_tail_loaded": 0,
+      "missing_tail": 0
+    },
+    "provider_route": {
+      "spot": "akshare_spot",
+      "index": "akshare_index",
+      "history": "akshare_daily",
+      "tail": "akshare_minute",
+      "risk": "akshare_news"
+    },
+    "bias_flags": [
+      "historical_trade_date_uses_current_live_universe",
+      "历史日期扫描仍使用当前活跃A股池，结果仅供研究参考。"
+    ],
+    "universe_snapshot_date": "2025-03-20",
+    "evaluation_config_version": "overnight_phase2_v1",
+    "evaluation_config_hash": "4395250d30cf",
+    "top_formal_tickers": [
+      "600519.SS",
+      "300750.SZ",
+      "000001.SZ"
+    ],
+    "validated_formal_count": 0,
+    "avg_next_open_return": null,
+    "best_candidate": null,
+    "worst_candidate": null,
+    "validation_status": "pending"
+  },
+  "market_message": "Frozen regime: constructive | 当前 v1 历史扫描仍使用现行活跃股票池，仅供研究参考。",
+  "formal_count": 3,
+  "watchlist_count": 0,
+  "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_final\\overnight_scans\\282e656a94514c028d9ea6b3d17e91c1",
+  "error_message": null,
+  "created_at": "2026-03-23T09:38:55.798363+00:00",
+  "started_at": "2026-03-23T09:38:55.817473+00:00",
+  "finished_at": "2026-03-23T09:38:55.937119+00:00",
+  "pid": 9999
+}

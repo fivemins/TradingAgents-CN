@@ -1,0 +1,22 @@
+{
+  "decision": "HOLD",
+  "score": 58.41,
+  "confidence": 0.74,
+  "summary": "综合得分 58.41，介于 45 和 65 之间，信号仍偏混合。",
+  "source": "balanced_factor_snapshot_v3",
+  "threshold_policy": {
+    "style": "balanced",
+    "buy_at_or_above": 65.0,
+    "sell_at_or_below": 45.0,
+    "min_confidence_for_directional_call": 0.5
+  },
+  "primary_drivers": [
+    "fundamentals: 成长性 - 营收增速 9.76%，利润增速 42.28%",
+    "technical: 波动状态 - 20 日波动率 1.99%，处于可控区间",
+    "news: 券商覆盖 - 近期研报覆盖 465 条（已对数缩放）"
+  ],
+  "risk_flags": [
+    "technical: 近期动量 - 20 日收益率 -4.86%，60 日收益率 -3.41%",
+    "fundamentals: 资产负债表 - 资产负债率 61.94%，杠杆压力偏高"
+  ]
+}

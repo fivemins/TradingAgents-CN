@@ -1,0 +1,7 @@
+{
+  "end_trade_date": "2025-03-19",
+  "market_region": "cn_a",
+  "window_days": 60,
+  "mode": "strict",
+  "return_basis": "next_open"
+}

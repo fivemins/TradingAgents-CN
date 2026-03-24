@@ -1,0 +1,33 @@
+{
+  "data_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass",
+  "scan": {
+    "scan_id": "a3b173b64b3449249b84696782238238",
+    "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass\\overnight_scans\\a3b173b64b3449249b84696782238238",
+    "evaluation_config_hash": "4395250d30cf"
+  },
+  "tasks": [
+    {
+      "ticker": "600519.SS",
+      "task_id": "ce7daf0edd3b415980ea3b49be7ee68b",
+      "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass\\tasks\\ce7daf0edd3b415980ea3b49be7ee68b",
+      "decision": "HOLD"
+    },
+    {
+      "ticker": "300750.SZ",
+      "task_id": "8da112acf8cf4c19bf96833c74ae343d",
+      "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass\\tasks\\8da112acf8cf4c19bf96833c74ae343d",
+      "decision": "HOLD"
+    },
+    {
+      "ticker": "000001.SZ",
+      "task_id": "2a3b36820602407c9014ae6fea3fae37",
+      "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass\\tasks\\2a3b36820602407c9014ae6fea3fae37",
+      "decision": "HOLD"
+    }
+  ],
+  "review": {
+    "review_id": "63605c0aa0aa432e8b295ffc22a22d05",
+    "artifact_dir": "D:\\TradingAgents-CN\\dashboard_data_phase2_acceptance_pass\\overnight_reviews\\63605c0aa0aa432e8b295ffc22a22d05",
+    "evaluation_config_hash": "4395250d30cf"
+  }
+}

@@ -1,7 +1,8 @@
+import logging
 from typing import Annotated, Dict
 from .reddit_utils import fetch_top_from_category
 from .yfin_utils import *
-from .stockstats_utils import *
+from .technical_indicators_utils import *
 from .googlenews_utils import *
 from .finnhub_utils import get_data_in_range
 from dateutil.relativedelta import relativedelta
@@ -10,10 +11,154 @@ from datetime import datetime
 import json
 import os
 import pandas as pd
+import time
 from tqdm import tqdm
 import yfinance as yf
 from openai import OpenAI
 from .config import get_config, set_config, DATA_DIR
+from .a_share_support import (
+    build_a_share_fundamentals_report,
+    build_a_share_news_report,
+    build_a_share_sentiment_report,
+)
+from tradingagents.market_utils import build_security_profile
+from tradingagents.provider_utils import (
+    extract_responses_text,
+    get_llm_api_key,
+    get_llm_base_url,
+    get_web_search_tools,
+)
+
+
+logger = logging.getLogger(__name__)
+
+
+def _build_llm_client():
+    config = get_config()
+    client_kwargs = {"base_url": get_llm_base_url(config)}
+    api_key = get_llm_api_key(config)
+    if api_key:
+        client_kwargs["api_key"] = api_key
+    return config, OpenAI(**client_kwargs)
+
+
+def _supports_native_responses_search(config):
+    provider = (config.get("llm_provider") or "").lower()
+    base_url = get_llm_base_url(config) or ""
+    return provider == "openai" and "api.openai.com" in base_url
+
+
+def _current_security_profile(ticker: str):
+    config = get_config()
+    market_region = config.get("market_region", "cn_a")
+    return build_security_profile(ticker, market_region)
+
+
+def _fallback_stock_news_report(ticker, curr_date):
+    news_text = get_google_news(f"{ticker}+stock+news", curr_date, 7)
+    if news_text:
+        return (
+            f"# Fallback provider note\n"
+            f"The current model provider does not support OpenAI Responses web search. "
+            f"Using Google News results for {ticker} instead.\n\n{news_text}"
+        )
+    return f"No recent company news found for {ticker}."
+
+
+def _fallback_global_news_report(curr_date):
+    news_text = get_google_news(
+        "macroeconomy+inflation+federal+reserve+stock+market", curr_date, 7
+    )
+    if news_text:
+        return (
+            "# Fallback provider note\n"
+            "The current model provider does not support OpenAI Responses web search. "
+            "Using Google News macro headlines instead.\n\n"
+            + news_text
+        )
+    return "No recent macro or market news found."
+
+
+def _format_optional_frame(title, frame, max_rows=12, max_cols=2):
+    if frame is None:
+        return ""
+    try:
+        if frame.empty:
+            return ""
+        trimmed = frame.iloc[:max_rows, :max_cols]
+        return f"## {title}\n{trimmed.to_string()}\n"
+    except Exception:
+        return ""
+
+
+def _fallback_fundamentals_report(ticker, curr_date):
+    ticker_obj = yf.Ticker(ticker.upper())
+
+    try:
+        info = ticker_obj.info or {}
+    except Exception as exc:
+        return f"无法为 {ticker} 加载在线基本面数据：{exc}"
+
+    if not info:
+        return f"{ticker} 暂无可用的在线基本面数据。"
+
+    fields = [
+        ("shortName", "公司名称"),
+        ("sector", "行业板块"),
+        ("industry", "细分行业"),
+        ("currentPrice", "当前价格"),
+        ("marketCap", "总市值"),
+        ("enterpriseValue", "企业价值"),
+        ("trailingPE", "静态市盈率"),
+        ("forwardPE", "动态市盈率"),
+        ("priceToSalesTrailing12Months", "市销率"),
+        ("trailingEps", "每股收益"),
+        ("revenueGrowth", "营收增长"),
+        ("earningsGrowth", "利润增长"),
+        ("profitMargins", "净利率"),
+        ("operatingMargins", "营业利润率"),
+        ("returnOnEquity", "净资产收益率"),
+        ("debtToEquity", "资产负债比"),
+        ("freeCashflow", "自由现金流"),
+        ("operatingCashflow", "经营现金流"),
+        ("recommendationKey", "分析师一致预期"),
+    ]
+
+    lines = [
+        "# 备选数据源说明",
+        "当前模型提供方不支持 OpenAI Responses web search，"
+        f"因此改用 Yahoo Finance 的基本面数据，分析日期为 {curr_date}。",
+        "",
+        f"## {ticker} 的基本面快照",
+    ]
+
+    for key, label in fields:
+        value = info.get(key)
+        if value not in (None, ""):
+            lines.append(f"- {label}: {value}")
+
+    try:
+        financials = ticker_obj.financials
+    except Exception:
+        financials = None
+    try:
+        balance_sheet = ticker_obj.balance_sheet
+    except Exception:
+        balance_sheet = None
+    try:
+        cashflow = ticker_obj.cashflow
+    except Exception:
+        cashflow = None
+
+    sections = [
+        _format_optional_frame("Income Statement Snapshot", financials),
+        _format_optional_frame("Balance Sheet Snapshot", balance_sheet),
+        _format_optional_frame("Cash Flow Snapshot", cashflow),
+    ]
+
+    return "\n".join(lines) + "\n\n" + "\n".join(
+        section for section in sections if section
+    )
 
 
 def get_finnhub_news(
@@ -172,7 +317,7 @@ def get_simfin_balance_sheet(
 
     # Check if there are any available reports; if not, return a notification
     if filtered_df.empty:
-        print("No balance sheet available before the given current date.")
+        logger.info("No balance sheet available for %s before %s.", ticker, curr_date)
         return ""
 
     # Get the most recent balance sheet by selecting the row with the latest Publish Date
@@ -219,7 +364,7 @@ def get_simfin_cashflow(
 
     # Check if there are any available reports; if not, return a notification
     if filtered_df.empty:
-        print("No cash flow statement available before the given current date.")
+        logger.info("No cash flow statement available for %s before %s.", ticker, curr_date)
         return ""
 
     # Get the most recent cash flow statement by selecting the row with the latest Publish Date
@@ -266,7 +411,7 @@ def get_simfin_income_statements(
 
     # Check if there are any available reports; if not, return a notification
     if filtered_df.empty:
-        print("No income statement available before the given current date.")
+        logger.info("No income statement available for %s before %s.", ticker, curr_date)
         return ""
 
     # Get the most recent income statement by selecting the row with the latest Publish Date
@@ -419,7 +564,7 @@ def get_reddit_company_news(
     return f"##{ticker} News Reddit, from {before} to {curr_date}:\n\n{news_str}"
 
 
-def get_stock_stats_indicators_window(
+def get_technical_indicators_window(
     symbol: Annotated[str, "ticker symbol of the company"],
     indicator: Annotated[str, "technical indicator to get the analysis and report of"],
     curr_date: Annotated[
@@ -428,7 +573,8 @@ def get_stock_stats_indicators_window(
     look_back_days: Annotated[int, "how many days to look back"],
     online: Annotated[bool, "to fetch data online or offline"],
 ) -> str:
-
+    profile = _current_security_profile(symbol)
+    symbol = profile.yfinance_symbol
     best_ind_params = {
         # Moving Averages
         "close_50_sma": (
@@ -510,40 +656,31 @@ def get_stock_stats_indicators_window(
     end_date = curr_date
     curr_date = datetime.strptime(curr_date, "%Y-%m-%d")
     before = curr_date - relativedelta(days=look_back_days)
-
-    if not online:
-        # read from YFin data
-        data = pd.read_csv(
-            os.path.join(
-                DATA_DIR,
-                f"market_data/price_data/{symbol}-YFin-data-2015-01-01-2025-03-25.csv",
-            )
+    try:
+        indicator_series = TechnicalIndicatorsUtils.get_indicator_series(
+            symbol,
+            indicator,
+            end_date,
+            os.path.join(DATA_DIR, "market_data", "price_data"),
+            online=online,
         )
-        data["Date"] = pd.to_datetime(data["Date"], utc=True)
-        dates_in_df = data["Date"].astype(str).str[:10]
+    except Exception as exc:
+        return (
+            f"## {indicator} values from {before.strftime('%Y-%m-%d')} to {end_date}:\n\n"
+            f"Indicator data unavailable: {exc}\n\n"
+            + best_ind_params.get(indicator, "No description available.")
+        )
 
-        ind_string = ""
-        while curr_date >= before:
-            # only do the trading dates
-            if curr_date.strftime("%Y-%m-%d") in dates_in_df.values:
-                indicator_value = get_stockstats_indicator(
-                    symbol, indicator, curr_date.strftime("%Y-%m-%d"), online
-                )
+    filtered_series = indicator_series[
+        (indicator_series["Date"] >= before.strftime("%Y-%m-%d"))
+        & (indicator_series["Date"] <= end_date)
+    ]
+    ind_string = ""
+    for _, row in filtered_series.iterrows():
+        ind_string += f"{row['Date']}: {row[indicator]}\n"
 
-                ind_string += f"{curr_date.strftime('%Y-%m-%d')}: {indicator_value}\n"
-
-            curr_date = curr_date - relativedelta(days=1)
-    else:
-        # online gathering
-        ind_string = ""
-        while curr_date >= before:
-            indicator_value = get_stockstats_indicator(
-                symbol, indicator, curr_date.strftime("%Y-%m-%d"), online
-            )
-
-            ind_string += f"{curr_date.strftime('%Y-%m-%d')}: {indicator_value}\n"
-
-            curr_date = curr_date - relativedelta(days=1)
+    if not ind_string:
+        ind_string = "No indicator values available in the selected window.\n"
 
     result_str = (
         f"## {indicator} values from {before.strftime('%Y-%m-%d')} to {end_date}:\n\n"
@@ -555,7 +692,7 @@ def get_stock_stats_indicators_window(
     return result_str
 
 
-def get_stockstats_indicator(
+def get_technical_indicator(
     symbol: Annotated[str, "ticker symbol of the company"],
     indicator: Annotated[str, "technical indicator to get the analysis and report of"],
     curr_date: Annotated[
@@ -568,18 +705,15 @@ def get_stockstats_indicator(
     curr_date = curr_date.strftime("%Y-%m-%d")
 
     try:
-        indicator_value = StockstatsUtils.get_stock_stats(
+        indicator_value = TechnicalIndicatorsUtils.get_indicator_value(
             symbol,
             indicator,
             curr_date,
             os.path.join(DATA_DIR, "market_data", "price_data"),
             online=online,
         )
-    except Exception as e:
-        print(
-            f"Error getting stockstats indicator data for indicator {indicator} on {curr_date}: {e}"
-        )
-        return ""
+    except Exception:
+        return "N/A: indicator unavailable"
 
     return str(indicator_value)
 
@@ -630,6 +764,8 @@ def get_YFin_data_online(
     start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
     end_date: Annotated[str, "End date in yyyy-mm-dd format"],
 ):
+    profile = _current_security_profile(symbol)
+    symbol = profile.yfinance_symbol
 
     datetime.strptime(start_date, "%Y-%m-%d")
     datetime.strptime(end_date, "%Y-%m-%d")
@@ -637,11 +773,39 @@ def get_YFin_data_online(
     # Create ticker object
     ticker = yf.Ticker(symbol.upper())
 
-    # Fetch historical data for the specified date range
-    data = ticker.history(start=start_date, end=end_date)
+    data = pd.DataFrame()
+    last_error = None
+
+    # Fetch historical data for the specified date range with light retry.
+    for _ in range(3):
+        try:
+            data = ticker.history(start=start_date, end=end_date)
+            if data is not None and not data.empty:
+                break
+        except Exception as exc:
+            last_error = exc
+        time.sleep(1)
+
+    if data is None or data.empty:
+        try:
+            data = yf.download(
+                symbol.upper(),
+                start=start_date,
+                end=end_date,
+                multi_level_index=False,
+                progress=False,
+                auto_adjust=False,
+            )
+        except Exception as exc:
+            last_error = exc
 
     # Check if data is empty
-    if data.empty:
+    if data is None or data.empty:
+        if last_error is not None:
+            return (
+                f"Unable to fetch online market data for symbol '{symbol}' between "
+                f"{start_date} and {end_date}: {last_error}"
+            )
         return (
             f"No data found for symbol '{symbol}' between {start_date} and {end_date}"
         )
@@ -672,6 +836,8 @@ def get_YFin_data(
     start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
     end_date: Annotated[str, "End date in yyyy-mm-dd format"],
 ) -> str:
+    profile = _current_security_profile(symbol)
+    symbol = profile.yfinance_symbol
     # read in data
     data = pd.read_csv(
         os.path.join(
@@ -703,8 +869,14 @@ def get_YFin_data(
 
 
 def get_stock_news_openai(ticker, curr_date):
-    config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    config, client = _build_llm_client()
+    profile = build_security_profile(ticker, config.get("market_region", "cn_a"))
+
+    if profile.market_region == "cn_a":
+        return build_a_share_sentiment_report(profile, curr_date)
+
+    if not _supports_native_responses_search(config):
+        return _fallback_stock_news_report(ticker, curr_date)
 
     response = client.responses.create(
         model=config["quick_think_llm"],
@@ -721,25 +893,21 @@ def get_stock_news_openai(ticker, curr_date):
         ],
         text={"format": {"type": "text"}},
         reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
+        tools=get_web_search_tools(config),
         temperature=1,
         max_output_tokens=4096,
         top_p=1,
         store=True,
     )
 
-    return response.output[1].content[0].text
+    return extract_responses_text(response)
 
 
 def get_global_news_openai(curr_date):
-    config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    config, client = _build_llm_client()
+
+    if not _supports_native_responses_search(config):
+        return _fallback_global_news_report(curr_date)
 
     response = client.responses.create(
         model=config["quick_think_llm"],
@@ -756,25 +924,25 @@ def get_global_news_openai(curr_date):
         ],
         text={"format": {"type": "text"}},
         reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
+        tools=get_web_search_tools(config),
         temperature=1,
         max_output_tokens=4096,
         top_p=1,
         store=True,
     )
 
-    return response.output[1].content[0].text
+    return extract_responses_text(response)
 
 
 def get_fundamentals_openai(ticker, curr_date):
-    config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
+    config, client = _build_llm_client()
+    profile = build_security_profile(ticker, config.get("market_region", "cn_a"))
+
+    if profile.market_region == "cn_a":
+        return build_a_share_fundamentals_report(profile, curr_date)
+
+    if not _supports_native_responses_search(config):
+        return _fallback_fundamentals_report(ticker, curr_date)
 
     response = client.responses.create(
         model=config["quick_think_llm"],
@@ -791,17 +959,11 @@ def get_fundamentals_openai(ticker, curr_date):
         ],
         text={"format": {"type": "text"}},
         reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
+        tools=get_web_search_tools(config),
         temperature=1,
         max_output_tokens=4096,
         top_p=1,
         store=True,
     )
 
-    return response.output[1].content[0].text
+    return extract_responses_text(response)

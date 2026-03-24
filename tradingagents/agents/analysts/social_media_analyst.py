@@ -8,17 +8,29 @@ def create_social_media_analyst(llm, toolkit):
         current_date = state["trade_date"]
         ticker = state["company_of_interest"]
         company_name = state["company_of_interest"]
+        market_region = state.get(
+            "market_region",
+            toolkit.config.get("market_region", "cn_a"),
+        )
 
-        if toolkit.config["online_tools"]:
+        if market_region == "cn_a":
+            tools = [toolkit.get_a_share_company_sentiment]
+        elif toolkit.config["online_tools"]:
             tools = [toolkit.get_stock_news_openai]
         else:
             tools = [
                 toolkit.get_reddit_stock_info,
             ]
 
+        chinese_output_requirement = (
+            "请默认使用简体中文输出完整报告。除股票代码、公司英文名、模型名、必要英文缩写"
+            "（如 BUY/HOLD/SELL）外，其余标题、段落、表格列名、总结和结论都请使用中文。"
+        )
+
         system_message = (
             "You are a social media and company specific news researcher/analyst tasked with analyzing social media posts, recent company news, and public sentiment for a specific company over the past week. You will be given a company's name your objective is to write a comprehensive long report detailing your analysis, insights, and implications for traders and investors on this company's current state after looking at social media and what people are saying about that company, analyzing sentiment data of what people feel each day about the company, and looking at recent company news. Try to look at all sources possible from social media to sentiment to news. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
-            + """ Make sure to append a Makrdown table at the end of the report to organize key points in the report, organized and easy to read.""",
+            + """ Make sure to append a Makrdown table at the end of the report to organize key points in the report, organized and easy to read."""
+            + chinese_output_requirement,
         )
 
         prompt = ChatPromptTemplate.from_messages(

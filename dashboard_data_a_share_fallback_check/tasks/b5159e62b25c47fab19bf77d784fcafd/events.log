@@ -1,0 +1,162 @@
+2026-03-23 19:48:25 [SYSTEM] Runner started.
+2026-03-23 19:48:30 [SYSTEM] Runner started.
+2026-03-23 19:48:34 [RISK] Risk review started.
+2026-03-23 19:48:34 [MESSAGE] 600519.SS
+2026-03-23 19:48:39 [RESEARCH] Research debate started.
+2026-03-23 19:48:39 [RISK] Risk review started.
+2026-03-23 19:48:39 [MESSAGE] 600519.SS
+2026-03-23 19:48:42 [MESSAGE] # Stock data for 600519.SS from 2024-01-01 to 2025-03-20 # Total records: 291 # Data retrieved on: 2026-03-23 19:48:42 Date,Open,High,Low,Close,Volume,Dividends,Stock Splits 2024-01-02,1595.28,1598.25,1560.96,1567.38,3215644,0.0,0.0 2024-01-03,1563.76,1576.88,1559.31,1575.75,2022929,0.0,0.0 2024-01-04,1574.82,1574.82,1546.85,1552.49,2155107,0.0,0.0 2024-01-05,1545.36,1561.48,1536.78,1547.25,2024286,0.0,0.0 2024-01-08,1545.05,1545.98,1525.53,1529.23,2558620,0.0,0.0 2024-01-09,1526.46,1536.98,1520
+2026-03-23 19:48:47 [RESEARCH] Research debate started.
+2026-03-23 19:48:48 [MESSAGE] ## close_10_ema values from 2024-07-13 to 2025-03-20: 2024-07-15: 1393.2589657351782 2024-07-16: 1394.7397796711118 2024-07-17: 1400.3361203346028 2024-07-18: 1404.2434468220613 2024-07-19: 1412.2929337635046 2024-07-22: 1414.2834630295151 2024-07-23: 1408.316396953126 2024-07-24: 1400.8482922869327 2024-07-25: 1393.0928721339108 2024-07-26: 1385.3146670442225 2024-07-29: 1374.7782511966934 2024-07-30: 1363.0450428825218 2024-07-31: 1360.5730304692224 2024-08-01: 1352.4877529123185 2024-08-02: 1
+2026-03-23 19:48:50 [MESSAGE] # Stock data for 600519.SS from 2023-03-20 to 2025-03-20 # Total records: 484 # Data retrieved on: 2026-03-23 19:48:50 Date,Open,High,Low,Close,Volume,Dividends,Stock Splits 2023-03-20,1585.84,1589.47,1565.01,1566.46,2049093,0.0,0.0 2023-03-21,1571.35,1617.41,1561.36,1607.58,3114182,0.0,0.0 2023-03-22,1612.11,1623.88,1599.02,1606.09,1533026,0.0,0.0 2023-03-23,1599.43,1622.17,1598.53,1607.45,1735566,0.0,0.0 2023-03-24,1602.22,1615.37,1599.43,1610.86,1276996,0.0,0.0 2023-03-27,1610.84,1610.84,1590
+2026-03-23 19:48:52 [MESSAGE] ## close_50_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1491.8283447265626 2024-07-16: 1487.1099072265624 2024-07-17: 1482.6914770507813 2024-07-18: 1478.3113623046875 2024-07-19: 1474.6133056640624 2024-07-22: 1470.7263891601563 2024-07-23: 1466.6175024414063 2024-07-24: 1462.2989501953125 2024-07-25: 1457.8362646484375 2024-07-26: 1453.13224609375 2024-07-29: 1447.7739208984376 2024-07-30: 1442.18484375 2024-07-31: 1437.4542504882813 2024-08-01: 1432.1923779296876 2024-08-02: 1427.02
+2026-03-23 19:48:57 [MESSAGE] ## close_200_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1557.8297113037108 2024-07-16: 1556.468942260742 2024-07-17: 1555.2343627929688 2024-07-18: 1554.1500610351563 2024-07-19: 1552.9821380615235 2024-07-22: 1551.698232421875 2024-07-23: 1550.2189630126952 2024-07-24: 1548.786332397461 2024-07-25: 1547.0757592773436 2024-07-26: 1545.4022003173827 2024-07-29: 1543.689213256836 2024-07-30: 1541.8998284912109 2024-07-31: 1540.3774975585939 2024-08-01: 1538.7875274658204 2024-08-02: 153
+2026-03-23 19:48:57 [MESSAGE] ## close_50_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1491.8283447265626 2024-07-16: 1487.1099072265624 2024-07-17: 1482.6914770507813 2024-07-18: 1478.3113623046875 2024-07-19: 1474.6133056640624 2024-07-22: 1470.7263891601563 2024-07-23: 1466.6175024414063 2024-07-24: 1462.2989501953125 2024-07-25: 1457.8362646484375 2024-07-26: 1453.13224609375 2024-07-29: 1447.7739208984376 2024-07-30: 1442.18484375 2024-07-31: 1437.4542504882813 2024-08-01: 1432.1923779296876 2024-08-02: 1427.02
+2026-03-23 19:49:00 [MESSAGE] ## macd values from 2024-07-13 to 2025-03-20: 2024-07-15: -27.0097702201208 2024-07-16: -24.550745976135204 2024-07-17: -20.420579146361433 2024-07-18: -17.24659752174034 2024-07-19: -12.434263651597576 2024-07-22: -10.53843738026012 2024-07-23: -12.265585212574706 2024-07-24: -14.613565571562958 2024-07-25: -17.0084198509378 2024-07-26: -19.31956484226407 2024-07-29: -22.74076373817411 2024-07-30: -26.527636459018368 2024-07-31: -26.064915993088334 2024-08-01: -28.065347296747404 2024-08-02: -2
+2026-03-23 19:49:02 [MESSAGE] ## close_200_sma values from 2024-07-13 to 2025-03-20: 2024-07-15: 1557.8297113037108 2024-07-16: 1556.468942260742 2024-07-17: 1555.2343627929688 2024-07-18: 1554.1500610351563 2024-07-19: 1552.9821380615235 2024-07-22: 1551.698232421875 2024-07-23: 1550.2189630126952 2024-07-24: 1548.786332397461 2024-07-25: 1547.0757592773436 2024-07-26: 1545.4022003173827 2024-07-29: 1543.689213256836 2024-07-30: 1541.8998284912109 2024-07-31: 1540.3774975585939 2024-08-01: 1538.7875274658204 2024-08-02: 153
+2026-03-23 19:49:05 [MESSAGE] ## rsi values from 2024-07-13 to 2025-03-20: 2024-07-15: 43.83784915159477 2024-07-16: 44.13304772748537 2024-07-17: 50.59093009523992 2024-07-18: 49.644498775787824 2024-07-19: 56.04402122462242 2024-07-22: 49.61362186279616 2024-07-23: 41.199202327451005 2024-07-24: 38.78733772916041 2024-07-25: 37.2916369863234 2024-07-26: 35.989915147383925 2024-07-29: 32.43897440239445 2024-07-30: 30.056609872664275 2024-07-31: 40.78235845210696 2024-08-01: 35.75936751769277 2024-08-02: 35.663706586435914 2
+2026-03-23 19:49:09 [MESSAGE] ## close_10_ema values from 2025-01-19 to 2025-03-20: 2025-01-20: 1410.9707088224648 2025-01-21: 1411.8395820763349 2025-01-22: 1407.7902910525127 2025-01-23: 1404.8278872816013 2025-01-24: 1401.1768074562533 2025-01-27: 1398.0124695948891 2025-02-05: 1389.954982225364 2025-02-06: 1384.9474534968886 2025-02-07: 1384.910997996034 2025-02-10: 1384.0939504200505 2025-02-11: 1381.056760215837 2025-02-12: 1382.9549984152302 2025-02-13: 1388.375866956211 2025-02-14: 1394.5538875948544 2025-02-17: 1399
+2026-03-23 19:49:13 [MESSAGE] ## boll_ub values from 2024-07-13 to 2025-03-20: 2024-07-15: 1444.411912117225 2024-07-16: 1443.133098843502 2024-07-17: 1443.1996368207099 2024-07-18: 1442.794176870765 2024-07-19: 1450.6254759988526 2024-07-22: 1452.6363420478408 2024-07-23: 1451.8203957370474 2024-07-24: 1451.2844358688326 2024-07-25: 1450.8420189604253 2024-07-26: 1452.3894169594155 2024-07-29: 1456.6128433538993 2024-07-30: 1459.832160168754 2024-07-31: 1455.6447657235992 2024-08-01: 1455.4579170392517 2024-08-02: 1453.9255
+2026-03-23 19:49:16 [MESSAGE] ## macd values from 2025-01-19 to 2025-03-20: 2025-01-20: -14.352752574245415 2025-01-21: -13.074451498948974 2025-01-22: -14.01245219967268 2025-01-23: -14.433819423658633 2025-01-24: -15.137933745226519 2025-01-27: -15.594776127295972 2025-02-05: -18.174260557309935 2025-02-06: -19.292714094773373 2025-02-07: -18.167555672457638 2025-02-10: -17.42437374871679 2025-02-11: -17.68279760299447 2025-02-12: -15.760634415179311 2025-02-13: -12.378089809773428 2025-02-14: -8.822255428254266 2025-02-17
+2026-03-23 19:49:20 [MESSAGE] ## boll_lb values from 2024-07-13 to 2025-03-20: 2024-07-15: 1355.262990226525 2024-07-16: 1355.1533147307168 2024-07-17: 1355.1247528277274 2024-07-18: 1355.2843143401724 2024-07-19: 1352.6389771261472 2024-07-22: 1352.7596296318468 2024-07-23: 1350.5705222317024 2024-07-24: 1346.4351442092925 2024-07-25: 1341.1807959809807 2024-07-26: 1335.3418208335534 2024-07-29: 1327.0964706109444 2024-07-30: 1313.3656669796837 2024-07-31: 1310.0789037099946 2024-08-01: 1300.8110404802796 2024-08-02: 1292.8
+2026-03-23 19:49:22 [MESSAGE] ## macdh values from 2025-01-19 to 2025-03-20: 2025-01-20: 0.31313042368691413 2025-01-21: 1.2731451991866827 2025-01-22: 0.26811559877038427 2025-01-23: -0.1226013001724553 2025-01-24: -0.6613724973922732 2025-01-27: -0.8945719035693802 2025-02-05: -2.7792450668666735 2025-02-06: -3.118158883464087 2025-02-07: -1.5944003689186808 2025-02-10: -0.6809747561422661 2025-02-11: -0.7515188883359585 2025-02-12: 0.9365154395833599 2025-02-13: 3.455248035991394 2025-02-14: 5.6088659340084455 2025-02-17:
+2026-03-23 19:49:32 [MESSAGE] ## rsi values from 2025-01-19 to 2025-03-20: 2025-01-20: 48.16094078073533 2025-01-21: 46.338544999851095 2025-01-22: 39.728722932388436 2025-01-23: 40.403108994650005 2025-01-24: 38.76806670113918 2025-01-27: 38.525797935579604 2025-02-05: 31.897074423584737 2025-02-06: 35.36812805716176 2025-02-07: 43.33629288807317 2025-02-10: 42.24882716488433 2025-02-11: 39.07177196885973 2025-02-12: 47.01235545114462 2025-02-13: 52.85155693028454 2025-02-14: 55.24479430868963 2025-02-17: 54.23662850306372
+2026-03-23 19:49:40 [MARKET] Market analysis report generated.
+2026-03-23 19:49:40 [MESSAGE] # Technical Analysis Report for 600519.SS (as of 2025-03-20) ## 1. Trend Analysis (Moving Averages) - **Long-term Trend (200 SMA):** From July 2024 to March 2025, the 200 SMA steadily declined from ~1557.8 to ~1424.6, indicating a long-term bearish trend that persisted for over 8 months. However, the recent sharp price rally has pushed the current closing price (1577.33 on 2025-03-19) decisively above the 200 SMA, signaling a potential golden cross setup and early reversal of the long-term downt
+2026-03-23 19:49:40 [MESSAGE] Continue
+2026-03-23 19:49:41 [MESSAGE] ## boll_ub values from 2025-01-19 to 2025-03-20: 2025-01-20: 1502.4813099721182 2025-01-21: 1496.9561556820283 2025-01-22: 1488.4358985482472 2025-01-23: 1480.3433996785645 2025-01-24: 1471.568148851634 2025-01-27: 1460.5955117853946 2025-02-05: 1451.3250135384255 2025-02-06: 1437.6661494246798 2025-02-07: 1431.2815943770609 2025-02-10: 1427.1796527234328 2025-02-11: 1427.8158157812454 2025-02-12: 1427.9350890828912 2025-02-13: 1430.2643456868914 2025-02-14: 1434.0675357505474 2025-02-17: 1437.0
+2026-03-23 19:49:48 [MESSAGE] ## boll_lb values from 2025-01-19 to 2025-03-20: 2025-01-20: 1354.8041758677255 2025-01-21: 1354.7074185367217 2025-01-22: 1353.7948143423778 2025-01-23: 1353.4978234659668 2025-01-24: 1353.4216826913346 2025-01-27: 1355.3317465153868 2025-02-05: 1352.9148424186055 2025-02-06: 1355.8544560440703 2025-02-07: 1357.2246067948142 2025-02-10: 1357.1327740343795 2025-02-11: 1354.3751388085984 2025-02-12: 1354.5258728311712 2025-02-13: 1354.3720923013898 2025-02-14: 1353.5582577064838 2025-02-17: 1353.
+2026-03-23 19:50:06 [MESSAGE] # A-share attention and sentiment snapshot for 600519.SS This report favors public attention, holder concentration, and short-term company event signals over Reddit-style social data. ## Shareholder count trend | 股东户数统计截止日 | 区间涨跌幅 | 股东户数-本次 | 股东户数-上次 | 股东户数-增减 | 股东户数-增减比例 | 户均持股市值 | 户均持股数量 | 总市值 | 总股本 | 股本变动 | 股本变动原因 | 股东户数公告日期 | 代码 | 名称 | |:---------------------|-------------:|----------------:|----------------:|----------------:|--------------------:|---------------:|---------------:|---------
+2026-03-23 19:50:14 [MARKET] Market analysis report generated.
+2026-03-23 19:50:14 [MESSAGE] # Technical Analysis Report for 600519.SS (Kweichow Moutai) as of 2025-03-20 ## 1. Trend Analysis ### Long-Term Trend (200 SMA) The 200-day simple moving average (close_200_sma) has been in a steady downtrend from ~1557.8 in July 2024 to ~1424.6 as of March 20, 2025. This reflects the prolonged bearish pressure on the stock over the past year. However, the pace of decline has slowed significantly in recent months, indicating weakening bearish momentum. ### Medium-Term Trend (50 SMA) The 50-day s
+2026-03-23 19:50:14 [MESSAGE] Continue
+2026-03-23 19:50:39 [SOCIAL] Sentiment analysis report generated.
+2026-03-23 19:50:39 [MESSAGE] # Sentiment and Attention Analysis Report for 600519.SS (Kweichow Moutai) Report Period: Past week ending 2025-03-20 ## 1. Company Background 600519.SS (Kweichow Moutai) is China's leading high-end baijiu (Chinese liquor) producer, a core blue-chip holding for institutional and retail investors in the A-share market. This analysis integrates shareholder trend data, recent market discussion, and public sentiment to generate actionable insights. ## 2. Shareholder Concentration Historical Pattern F
+2026-03-23 19:50:39 [MESSAGE] Continue
+2026-03-23 19:50:50 [MESSAGE] # A-share attention and sentiment snapshot for 600519.SS This report favors public attention, holder concentration, and short-term company event signals over Reddit-style social data. ## Shareholder count trend | 股东户数统计截止日 | 区间涨跌幅 | 股东户数-本次 | 股东户数-上次 | 股东户数-增减 | 股东户数-增减比例 | 户均持股市值 | 户均持股数量 | 总市值 | 总股本 | 股本变动 | 股本变动原因 | 股东户数公告日期 | 代码 | 名称 | |:---------------------|-------------:|----------------:|----------------:|----------------:|--------------------:|---------------:|---------------:|---------
+2026-03-23 19:51:20 [SOCIAL] Sentiment analysis report generated.
+2026-03-23 19:51:20 [MESSAGE] # Comprehensive Sentiment and Attention Analysis Report for 600519.SS (Kweichow Moutai) Analysis Period: 2025-03-13 to 2025-03-20 | Current Date: 2025-03-20 ## 1. Company Context 600519.SS (Kweichow Moutai) is the global leading high-end baijiu (Chinese liquor) manufacturer, with a decades-long brand moat and the largest market capitalization in the A-share consumer staples sector. It is widely held by both institutional and retail investors, making market sentiment and attention a key driver of
+2026-03-23 19:51:20 [MESSAGE] Continue
+2026-03-23 19:51:21 [MESSAGE] # A-share company and policy-sensitive news snapshot for 600519.SS For CN A-shares, corporate events and broker research are treated as more decision-relevant than generic overseas macro headlines. ## Recent broker research headlines | 序号 | 股票代码 | 股票简称 | 报告名称 | 东财评级 | 机构 | 近一月个股研报数 | 2025-盈利预测-收益 | 2025-盈利预测-市盈率 | 2026-盈利预测-收益 | 2026-盈利预测-市盈率 | 2027-盈利预测-收益 | 2027-盈利预测-市盈率 | 行业 | 日期 | 报告PDF链接 | |-------:|-----------:|:-----------|:-----------------------------------------------|:-----------|:---
+2026-03-23 19:51:45 [NEWS] News analysis report generated.
+2026-03-23 19:51:45 [MESSAGE] # 600519.SS (Kweichow Moutai) Weekly News & Impact Report (as of 2025-03-20) ## Core News Overview Over the past 7 days, multiple top-tier Chinese brokerages have released new research reports on Kweichow Moutai, with an overwhelming positive consensus focused on the company's ongoing marketing transformation and channel restructuring (shifting from dealer-dominated distribution to direct 2C end-consumer sales). All recent reports maintain either "Buy" or "Overweight" ratings, reflecting broad c
+2026-03-23 19:51:45 [MESSAGE] Continue
+2026-03-23 19:52:04 [MESSAGE] # A-share company and policy-sensitive news snapshot for 600519.SS For CN A-shares, corporate events and broker research are treated as more decision-relevant than generic overseas macro headlines. ## Recent broker research headlines | 序号 | 股票代码 | 股票简称 | 报告名称 | 东财评级 | 机构 | 近一月个股研报数 | 2025-盈利预测-收益 | 2025-盈利预测-市盈率 | 2026-盈利预测-收益 | 2026-盈利预测-市盈率 | 2027-盈利预测-收益 | 2027-盈利预测-市盈率 | 行业 | 日期 | 报告PDF链接 | |-------:|-----------:|:-----------|:-----------------------------------------------|:-----------|:---
+2026-03-23 19:52:24 [NEWS] News analysis report generated.
+2026-03-23 19:52:24 [MESSAGE] # 600519.SS (贵州茅台) Weekly News and Impact Report (2025-03-13 ~ 2025-03-20) ## Core News Overview Over the past week, the dominant material news for Kweichow Moutai comes from leading broker research reports, all focused on the company's ongoing marketing and channel transformation. Most institutions maintain positive ratings, with the core consensus centering on the progress of the company's market-oriented reform: 1. The transition to a direct-to-consumer (2C) sales model is on track, cutting o
+2026-03-23 19:52:24 [MESSAGE] Continue
+2026-03-23 19:52:26 [MESSAGE] # A-share fundamentals snapshot for 600519.SS - Analysis date: 2025-03-20 ## Financial analysis indicators | SECUCODE | SECURITY_CODE | SECURITY_NAME_ABBR | ORG_CODE | ORG_TYPE | REPORT_DATE | REPORT_TYPE | REPORT_DATE_NAME | SECURITY_TYPE_CODE | NOTICE_DATE | UPDATE_DATE | CURRENCY | EPSJB | EPSKCJB | EPSXS | BPS | MGZBGJ | MGWFPLR | MGJYXJJE | TOTALOPERATEREVE | MLR | PARENTNETPROFIT | KCFJCXSYJLR | TOTALOPERATEREVETZ | PARENTNETPROFITTZ | KCFJCXSYJLRTZ | YYZSRGDHBZC | NETPROFITRPHBZC | KFJLRG
+2026-03-23 19:53:01 [MESSAGE] # A-share fundamentals snapshot for 600519.SS - Analysis date: 2025-03-20 ## Financial analysis indicators | SECUCODE | SECURITY_CODE | SECURITY_NAME_ABBR | ORG_CODE | ORG_TYPE | REPORT_DATE | REPORT_TYPE | REPORT_DATE_NAME | SECURITY_TYPE_CODE | NOTICE_DATE | UPDATE_DATE | CURRENCY | EPSJB | EPSKCJB | EPSXS | BPS | MGZBGJ | MGWFPLR | MGJYXJJE | TOTALOPERATEREVE | MLR | PARENTNETPROFIT | KCFJCXSYJLR | TOTALOPERATEREVETZ | PARENTNETPROFITTZ | KCFJCXSYJLRTZ | YYZSRGDHBZC | NETPROFITRPHBZC | KFJLRG
+2026-03-23 19:53:19 [FUNDAMENTALS] Fundamentals report generated.
+2026-03-23 19:53:19 [MESSAGE] # Fundamental Analysis Report: Kweichow Moutai (600519.SS) Analysis Date: 2025-03-20 ## 1. Company Profile Kweichow Moutai (600519.SS) is China's leading producer of premium baijiu (Chinese liquor), with a centuries-old brand that dominates the ultra-high-end baijiu market. It is widely recognized as a national consumer staple with unparalleled pricing power and a wide economic moat, making it a core holding for most long-term institutional investors in the A-share market. ## 2. Recent Financial
+2026-03-23 19:53:19 [MESSAGE] Continue
+2026-03-23 19:53:22 [ERROR] TypeError: arg must be a list, tuple, 1-d array, or Series
+2026-03-23 19:53:22 [TRACEBACK] Traceback (most recent call last):
+  File "D:\TradingAgents-CN\dashboard_api\runner.py", line 105, in run_task
+    for chunk in graph.graph.stream(init_state, **args):
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\main.py", line 2725, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 96, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "D:\TradingAgents-CN\tradingagents\graph\trading_graph.py", line 155, in structured_decision_node
+    structured_payload = build_structured_analysis(state, self.config)
+  File "D:\TradingAgents-CN\tradingagents\structured_snapshot.py", line 1160, in build_structured_analysis
+    get_a_share_factor_inputs(profile, trade_date)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 380, in get_a_share_factor_inputs
+    "history": get_a_share_history(profile, start_date, end_inclusive),
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 246, in get_a_share_history
+    return _load_history_with_fallback(profile, start_date, end_date)
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 219, in _load_history_with_fallback
+    yfinance_history = _download_yfinance_history(profile, start_date, end_date)
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 206, in _download_yfinance_history
+    return _standardize_history(attempts[0])
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 129, in _standardize_history
+    normalized[column] = pd.to_numeric(normalized[column], errors="coerce")
+                         ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\pandas\core\tools\numeric.py", line 212, in to_numeric
+    raise TypeError("arg must be a list, tuple, 1-d array, or Series")
+TypeError: arg must be a list, tuple, 1-d array, or Series
+During task with name 'Structured Decision' and id 'e8339e70-3f42-7022-0d08-8998b1677208'
+2026-03-23 19:53:56 [FUNDAMENTALS] Fundamentals report generated.
+2026-03-23 19:53:56 [MESSAGE] # Fundamental Analysis Report for 600519.SS (Kweichow Moutai) Analysis Date: 2025-03-20 ## 1. Company Profile 600519.SS (Kweichow Moutai) is China's leading high-end baijiu (Chinese liquor) producer, with a centuries-old iconic brand that commands unmatched pricing power and consumer loyalty in the global Chinese liquor market. As the largest large-cap consumer staple in A-share, it is widely held by domestic and international institutional investors, and acts as a key bellwether for China's hig
+2026-03-23 19:53:56 [MESSAGE] Continue
+2026-03-23 19:53:59 [ERROR] TypeError: arg must be a list, tuple, 1-d array, or Series
+2026-03-23 19:53:59 [TRACEBACK] Traceback (most recent call last):
+  File "D:\TradingAgents-CN\dashboard_api\runner.py", line 105, in run_task
+    for chunk in graph.graph.stream(init_state, **args):
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\main.py", line 2725, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 96, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "D:\TradingAgents-CN\tradingagents\graph\trading_graph.py", line 155, in structured_decision_node
+    structured_payload = build_structured_analysis(state, self.config)
+  File "D:\TradingAgents-CN\tradingagents\structured_snapshot.py", line 1160, in build_structured_analysis
+    get_a_share_factor_inputs(profile, trade_date)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 380, in get_a_share_factor_inputs
+    report_parts.append(_frame_to_markdown("Financial analysis indicators", indicators, rows=4))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 246, in get_a_share_history
+    history = _safe_akshare_call(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 219, in _load_history_with_fallback
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 206, in _download_yfinance_history
+    return pd.DataFrame()
+       ^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\tradingagents\dataflows\a_share_support.py", line 129, in _standardize_history
+    "TurnoverRate": ["换手率", "turnoverrate"],
+                            ^^^^^^^^^^^^^^^^^^^
+  File "D:\TradingAgents-CN\venv\Lib\site-packages\pandas\core\tools\numeric.py", line 212, in to_numeric
+    raise TypeError("arg must be a list, tuple, 1-d array, or Series")
+TypeError: arg must be a list, tuple, 1-d array, or Series
+During task with name 'Structured Decision' and id '8290020c-0606-3950-9398-1cce967ad8ed'
