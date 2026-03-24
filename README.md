@@ -119,7 +119,7 @@ Our framework decomposes complex trading tasks into specialized roles. This ensu
 
 Clone this repository:
 ```bash
-git clone <your-github-repo-url>
+git clone https://github.com/fivemins/TradingAgents-CN.git
 cd TradingAgents-CN
 ```
 
@@ -241,5 +241,6 @@ Please reference our work if you find *TradingAgents* provides you with some hel
       url={https://arxiv.org/abs/2412.20138}, 
 }
 ```
+
 
 
