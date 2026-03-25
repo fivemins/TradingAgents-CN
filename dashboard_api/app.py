@@ -109,6 +109,11 @@ def build_index_response(frontend_dist: Path) -> FileResponse:
     return FileResponse(frontend_dist / "index.html", headers=INDEX_CACHE_HEADERS)
 
 
+def build_artifact_download_response(file_path: Path, artifact_name: str) -> FileResponse:
+    media_type = "text/plain; charset=utf-8" if artifact_name.endswith(".log") else None
+    return FileResponse(file_path, filename=artifact_name, media_type=media_type)
+
+
 def create_app(
     data_dir: str | Path | None = None,
     launcher: TaskLauncher | None = None,
@@ -366,7 +371,7 @@ def create_app(
             file_path = artifact_dir / artifact_name
         if not file_path.exists():
             raise HTTPException(status_code=404, detail="Artifact file is missing.")
-        return FileResponse(file_path, filename=artifact_name)
+        return build_artifact_download_response(file_path, artifact_name)
 
     @app.post("/api/overnight/scans", response_model=OvernightScanDetail, status_code=201)
     def create_overnight_scan(request: OvernightScanCreateRequest) -> OvernightScanDetail:
@@ -498,7 +503,7 @@ def create_app(
         file_path = Path(scan["artifact_dir"]) / artifact_name
         if not file_path.exists():
             raise HTTPException(status_code=404, detail="Artifact file is missing.")
-        return FileResponse(file_path, filename=artifact_name)
+        return build_artifact_download_response(file_path, artifact_name)
 
     @app.post("/api/overnight/reviews", response_model=OvernightReviewDetail, status_code=201)
     def create_overnight_review(
@@ -590,7 +595,7 @@ def create_app(
         file_path = Path(review["artifact_dir"]) / artifact_name
         if not file_path.exists():
             raise HTTPException(status_code=404, detail="Artifact file is missing.")
-        return FileResponse(file_path, filename=artifact_name)
+        return build_artifact_download_response(file_path, artifact_name)
 
     if settings.frontend_dist.exists():
 

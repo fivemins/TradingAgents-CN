@@ -56,6 +56,7 @@ Debate history:
             "history": investment_debate_state.get("history", ""),
             "bear_history": investment_debate_state.get("bear_history", ""),
             "bull_history": investment_debate_state.get("bull_history", ""),
+            "latest_speaker": "Judge",
             "current_response": response.content,
             "count": investment_debate_state["count"],
         }

@@ -5,7 +5,7 @@ import json
 import traceback
 from pathlib import Path
 
-from dashboard_api.runtime import append_event
+from dashboard_api.runtime import append_event, reset_event_log
 from dashboard_api.settings import get_settings
 from dashboard_api.store import OvernightReviewStore, utc_now
 from tradingagents.overnight.config import build_evaluation_config_payload, get_default_evaluation_config
@@ -32,6 +32,7 @@ def run_review(review_id: str) -> None:
     evaluation_config_json = artifact_dir / "evaluation_config.json"
 
     artifact_dir.mkdir(parents=True, exist_ok=True)
+    reset_event_log(events_log)
     append_event(events_log, "SYSTEM", "Overnight review runner started.")
     store.update_review(
         review_id,

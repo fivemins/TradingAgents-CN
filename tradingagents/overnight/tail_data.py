@@ -27,7 +27,14 @@ def _normalize_frame(frame: pd.DataFrame | None) -> pd.DataFrame:
     if frame is None or frame.empty:
         return pd.DataFrame()
     normalized = frame.copy()
-    normalized.columns = [str(column).strip() for column in normalized.columns]
+    if isinstance(normalized.columns, pd.MultiIndex):
+        normalized.columns = [
+            "_".join(str(part) for part in column if part not in ("", None)).strip("_")
+            for column in normalized.columns
+        ]
+    else:
+        normalized.columns = [str(column).strip() for column in normalized.columns]
+    normalized = normalized.loc[:, ~normalized.columns.duplicated()].copy()
     return normalized
 
 

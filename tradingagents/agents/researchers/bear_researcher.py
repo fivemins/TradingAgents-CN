@@ -53,7 +53,9 @@ Default to Simplified Chinese in your output. Keep ticker symbols, company Engli
             "history": history + "\n" + argument,
             "bear_history": bear_history + "\n" + argument,
             "bull_history": investment_debate_state.get("bull_history", ""),
+            "latest_speaker": "Bear",
             "current_response": argument,
+            "judge_decision": investment_debate_state.get("judge_decision", ""),
             "count": investment_debate_state["count"] + 1,
         }
 

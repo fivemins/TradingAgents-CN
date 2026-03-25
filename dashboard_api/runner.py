@@ -9,6 +9,7 @@ from dashboard_api.runtime import (
     append_event,
     build_structured_summary,
     detect_stage_update,
+    reset_event_log,
     serialize_final_state,
     summarize_message,
     write_report_files,
@@ -71,6 +72,7 @@ def run_task(task_id: str) -> None:
     artifact_dir.mkdir(parents=True, exist_ok=True)
     report_dir.mkdir(parents=True, exist_ok=True)
 
+    reset_event_log(events_log)
     task_json.write_text(json.dumps(task, indent=2), encoding="utf-8")
     append_event(events_log, "SYSTEM", "Runner started.")
     store.update_task(

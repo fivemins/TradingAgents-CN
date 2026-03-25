@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from pathlib import Path
+import re
 from typing import Any, Iterable
 
 import akshare as ak
@@ -62,12 +63,26 @@ def _get_series(frame: pd.DataFrame, column: str) -> pd.Series:
     return value
 
 
+def _normalize_column_key(value: str) -> str:
+    return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", "", str(value).strip().lower())
+
+
 def _find_column(frame: pd.DataFrame, keywords: Iterable[str]) -> str | None:
     lowered = [keyword.lower() for keyword in keywords]
+    normalized_keywords = {_normalize_column_key(keyword) for keyword in keywords}
+    substring_matches: list[str] = []
     for column in frame.columns:
         normalized = str(column).strip().lower()
-        if any(keyword in normalized for keyword in lowered):
+        normalized_key = _normalize_column_key(column)
+        if normalized_key in normalized_keywords:
             return str(column)
+        if any(keyword in normalized for keyword in lowered):
+            substring_matches.append(str(column))
+            continue
+        if any(keyword and keyword in normalized_key for keyword in normalized_keywords):
+            substring_matches.append(str(column))
+    if substring_matches:
+        return substring_matches[0]
     return None
 
 
@@ -117,6 +132,19 @@ def _standardize_history(frame: pd.DataFrame) -> pd.DataFrame:
     if normalized.empty:
         return normalized
 
+    adjusted_close_columns = [
+        column
+        for column in normalized.columns
+        if _normalize_column_key(column) in {"adjclose", "adjustedclose"}
+    ]
+    close_columns = [
+        column
+        for column in normalized.columns
+        if _normalize_column_key(column) == "close"
+    ]
+    if adjusted_close_columns and close_columns:
+        normalized = normalized.drop(columns=adjusted_close_columns)
+
     mapping_candidates = {
         "Date": ["日期", "交易日期", "date"],
         "Open": ["开盘", "open"],
@@ -136,6 +164,7 @@ def _standardize_history(frame: pd.DataFrame) -> pd.DataFrame:
             rename_map[column] = canonical
 
     normalized = normalized.rename(columns=rename_map)
+    normalized = normalized.loc[:, ~normalized.columns.duplicated()].copy()
     if "Date" in normalized.columns:
         normalized["Date"] = pd.to_datetime(_get_series(normalized, "Date"), errors="coerce").dt.strftime("%Y-%m-%d")
     for column in ["Open", "High", "Low", "Close", "Volume", "Turnover", "Amplitude", "TurnoverRate"]:

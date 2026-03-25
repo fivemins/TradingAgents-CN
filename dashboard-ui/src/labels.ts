@@ -176,6 +176,12 @@ export function getProgressMessageLabel(message: string | null | undefined): str
   if (!message) {
     return "";
   }
+  if (message.startsWith("Loading historical bars for replay universe")) {
+    return "\u6b63\u5728\u52a0\u8f7d\u56de\u653e\u80a1\u7968\u6c60\u7684\u5386\u53f2K\u7ebf\u6570\u636e\u3002";
+  }
+  if (message.startsWith("Replaying overnight scan for ")) {
+    return "\u6b63\u5728\u9010\u65e5\u56de\u653e\u5386\u53f2\u9694\u591c\u626b\u63cf\u3002";
+  }
   return PROGRESS_MESSAGE_LABELS[message] ?? message;
 }
 

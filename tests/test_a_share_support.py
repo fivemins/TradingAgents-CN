@@ -150,6 +150,41 @@ class AShareSupportTests(unittest.TestCase):
         self.assertIn("Close", history.columns)
         self.assertEqual(history.iloc[-1]["Date"], "2025-03-20")
 
+    def test_fallback_prefers_close_over_adj_close(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            frame = pd.DataFrame(
+                {
+                    "Adj Close": [10.3, 10.4],
+                    "Close": [10.4, 10.5],
+                    "High": [10.5, 10.6],
+                    "Low": [10.0, 10.2],
+                    "Open": [10.1, 10.3],
+                    "Volume": [100000, 120000],
+                },
+                index=pd.to_datetime(["2025-03-19", "2025-03-20"]),
+            )
+            frame.index.name = "Date"
+
+            with (
+                patch(
+                    "tradingagents.dataflows.a_share_support.get_config",
+                    return_value={"data_cache_dir": temp_dir},
+                ),
+                patch(
+                    "tradingagents.dataflows.a_share_support._safe_akshare_call",
+                    return_value=None,
+                ),
+                patch(
+                    "tradingagents.dataflows.a_share_support.call_with_proxy_fallback",
+                    side_effect=[frame, frame],
+                ),
+            ):
+                history = get_a_share_history(self.profile, "2025-03-01", "2025-03-21")
+
+        self.assertFalse(history.empty)
+        self.assertEqual(list(history.columns).count("Close"), 1)
+        self.assertEqual(history["Close"].tolist(), [10.4, 10.5])
+
 
 if __name__ == "__main__":
     unittest.main()

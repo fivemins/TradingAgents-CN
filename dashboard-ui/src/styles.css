@@ -1689,6 +1689,30 @@ button {
   font-size: 0.9rem;
 }
 
+.scan-chip .badge {
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 0.82rem;
+}
+
+.scan-chip-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.scan-chip-step {
+  color: #2455c2;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.scan-chip-progress {
+  white-space: normal;
+  line-height: 1.55;
+}
+
 .overnight-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1895,6 +1919,38 @@ button {
   margin: 4px 0 0;
   color: var(--muted);
   line-height: 1.65;
+}
+
+.overnight-progress-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.overnight-live-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(61, 125, 255, 0.1);
+  color: #2455c2;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.overnight-progress-copy {
+  margin-top: 0;
+}
+
+.overnight-stage-strip {
+  margin-top: 4px;
+}
+
+.overnight-progress-times {
+  margin-top: 2px;
 }
 
 .text-multiline {

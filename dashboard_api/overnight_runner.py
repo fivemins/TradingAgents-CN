@@ -5,7 +5,7 @@ import json
 import traceback
 from pathlib import Path
 
-from dashboard_api.runtime import append_event
+from dashboard_api.runtime import append_event, reset_event_log
 from dashboard_api.settings import get_settings
 from dashboard_api.store import OvernightCandidateStore, OvernightScanStore, utc_now
 from tradingagents.overnight.config import build_evaluation_config_payload, get_default_evaluation_config
@@ -36,6 +36,7 @@ def run_scan(scan_id: str) -> None:
 
     artifact_dir.mkdir(parents=True, exist_ok=True)
     qveris_auth = build_qveris_auth_summary()
+    reset_event_log(events_log)
     append_event(events_log, "SYSTEM", "Overnight scan runner started.")
     store.update_scan(
         scan_id,

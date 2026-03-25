@@ -33,7 +33,15 @@ class Propagator:
             "market_region": security_profile.market_region,
             "security_profile": security_profile.to_dict(),
             "investment_debate_state": InvestDebateState(
-                {"history": "", "current_response": "", "count": 0}
+                {
+                    "history": "",
+                    "bull_history": "",
+                    "bear_history": "",
+                    "latest_speaker": "",
+                    "current_response": "",
+                    "judge_decision": "",
+                    "count": 0,
+                }
             ),
             "risk_debate_state": RiskDebateState(
                 {

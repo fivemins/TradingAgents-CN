@@ -627,6 +627,21 @@ class DashboardApiTests(unittest.TestCase):
         self.assertEqual(detail_response.status_code, 200)
         self.assertEqual(detail_response.json()["scan_id"], payload["scan_id"])
 
+    def test_scan_events_log_download_uses_utf8_charset(self) -> None:
+        payload = self._create_scan("strict")
+        artifact_dir = Path(payload["artifact_dir"])
+        (artifact_dir / "events.log").write_text(
+            "2025-03-20 15:00:00 [SCAN] 正在加载 A 股动态股票池。\n",
+            encoding="utf-8",
+        )
+
+        response = self.client.get(f"/api/overnight/scans/{payload['scan_id']}/download/events.log")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/plain", response.headers["content-type"])
+        self.assertIn("charset=utf-8", response.headers["content-type"].lower())
+        self.assertIn("正在加载 A 股动态股票池。", response.text)
+
     def test_overnight_scan_detail_prefers_persisted_candidates(self) -> None:
         payload = self._create_scan("strict")
         scan_id = payload["scan_id"]

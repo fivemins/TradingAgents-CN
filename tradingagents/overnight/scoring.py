@@ -11,6 +11,13 @@ def _clamp(value: float, lower: float = 0.0, upper: float = 100.0) -> float:
     return max(lower, min(upper, value))
 
 
+def _get_numeric_series(frame: pd.DataFrame, column: str) -> pd.Series:
+    value = frame[column]
+    if isinstance(value, pd.DataFrame):
+        value = value.iloc[:, 0]
+    return pd.to_numeric(value, errors="coerce")
+
+
 def calc_quick_score(snapshot: OvernightSnapshot, benchmark_pct: float = 0.0) -> float:
     score = 0.0
     if 0.5 <= snapshot.pct <= 2.5:
@@ -69,8 +76,8 @@ def calc_trend_score(history: pd.DataFrame) -> float:
     if history is None or history.empty or "Close" not in history.columns:
         return 0.0
 
-    frame = history.copy()
-    frame["Close"] = pd.to_numeric(frame["Close"], errors="coerce")
+    frame = history.loc[:, ~history.columns.duplicated()].copy()
+    frame["Close"] = _get_numeric_series(frame, "Close")
     frame = frame.dropna(subset=["Close"])
     if len(frame) < 20:
         return 0.0

@@ -67,6 +67,11 @@ def append_event(log_path: Path, event_type: str, message: str) -> None:
         handle.write(f"{timestamp} [{event_type}] {message.strip()}\n")
 
 
+def reset_event_log(log_path: Path) -> None:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text("", encoding="utf-8")
+
+
 def normalize_value(value: Any) -> str:
     if isinstance(value, (dict, list)):
         return json.dumps(value, sort_keys=True, default=str)
@@ -140,14 +145,35 @@ def stage_message(key: str, value: Any) -> str:
     return label_map[key]
 
 
+def compact_message_text(content: str | None) -> str | None:
+    content = clean_text(content) or ""
+    content = " ".join(content.split())
+    if not content or content == "Continue":
+        return None
+
+    lowered = content.lower()
+    if lowered.startswith("# stock data for "):
+        return None
+    if lowered.startswith("## ") and " values from " in lowered:
+        return None
+
+    if content.startswith("#"):
+        heading = content.lstrip("#").strip()
+        for separator in (" ## ", " ### ", " --- ", " - "):
+            if separator in heading:
+                heading = heading.split(separator, 1)[0].strip()
+        return heading[:160] if heading else None
+
+    return content[:240]
+
+
 def summarize_message(chunk: dict[str, Any]) -> str | None:
     messages = chunk.get("messages") or []
     if not messages:
         return None
     last_message = messages[-1]
     content = extract_content_string(getattr(last_message, "content", str(last_message)))
-    content = " ".join(content.split())
-    return content[:500] if content else None
+    return compact_message_text(content)
 
 
 def serialize_final_state(final_state: dict[str, Any]) -> dict[str, Any]:
