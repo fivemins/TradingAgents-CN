@@ -16,6 +16,7 @@ import type {
   EvidenceGroup,
   FactorBlock,
   FactorSignal,
+  OvernightMode,
   StructuredDecision,
   TaskArtifactsResponse,
   TaskDetail,
@@ -314,9 +315,7 @@ export function TaskDetailPage() {
               <span>
                 扫描日期 {detail.source_context.trade_date ?? "--"} /{" "}
                 {detail.source_context.mode
-                  ? getOvernightModeLabel(
-                      detail.source_context.mode as "strict" | "research_fallback"
-                    )
+                  ? getOvernightModeLabel(detail.source_context.mode as OvernightMode)
                   : "隔夜扫描"}
               </span>
             </div>
@@ -423,9 +422,7 @@ export function TaskDetailPage() {
                   <span>扫描模式</span>
                   <strong>
                     {overnightContext.scan_mode
-                      ? getOvernightModeLabel(
-                          overnightContext.scan_mode as "strict" | "research_fallback"
-                        )
+                      ? getOvernightModeLabel(overnightContext.scan_mode as OvernightMode)
                       : "--"}
                   </strong>
                 </div>

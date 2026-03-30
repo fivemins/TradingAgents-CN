@@ -5,6 +5,12 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from tradingagents.overnight.models import (
+    normalize_overnight_mode,
+    normalize_review_return_basis,
+    normalize_tail_quality,
+)
+
 
 TaskStatus = Literal["queued", "running", "succeeded", "failed"]
 TaskStage = Literal[
@@ -20,8 +26,11 @@ TaskStage = Literal[
 ]
 AnalystValue = Literal["market", "social", "news", "fundamentals"]
 MarketRegion = Literal["cn_a", "us"]
-OvernightMode = Literal["strict", "research_fallback"]
-OvernightQuality = Literal["real", "proxy", "missing", "invalid"]
+OvernightMode = Literal["strict", "intraday_preview"]
+ReviewReturnBasis = Literal["next_open", "buy_1455_sell_next_day_1000"]
+OvernightQuality = Literal["real", "partial", "proxy", "missing", "invalid"]
+TrackedTradeStatus = Literal["pending_entry", "pending_exit", "validated", "unavailable"]
+TrackedTradeSourceBucket = Literal["formal", "watchlist", "total_score"]
 
 
 class OptionItem(BaseModel):
@@ -187,6 +196,11 @@ class OvernightScanCreateRequest(BaseModel):
         date.fromisoformat(value)
         return value
 
+    @field_validator("mode", mode="before")
+    @classmethod
+    def normalize_mode(cls, value: str) -> str:
+        return normalize_overnight_mode(str(value) if value is not None else None)
+
 
 class OvernightCandidate(BaseModel):
     ticker: str
@@ -213,6 +227,11 @@ class OvernightCandidate(BaseModel):
     next_open_return: float | None = None
     next_open_date: str | None = None
     scan_close_price: float | None = None
+
+    @field_validator("quality", mode="before")
+    @classmethod
+    def normalize_quality(cls, value: str) -> str:
+        return normalize_tail_quality(str(value) if value is not None else None)
 
 
 class StratifiedBreakdownBucket(BaseModel):
@@ -284,6 +303,98 @@ class OvernightScanArtifactsResponse(BaseModel):
     downloads: dict[str, str]
 
 
+class OvernightTrackedTradeCandidateSnapshot(BaseModel):
+    ticker: str
+    name: str
+    pool: str
+    quality: OvernightQuality
+    quick_score: float
+    total_score: float
+    factor_breakdown: dict[str, float] = Field(default_factory=dict)
+    tail_metrics: dict[str, Any] | None = None
+
+    @field_validator("quality", mode="before")
+    @classmethod
+    def normalize_quality(cls, value: str) -> str:
+        return normalize_tail_quality(str(value) if value is not None else None)
+
+
+class OvernightTrackedTradeCreateRequest(BaseModel):
+    trade_date: str
+    market_region: Literal["cn_a"] = "cn_a"
+    scan_id: str
+    scan_mode: OvernightMode
+    source_bucket: TrackedTradeSourceBucket
+    candidate: OvernightTrackedTradeCandidateSnapshot
+
+    @field_validator("trade_date")
+    @classmethod
+    def validate_trade_date(cls, value: str) -> str:
+        date.fromisoformat(value)
+        return value
+
+    @field_validator("scan_mode", mode="before")
+    @classmethod
+    def normalize_mode(cls, value: str) -> str:
+        return normalize_overnight_mode(str(value) if value is not None else None)
+
+
+class OvernightTrackedTrade(BaseModel):
+    trade_id: str
+    trade_date: str
+    market_region: Literal["cn_a"]
+    scan_id: str
+    scan_mode: OvernightMode
+    source_bucket: TrackedTradeSourceBucket
+    ticker: str
+    name: str
+    pool: str
+    quality: OvernightQuality
+    quick_score: float
+    total_score: float
+    factor_breakdown: dict[str, float]
+    tail_metrics: dict[str, Any] | None = None
+    confirmed_at: str
+    entry_target_time: str
+    entry_price: float | None = None
+    entry_time_used: str | None = None
+    exit_target_time: str
+    exit_trade_date: str | None = None
+    exit_price: float | None = None
+    exit_time_used: str | None = None
+    strategy_return: float | None = None
+    status: TrackedTradeStatus
+    last_error: str | None = None
+    last_checked_at: str | None = None
+    created_at: str
+    updated_at: str
+
+    @field_validator("scan_mode", mode="before")
+    @classmethod
+    def normalize_mode(cls, value: str) -> str:
+        return normalize_overnight_mode(str(value) if value is not None else None)
+
+    @field_validator("quality", mode="before")
+    @classmethod
+    def normalize_quality(cls, value: str) -> str:
+        return normalize_tail_quality(str(value) if value is not None else None)
+
+
+class OvernightTrackedTradeStats(BaseModel):
+    total_days: int
+    validated_days: int
+    pending_count: int
+    unavailable_count: int
+    avg_return: float | None = None
+    win_rate: float | None = None
+    cumulative_return: float | None = None
+
+
+class OvernightTrackedTradeListResponse(BaseModel):
+    items: list[OvernightTrackedTrade]
+    stats: OvernightTrackedTradeStats
+
+
 class OvernightReviewCreateRequest(BaseModel):
     end_trade_date: str
     market_region: Literal["cn_a"] = "cn_a"
@@ -301,7 +412,7 @@ class OvernightReviewSummary(BaseModel):
     market_region: Literal["cn_a"]
     window_days: int
     mode: Literal["strict"]
-    return_basis: Literal["next_open"]
+    return_basis: ReviewReturnBasis
     status: TaskStatus
     progress_message: str
     created_at: str

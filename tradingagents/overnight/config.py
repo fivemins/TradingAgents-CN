@@ -5,7 +5,7 @@ import hashlib
 import json
 from typing import Any
 
-from .models import OvernightMode, ScanParams
+from .models import OvernightMode, ReviewReturnBasis, ScanParams
 
 
 DEFAULT_EVALUATION_CONFIG_VERSION = "overnight_phase2_v1"
@@ -36,7 +36,7 @@ class OvernightEvaluationConfig:
     )
     review_window_days: int = 60
     review_mode: OvernightMode = "strict"
-    review_return_basis: str = "next_open"
+    review_return_basis: ReviewReturnBasis = "buy_1455_sell_next_day_1000"
     tail_policy: OvernightTailPolicy = field(default_factory=OvernightTailPolicy)
 
     def to_dict(self) -> dict[str, Any]:

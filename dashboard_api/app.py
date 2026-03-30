@@ -34,6 +34,9 @@ from dashboard_api.launcher import TaskLauncher
 from dashboard_api.readiness import collect_readiness
 from dashboard_api.runtime import REPORT_FILE_MAP, build_structured_summary
 from dashboard_api.schemas import (
+    OvernightTrackedTrade,
+    OvernightTrackedTradeCreateRequest,
+    OvernightTrackedTradeListResponse,
     OvernightScanArtifactsResponse,
     OvernightScanCreateRequest,
     OvernightScanDetail,
@@ -58,10 +61,15 @@ from dashboard_api.store import (
     OvernightCandidateStore,
     OvernightReviewStore,
     OvernightScanStore,
+    OvernightTrackedTradeStore,
     TaskStore,
     utc_now,
 )
 from tradingagents.market_utils import build_security_profile
+from tradingagents.overnight.tracked_trades import (
+    build_tracked_trade_stats,
+    refresh_tracked_trade,
+)
 from tradingagents.overnight.validation import validate_scan_candidates
 from tradingagents.text_cleaning import clean_source_name, clean_structure
 
@@ -123,10 +131,12 @@ def create_app(
     scan_store = OvernightScanStore(settings.db_path)
     review_store = OvernightReviewStore(settings.db_path)
     candidate_store = OvernightCandidateStore(settings.db_path)
+    tracked_trade_store = OvernightTrackedTradeStore(settings.db_path)
     task_store.initialize()
     scan_store.initialize()
     review_store.initialize()
     candidate_store.initialize()
+    tracked_trade_store.initialize()
     settings.tasks_dir.mkdir(parents=True, exist_ok=True)
     settings.overnight_scans_dir.mkdir(parents=True, exist_ok=True)
     settings.overnight_reviews_dir.mkdir(parents=True, exist_ok=True)
@@ -145,6 +155,7 @@ def create_app(
     app.state.scan_store = scan_store
     app.state.review_store = review_store
     app.state.candidate_store = candidate_store
+    app.state.tracked_trade_store = tracked_trade_store
     app.state.settings = settings
 
     app.add_middleware(
@@ -424,6 +435,23 @@ def create_app(
             raise HTTPException(status_code=404, detail="Overnight scan not found.")
         return build_scan_detail(scan, scan_store, candidate_store, task_store)
 
+    @app.delete("/api/overnight/scans/{scan_id}")
+    def delete_overnight_scan(scan_id: str) -> dict[str, bool]:
+        scan = scan_store.get_scan(scan_id)
+        if not scan:
+            raise HTTPException(status_code=404, detail="Overnight scan not found.")
+
+        if scan.get("status") in {"queued", "running"}:
+            scan = terminate_overnight_scan_record(scan_store, scan)
+
+        artifact_dir = Path(scan["artifact_dir"])
+        if artifact_dir.exists():
+            shutil.rmtree(artifact_dir)
+
+        candidate_store.delete_scan_candidates(scan_id)
+        scan_store.delete_scan(scan_id)
+        return {"ok": True}
+
     @app.post("/api/overnight/scans/{scan_id}/validate", response_model=OvernightScanDetail)
     def validate_overnight_scan(scan_id: str) -> OvernightScanDetail:
         scan = scan_store.get_scan(scan_id)
@@ -505,6 +533,87 @@ def create_app(
             raise HTTPException(status_code=404, detail="Artifact file is missing.")
         return build_artifact_download_response(file_path, artifact_name)
 
+    @app.post("/api/overnight/trades", response_model=OvernightTrackedTrade, status_code=201)
+    def create_overnight_tracked_trade(
+        request: OvernightTrackedTradeCreateRequest,
+    ) -> OvernightTrackedTrade:
+        scan = scan_store.get_scan(request.scan_id)
+        if not scan:
+            raise HTTPException(status_code=404, detail="Overnight scan not found.")
+        if scan.get("status") != "succeeded":
+            raise HTTPException(status_code=400, detail="Only completed scans can be tracked.")
+        if scan.get("trade_date") != request.trade_date:
+            raise HTTPException(status_code=400, detail="Tracked trade date must match the scan trade date.")
+        if scan.get("market_region") != request.market_region:
+            raise HTTPException(status_code=400, detail="Tracked trade market must match the scan market.")
+
+        candidate = request.candidate.model_dump()
+        now = utc_now()
+        try:
+            trade = tracked_trade_store.create_trade(
+                {
+                    "trade_id": uuid4().hex,
+                    "trade_date": scan["trade_date"],
+                    "market_region": scan["market_region"],
+                    "scan_id": scan["scan_id"],
+                    "scan_mode": scan["mode"],
+                    "source_bucket": request.source_bucket,
+                    "ticker": candidate["ticker"],
+                    "name": candidate["name"],
+                    "pool": candidate["pool"],
+                    "quality": candidate["quality"],
+                    "quick_score": candidate["quick_score"],
+                    "total_score": candidate["total_score"],
+                    "factor_breakdown": candidate.get("factor_breakdown") or {},
+                    "tail_metrics": candidate.get("tail_metrics"),
+                    "confirmed_at": now,
+                    "entry_target_time": "14:55",
+                    "exit_target_time": "10:00",
+                    "status": "pending_entry",
+                    "last_error": None,
+                    "last_checked_at": None,
+                    "created_at": now,
+                    "updated_at": now,
+                }
+            )
+        except ValueError as exc:
+            if str(exc) == "tracked_trade_already_exists":
+                raise HTTPException(
+                    status_code=409,
+                    detail="A tracked trade already exists for this trade date.",
+                ) from exc
+            raise
+        return build_tracked_trade_detail(trade)
+
+    @app.get("/api/overnight/trades", response_model=OvernightTrackedTradeListResponse)
+    def list_overnight_tracked_trades() -> OvernightTrackedTradeListResponse:
+        return build_tracked_trade_list_response(tracked_trade_store.list_trades())
+
+    @app.post("/api/overnight/trades/refresh-pending", response_model=OvernightTrackedTradeListResponse)
+    def refresh_pending_overnight_trades() -> OvernightTrackedTradeListResponse:
+        for trade in tracked_trade_store.list_refreshable():
+            updates = refresh_tracked_trade(
+                trade,
+                data_dir=settings.data_dir,
+            )
+            tracked_trade_store.update_trade(trade["trade_id"], **updates)
+        return build_tracked_trade_list_response(tracked_trade_store.list_trades())
+
+    @app.get("/api/overnight/trades/{trade_id}", response_model=OvernightTrackedTrade)
+    def get_overnight_tracked_trade(trade_id: str) -> OvernightTrackedTrade:
+        trade = tracked_trade_store.get_trade(trade_id)
+        if not trade:
+            raise HTTPException(status_code=404, detail="Tracked trade not found.")
+        return build_tracked_trade_detail(trade)
+
+    @app.delete("/api/overnight/trades/{trade_id}")
+    def delete_overnight_tracked_trade(trade_id: str) -> dict[str, bool]:
+        trade = tracked_trade_store.get_trade(trade_id)
+        if not trade:
+            raise HTTPException(status_code=404, detail="Tracked trade not found.")
+        tracked_trade_store.delete_trade(trade_id)
+        return {"ok": True}
+
     @app.post("/api/overnight/reviews", response_model=OvernightReviewDetail, status_code=201)
     def create_overnight_review(
         request: OvernightReviewCreateRequest,
@@ -519,7 +628,7 @@ def create_app(
                 **request.model_dump(),
                 "window_days": 60,
                 "mode": "strict",
-                "return_basis": "next_open",
+                "return_basis": "buy_1455_sell_next_day_1000",
             },
             artifact_dir=artifact_dir,
         )
@@ -562,6 +671,22 @@ def create_app(
         if not review:
             raise HTTPException(status_code=404, detail="Overnight review not found.")
         return build_review_detail(review, review_store)
+
+    @app.delete("/api/overnight/reviews/{review_id}")
+    def delete_overnight_review(review_id: str) -> dict[str, bool]:
+        review = review_store.get_review(review_id)
+        if not review:
+            raise HTTPException(status_code=404, detail="Overnight review not found.")
+
+        if review.get("status") in {"queued", "running"}:
+            review = terminate_overnight_review_record(review_store, review)
+
+        artifact_dir = Path(review["artifact_dir"])
+        if artifact_dir.exists():
+            shutil.rmtree(artifact_dir)
+
+        review_store.delete_review(review_id)
+        return {"ok": True}
 
     @app.get(
         "/api/overnight/reviews/{review_id}/artifacts",
@@ -669,6 +794,44 @@ def terminate_task_record(task_store: TaskStore, task: dict[str, Any]) -> dict[s
         if updated:
             return updated
     return task
+
+
+def terminate_overnight_scan_record(
+    scan_store: OvernightScanStore,
+    scan: dict[str, Any],
+) -> dict[str, Any]:
+    if scan.get("status") in {"queued", "running"}:
+        terminate_task_process(scan.get("pid"))
+        updated = scan_store.update_scan(
+            scan["scan_id"],
+            status="failed",
+            progress_message="Overnight scan terminated by user.",
+            error_message="Overnight scan terminated by user.",
+            finished_at=utc_now(),
+            pid=None,
+        )
+        if updated:
+            return updated
+    return scan
+
+
+def terminate_overnight_review_record(
+    review_store: OvernightReviewStore,
+    review: dict[str, Any],
+) -> dict[str, Any]:
+    if review.get("status") in {"queued", "running"}:
+        terminate_task_process(review.get("pid"))
+        updated = review_store.update_review(
+            review["review_id"],
+            status="failed",
+            progress_message="Overnight review terminated by user.",
+            error_message="Overnight review terminated by user.",
+            finished_at=utc_now(),
+            pid=None,
+        )
+        if updated:
+            return updated
+    return review
 
 
 def unlink_overnight_candidate_task(
@@ -818,6 +981,7 @@ def ensure_scan_compat(
     )
     update_fields: dict[str, Any] = {}
     for key in (
+        "mode",
         "summary_json",
         "market_message",
         "formal_count",
@@ -844,7 +1008,7 @@ def ensure_scan_compat(
 def ensure_review_compat(store: OvernightReviewStore, review: dict[str, Any]) -> dict[str, Any]:
     normalized = normalize_review_record(review)
     update_fields: dict[str, Any] = {}
-    for key in ("summary_json", "progress_message", "error_message"):
+    for key in ("return_basis", "summary_json", "progress_message", "error_message"):
         if values_differ(review.get(key), normalized.get(key)):
             update_fields[key] = normalized.get(key)
     if update_fields:
@@ -1167,6 +1331,21 @@ def build_scan_detail(
         "audit": artifact_payload.get("audit", {}),
     }
     return OvernightScanDetail(**detail_payload)
+
+
+def build_tracked_trade_detail(trade: dict[str, Any]) -> OvernightTrackedTrade:
+    payload = clean_structure(dict(trade))
+    return OvernightTrackedTrade(**payload)
+
+
+def build_tracked_trade_list_response(
+    trades: list[dict[str, Any]],
+) -> OvernightTrackedTradeListResponse:
+    normalized = [clean_structure(dict(trade)) for trade in trades]
+    return OvernightTrackedTradeListResponse(
+        items=[OvernightTrackedTrade(**trade) for trade in normalized],
+        stats=build_tracked_trade_stats(normalized),
+    )
 
 
 def build_review_summary(

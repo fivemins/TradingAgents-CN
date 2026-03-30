@@ -11,8 +11,11 @@ export type TaskStage =
   | "completed";
 export type AnalystValue = "market" | "social" | "news" | "fundamentals";
 export type MarketRegion = "cn_a" | "us";
-export type OvernightMode = "strict" | "research_fallback";
-export type OvernightQuality = "real" | "proxy" | "missing" | "invalid";
+export type OvernightMode = "strict" | "intraday_preview";
+export type ReviewReturnBasis = "next_open" | "buy_1455_sell_next_day_1000";
+export type OvernightQuality = "real" | "partial" | "proxy" | "missing" | "invalid";
+export type OvernightTrackedTradeStatus = "pending_entry" | "pending_exit" | "validated" | "unavailable";
+export type OvernightTrackedTradeSourceBucket = "formal" | "watchlist" | "total_score";
 
 export interface OptionItem {
   value: string;
@@ -384,15 +387,87 @@ export interface CreateOvernightScanRequest {
   mode: OvernightMode;
 }
 
+export interface OvernightTrackedTradeCandidateSnapshot {
+  ticker: string;
+  name: string;
+  pool: string;
+  quality: OvernightQuality;
+  quick_score: number;
+  total_score: number;
+  factor_breakdown: Record<string, number>;
+  tail_metrics?: TailMetricsSummary | null;
+}
+
+export interface CreateOvernightTrackedTradeRequest {
+  trade_date: string;
+  market_region: "cn_a";
+  scan_id: string;
+  scan_mode: OvernightMode;
+  source_bucket: OvernightTrackedTradeSourceBucket;
+  candidate: OvernightTrackedTradeCandidateSnapshot;
+}
+
+export interface OvernightTrackedTrade {
+  trade_id: string;
+  trade_date: string;
+  market_region: "cn_a";
+  scan_id: string;
+  scan_mode: OvernightMode;
+  source_bucket: OvernightTrackedTradeSourceBucket;
+  ticker: string;
+  name: string;
+  pool: string;
+  quality: OvernightQuality;
+  quick_score: number;
+  total_score: number;
+  factor_breakdown: Record<string, number>;
+  tail_metrics?: TailMetricsSummary | null;
+  confirmed_at: string;
+  entry_target_time: string;
+  entry_price?: number | null;
+  entry_time_used?: string | null;
+  exit_target_time: string;
+  exit_trade_date?: string | null;
+  exit_price?: number | null;
+  exit_time_used?: string | null;
+  strategy_return?: number | null;
+  status: OvernightTrackedTradeStatus;
+  last_error?: string | null;
+  last_checked_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OvernightTrackedTradeStats {
+  total_days: number;
+  validated_days: number;
+  pending_count: number;
+  unavailable_count: number;
+  avg_return?: number | null;
+  win_rate?: number | null;
+  cumulative_return?: number | null;
+}
+
+export interface OvernightTrackedTradeListResponse {
+  items: OvernightTrackedTrade[];
+  stats: OvernightTrackedTradeStats;
+}
+
 export interface OvernightReviewSummarySnapshot {
   end_trade_date: string;
   market_region: "cn_a";
   window_days: number;
   mode: "strict";
-  return_basis: "next_open";
+  return_basis: ReviewReturnBasis;
   candidate_count: number;
+  trade_count: number;
   days_evaluated: number;
   days_with_formal_picks: number;
+  days_with_trade: number;
+  avg_strategy_return: number | null;
+  median_strategy_return: number | null;
+  avg_daily_strategy_return: number | null;
+  avg_benchmark_return: number | null;
   avg_next_open_return: number | null;
   median_next_open_return: number | null;
   positive_pick_rate: number | null;
@@ -413,6 +488,10 @@ export interface OvernightReviewSummarySnapshot {
 
 export interface OvernightReviewExtrema {
   trade_date: string;
+  strategy_return?: number | null;
+  benchmark_return?: number | null;
+  excess_return?: number | null;
+  selected_ticker?: string | null;
   equal_weight_next_open_return: number | null;
   benchmark_next_open_return: number | null;
   avg_excess_return: number | null;
@@ -425,7 +504,7 @@ export interface OvernightReviewSummary {
   market_region: "cn_a";
   window_days: number;
   mode: "strict";
-  return_basis: "next_open";
+  return_basis: ReviewReturnBasis;
   status: TaskStatus;
   progress_message: string;
   created_at: string;
@@ -457,10 +536,27 @@ export interface OvernightReviewListResponse {
 
 export interface OvernightReviewDailyResult {
   trade_date: string;
+  trade_count?: number;
+  selected_ticker?: string | null;
+  selected_name?: string | null;
+  selected_pool?: string | null;
+  selected_quality?: OvernightQuality | null;
+  selected_total_score?: number | null;
   formal_count: number;
   watchlist_count: number;
   formal_tickers: string[];
   market_message: string;
+  entry_target_time?: string | null;
+  entry_time_used?: string | null;
+  entry_price?: number | null;
+  exit_target_time?: string | null;
+  exit_trade_date?: string | null;
+  exit_time_used?: string | null;
+  exit_price?: number | null;
+  strategy_return?: number | null;
+  benchmark_return?: number | null;
+  excess_return?: number | null;
+  counted_in_performance?: boolean;
   benchmark_next_open_return: number | null;
   equal_weight_next_open_return: number | null;
   avg_excess_return: number | null;
@@ -471,7 +567,7 @@ export interface OvernightReviewDailyResult {
 
 export interface OvernightReviewCandidateResult {
   trade_date: string;
-  category: "formal" | "watchlist";
+  category: "formal" | "watchlist" | "selected";
   ticker: string;
   name: string;
   quality: OvernightQuality;
@@ -480,12 +576,21 @@ export interface OvernightReviewCandidateResult {
   factor_breakdown: Record<string, number>;
   tail_metrics?: TailMetricsSummary | null;
   filter_reason?: string | null;
+  entry_target_time?: string | null;
+  entry_time_used?: string | null;
+  entry_price?: number | null;
+  exit_target_time?: string | null;
+  exit_time_used?: string | null;
+  exit_price?: number | null;
+  strategy_return?: number | null;
+  benchmark_return?: number | null;
   next_trade_date?: string | null;
   scan_close_price?: number | null;
   next_open_return?: number | null;
   benchmark_next_open_return?: number | null;
   excess_return?: number | null;
   counted_in_performance: boolean;
+  skipped_reason?: string | null;
 }
 
 export interface OvernightReviewArtifactsResponse {

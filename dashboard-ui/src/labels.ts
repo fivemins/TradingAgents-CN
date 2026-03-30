@@ -43,12 +43,13 @@ export const PROVIDER_LABELS: Record<string, string> = {
 };
 
 export const MODE_LABELS: Record<OvernightMode, string> = {
-  strict: "严格模式",
-  research_fallback: "研究回退"
+  strict: "收盘确认",
+  intraday_preview: "盘中预估"
 };
 
 export const QUALITY_LABELS: Record<OvernightQuality, string> = {
   real: "真实尾盘",
+  partial: "部分尾盘",
   proxy: "代理尾盘",
   missing: "缺失",
   invalid: "无效"

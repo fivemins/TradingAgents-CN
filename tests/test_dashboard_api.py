@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 
 from dashboard_api.app import create_app
 from dashboard_api.repair import repair_dashboard_data
-from dashboard_api.store import OvernightCandidateStore, OvernightScanStore
+from dashboard_api.store import OvernightCandidateStore, OvernightScanStore, OvernightTrackedTradeStore
 
 
 class DummyLauncher:
@@ -128,6 +128,53 @@ class DashboardApiTests(unittest.TestCase):
             json={
                 "end_trade_date": end_trade_date,
                 "market_region": "cn_a",
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        return response.json()
+
+    def _mark_scan_succeeded(self, scan_id: str) -> None:
+        scan_store = OvernightScanStore(self.app.state.settings.db_path)
+        scan_store.initialize()
+        scan_store.update_scan(
+            scan_id,
+            status="succeeded",
+            progress_message="Overnight scan completed successfully.",
+            market_message="市场偏强，允许扩大推荐池。",
+            formal_count=1,
+            watchlist_count=1,
+            summary_json={
+                "trade_date": "2025-03-20",
+                "market_region": "cn_a",
+                "mode": "strict",
+                "market_message": "市场偏强，允许扩大推荐池。",
+                "formal_count": 1,
+                "watchlist_count": 1,
+                "provider_route": {"tail": "frozen-minute"},
+            },
+        )
+
+    def _create_tracked_trade(self, source_bucket: str = "formal") -> dict:
+        scan = self._create_scan("strict")
+        self._mark_scan_succeeded(scan["scan_id"])
+        response = self.client.post(
+            "/api/overnight/trades",
+            json={
+                "trade_date": "2025-03-20",
+                "market_region": "cn_a",
+                "scan_id": scan["scan_id"],
+                "scan_mode": "strict",
+                "source_bucket": source_bucket,
+                "candidate": {
+                    "ticker": "600519.SS",
+                    "name": "贵州茅台",
+                    "pool": "主板",
+                    "quality": "real",
+                    "quick_score": 78.5,
+                    "total_score": 83.2,
+                    "factor_breakdown": {"trend_strength": 22.0},
+                    "tail_metrics": {"quality": "real", "tail_return_pct": 0.82},
+                },
             },
         )
         self.assertEqual(response.status_code, 201)
@@ -255,6 +302,152 @@ class DashboardApiTests(unittest.TestCase):
         candidate = candidate_store.get_candidate(scan_id, "600519.SS")
         self.assertIsNotNone(candidate)
         self.assertIsNone(candidate["linked_task_id"])
+
+    def test_delete_overnight_scan_removes_row_candidates_and_artifacts(self) -> None:
+        payload = self._create_scan("strict")
+        scan_id = payload["scan_id"]
+        artifact_dir = Path(payload["artifact_dir"])
+        self._persist_scan_candidates(scan_id)
+        (artifact_dir / "events.log").write_text("scan log", encoding="utf-8")
+
+        with patch("dashboard_api.app.terminate_task_process") as terminate_process:
+            response = self.client.delete(f"/api/overnight/scans/{scan_id}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"ok": True})
+        terminate_process.assert_called_once_with(4343)
+        self.assertFalse(artifact_dir.exists())
+        missing = self.client.get(f"/api/overnight/scans/{scan_id}")
+        self.assertEqual(missing.status_code, 404)
+
+        candidate_store = OvernightCandidateStore(self.app.state.settings.db_path)
+        candidate_store.initialize()
+        self.assertEqual(candidate_store.list_candidates(scan_id), [])
+
+    def test_delete_overnight_review_removes_row_and_artifacts(self) -> None:
+        payload = self._create_review("2025-03-31")
+        review_id = payload["review_id"]
+        artifact_dir = Path(payload["artifact_dir"])
+        (artifact_dir / "events.log").write_text("review log", encoding="utf-8")
+
+        with patch("dashboard_api.app.terminate_task_process") as terminate_process:
+            response = self.client.delete(f"/api/overnight/reviews/{review_id}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"ok": True})
+        terminate_process.assert_called_once_with(4444)
+        self.assertFalse(artifact_dir.exists())
+        missing = self.client.get(f"/api/overnight/reviews/{review_id}")
+        self.assertEqual(missing.status_code, 404)
+
+    def test_create_tracked_trade_conflicts_on_duplicate_and_can_recreate_after_delete(self) -> None:
+        payload = self._create_tracked_trade("total_score")
+        self.assertEqual(payload["source_bucket"], "total_score")
+        self.assertEqual(payload["status"], "pending_entry")
+        self.assertEqual(payload["scan_mode"], "strict")
+
+        duplicate_scan = self._create_scan("strict")
+        self._mark_scan_succeeded(duplicate_scan["scan_id"])
+        duplicate = self.client.post(
+            "/api/overnight/trades",
+            json={
+                "trade_date": "2025-03-20",
+                "market_region": "cn_a",
+                "scan_id": duplicate_scan["scan_id"],
+                "scan_mode": "strict",
+                "source_bucket": "watchlist",
+                "candidate": {
+                    "ticker": "300750.SZ",
+                    "name": "宁德时代",
+                    "pool": "创业板",
+                    "quality": "proxy",
+                    "quick_score": 68.1,
+                    "total_score": 64.3,
+                    "factor_breakdown": {"trend_strength": 18.0},
+                    "tail_metrics": {"quality": "proxy", "tail_return_pct": 0.32},
+                },
+            },
+        )
+        self.assertEqual(duplicate.status_code, 409)
+
+        delete_response = self.client.delete(f"/api/overnight/trades/{payload['trade_id']}")
+        self.assertEqual(delete_response.status_code, 200)
+
+        recreated = self.client.post(
+            "/api/overnight/trades",
+            json={
+                "trade_date": "2025-03-20",
+                "market_region": "cn_a",
+                "scan_id": duplicate_scan["scan_id"],
+                "scan_mode": "strict",
+                "source_bucket": "watchlist",
+                "candidate": {
+                    "ticker": "300750.SZ",
+                    "name": "宁德时代",
+                    "pool": "创业板",
+                    "quality": "proxy",
+                    "quick_score": 68.1,
+                    "total_score": 64.3,
+                    "factor_breakdown": {"trend_strength": 18.0},
+                    "tail_metrics": {"quality": "proxy", "tail_return_pct": 0.32},
+                },
+            },
+        )
+        self.assertEqual(recreated.status_code, 201)
+        self.assertEqual(recreated.json()["source_bucket"], "watchlist")
+
+    def test_refresh_pending_tracked_trades_updates_status_and_stats(self) -> None:
+        payload = self._create_tracked_trade("formal")
+
+        with patch(
+            "dashboard_api.app.refresh_tracked_trade",
+            return_value={
+                "entry_target_time": "14:55",
+                "entry_price": 100.0,
+                "entry_time_used": "14:55",
+                "exit_target_time": "10:00",
+                "exit_trade_date": "2025-03-21",
+                "exit_price": 103.0,
+                "exit_time_used": "10:00",
+                "strategy_return": 3.0,
+                "status": "validated",
+                "last_error": None,
+                "last_checked_at": "2025-03-21T02:01:00+00:00",
+                "updated_at": "2025-03-21T02:01:00+00:00",
+            },
+        ):
+            response = self.client.post("/api/overnight/trades/refresh-pending")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["stats"]["total_days"], 1)
+        self.assertEqual(body["stats"]["validated_days"], 1)
+        self.assertEqual(body["stats"]["avg_return"], 3.0)
+        self.assertEqual(body["stats"]["win_rate"], 1.0)
+        self.assertEqual(body["stats"]["cumulative_return"], 3.0)
+        self.assertEqual(body["items"][0]["status"], "validated")
+        self.assertEqual(body["items"][0]["strategy_return"], 3.0)
+
+        detail = self.client.get(f"/api/overnight/trades/{payload['trade_id']}")
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(detail.json()["exit_trade_date"], "2025-03-21")
+
+    def test_delete_scan_does_not_delete_tracked_trade(self) -> None:
+        payload = self._create_tracked_trade("formal")
+        scan_id = payload["scan_id"]
+
+        response = self.client.delete(f"/api/overnight/scans/{scan_id}")
+        self.assertEqual(response.status_code, 200)
+
+        trades = self.client.get("/api/overnight/trades")
+        self.assertEqual(trades.status_code, 200)
+        self.assertEqual(len(trades.json()["items"]), 1)
+        self.assertEqual(trades.json()["items"][0]["trade_id"], payload["trade_id"])
+
+        store = OvernightTrackedTradeStore(self.app.state.settings.db_path)
+        store.initialize()
+        persisted = store.get_trade(payload["trade_id"])
+        self.assertIsNotNone(persisted)
 
     def test_task_source_context_can_be_attached_without_changing_request_body(self) -> None:
         payload = self._create_task(
@@ -627,6 +820,38 @@ class DashboardApiTests(unittest.TestCase):
         self.assertEqual(detail_response.status_code, 200)
         self.assertEqual(detail_response.json()["scan_id"], payload["scan_id"])
 
+    def test_create_overnight_scan_normalizes_legacy_mode_alias(self) -> None:
+        payload = self._create_scan("research_fallback")
+        self.assertEqual(payload["mode"], "intraday_preview")
+        self.assertEqual(len(self.launcher.launched_scans), 1)
+
+        stored = self.app.state.scan_store.get_scan(payload["scan_id"])
+        self.assertIsNotNone(stored)
+        self.assertEqual(stored["mode"], "intraday_preview")
+
+    def test_legacy_scan_mode_is_normalized_and_persisted_on_detail_read(self) -> None:
+        payload = self._create_scan("strict")
+        scan_id = payload["scan_id"]
+        scan_store = self.app.state.scan_store
+        updated = scan_store.update_scan(
+            scan_id,
+            mode="research_fallback",
+            status="succeeded",
+            summary_json={"mode": "research_fallback"},
+        )
+        self.assertIsNotNone(updated)
+
+        response = self.client.get(f"/api/overnight/scans/{scan_id}")
+        self.assertEqual(response.status_code, 200)
+        detail = response.json()
+        self.assertEqual(detail["mode"], "intraday_preview")
+        self.assertEqual(detail["summary_snapshot"]["mode"], "intraday_preview")
+
+        persisted = scan_store.get_scan(scan_id)
+        self.assertIsNotNone(persisted)
+        self.assertEqual(persisted["mode"], "intraday_preview")
+        self.assertEqual(persisted["summary_json"]["mode"], "intraday_preview")
+
     def test_scan_events_log_download_uses_utf8_charset(self) -> None:
         payload = self._create_scan("strict")
         artifact_dir = Path(payload["artifact_dir"])
@@ -904,6 +1129,7 @@ class DashboardApiTests(unittest.TestCase):
 
     def test_overnight_scan_artifacts_endpoint_reads_saved_files(self) -> None:
         payload = self._create_scan("research_fallback")
+        self.assertEqual(payload["mode"], "intraday_preview")
         scan_id = payload["scan_id"]
         artifact_dir = Path(payload["artifact_dir"])
         store = OvernightScanStore(self.app.state.settings.db_path)
@@ -1070,6 +1296,7 @@ class DashboardApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         artifact_payload = response.json()
         self.assertEqual(artifact_payload["summary"]["formal_count"], 1)
+        self.assertEqual(artifact_payload["summary"]["mode"], "intraday_preview")
         self.assertEqual(len(artifact_payload["preliminary_candidates"]), 1)
         self.assertEqual(
             artifact_payload["preliminary_candidates"][0]["ticker"],
@@ -1095,7 +1322,7 @@ class DashboardApiTests(unittest.TestCase):
         self.assertEqual(payload["market_region"], "cn_a")
         self.assertEqual(payload["window_days"], 60)
         self.assertEqual(payload["mode"], "strict")
-        self.assertEqual(payload["return_basis"], "next_open")
+        self.assertEqual(payload["return_basis"], "buy_1455_sell_next_day_1000")
         self.assertIn("data_quality", payload)
         self.assertIn("provider_route", payload)
         self.assertEqual(len(self.launcher.launched_reviews), 1)
@@ -1204,6 +1431,11 @@ class DashboardApiTests(unittest.TestCase):
         response = self.client.get(f"/api/overnight/reviews/{review_id}/artifacts")
         self.assertEqual(response.status_code, 200)
         artifact_payload = response.json()
+        self.assertEqual(artifact_payload["summary"]["return_basis"], "next_open")
+        self.assertEqual(artifact_payload["summary"]["trade_count"], 8)
+        self.assertEqual(artifact_payload["summary"]["days_with_trade"], 11)
+        self.assertEqual(artifact_payload["summary"]["avg_strategy_return"], 0.83)
+        self.assertEqual(artifact_payload["summary"]["avg_benchmark_return"], 0.11)
         self.assertEqual(artifact_payload["summary"]["days_with_formal_picks"], 11)
         self.assertEqual(len(artifact_payload["daily_results"]), 1)
         self.assertEqual(len(artifact_payload["candidate_results"]), 1)
@@ -1303,6 +1535,10 @@ class DashboardApiTests(unittest.TestCase):
         response = self.client.get(f"/api/overnight/reviews/{payload['review_id']}")
         self.assertEqual(response.status_code, 200)
         detail = response.json()
+        self.assertEqual(detail["return_basis"], "next_open")
+        self.assertEqual(detail["summary_snapshot"]["trade_count"], 6)
+        self.assertEqual(detail["summary_snapshot"]["days_with_trade"], 12)
+        self.assertEqual(detail["summary_snapshot"]["avg_strategy_return"], 0.51)
         self.assertEqual(detail["evaluation_config_hash"], "hash-phase2")
         self.assertEqual(detail["regime_breakdown"][0]["group"], "normal")
         self.assertEqual(detail["pool_breakdown"][0]["group"], "main")

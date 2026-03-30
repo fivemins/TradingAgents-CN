@@ -6,8 +6,9 @@ from typing import Any, Literal
 from tradingagents.market_utils import SecurityProfile
 
 
-OvernightMode = Literal["strict", "research_fallback"]
-TailQuality = Literal["real", "proxy", "missing", "invalid"]
+OvernightMode = Literal["strict", "intraday_preview"]
+ReviewReturnBasis = Literal["next_open", "buy_1455_sell_next_day_1000"]
+TailQuality = Literal["real", "partial", "proxy", "missing", "invalid"]
 PoolType = Literal["main", "gem", "star", "other"]
 SelectionStage = Literal["preliminary", "scored", "formal", "watchlist", "rejected"]
 
@@ -124,3 +125,26 @@ class Candidate:
     @property
     def quality(self) -> TailQuality:
         return self.tail_metrics.quality if self.tail_metrics else "missing"
+
+
+def normalize_overnight_mode(value: str | None, default: OvernightMode = "strict") -> OvernightMode:
+    if value == "research_fallback":
+        return "intraday_preview"
+    if value in {"strict", "intraday_preview"}:
+        return value
+    return default
+
+
+def normalize_review_return_basis(
+    value: str | None,
+    default: ReviewReturnBasis = "buy_1455_sell_next_day_1000",
+) -> ReviewReturnBasis:
+    if value in {"next_open", "buy_1455_sell_next_day_1000"}:
+        return value
+    return default
+
+
+def normalize_tail_quality(value: str | None, default: TailQuality = "missing") -> TailQuality:
+    if value in {"real", "partial", "proxy", "missing", "invalid"}:
+        return value
+    return default

@@ -7,8 +7,9 @@ import { StatusBadge } from "../components/StatusBadge";
 import { TaskTable } from "../components/TaskTable";
 import { getProgressMessageLabel } from "../labels";
 import type {
-  OvernightReviewSummary,
   OvernightScanSummary,
+  OvernightTrackedTrade,
+  OvernightTrackedTradeListResponse,
   SystemReadinessResponse,
   TaskListResponse,
 } from "../types";
@@ -16,7 +17,8 @@ import type {
 interface DashboardData {
   tasks: TaskListResponse | null;
   latestScan: OvernightScanSummary | null;
-  latestReview: OvernightReviewSummary | null;
+  latestTrackedTrade: OvernightTrackedTrade | null;
+  trackedTrades: OvernightTrackedTradeListResponse | null;
   latestValidatedScan: OvernightScanSummary | null;
   readiness: SystemReadinessResponse | null;
 }
@@ -25,7 +27,8 @@ function useDashboardPolling(intervalMs: number) {
   const [data, setData] = useState<DashboardData>({
     tasks: null,
     latestScan: null,
-    latestReview: null,
+    latestTrackedTrade: null,
+    trackedTrades: null,
     latestValidatedScan: null,
     readiness: null,
   });
@@ -36,14 +39,14 @@ function useDashboardPolling(intervalMs: number) {
 
     const load = async () => {
       try {
-        const [tasks, scans, reviews] = await Promise.all([
+        const [tasks, scans, trackedTrades] = await Promise.all([
           dashboardApi.getTasks(),
           dashboardApi.getOvernightScans(),
-          dashboardApi.getOvernightReviews(),
+          dashboardApi.getOvernightTrackedTrades(),
         ]);
         const readiness = await dashboardApi.getSystemReadiness().catch(() => null);
         const latestScan = scans.items[0] ?? null;
-        const latestReview = reviews.items[0] ?? null;
+        const latestTrackedTrade = trackedTrades.items[0] ?? null;
         const latestValidatedScan =
           scans.items.find(
             (item) =>
@@ -53,7 +56,14 @@ function useDashboardPolling(intervalMs: number) {
           ) ?? null;
 
         if (!cancelled) {
-          setData({ tasks, latestScan, latestReview, latestValidatedScan, readiness });
+          setData({
+            tasks,
+            latestScan,
+            latestTrackedTrade,
+            trackedTrades,
+            latestValidatedScan,
+            readiness,
+          });
           setError("");
         }
       } catch (err) {
@@ -92,9 +102,8 @@ export function DashboardPage() {
     failed: 0,
   };
   const latestTasks = data.tasks?.items.slice(0, 5) ?? [];
-  const latestDecisions =
-    data.tasks?.items.filter((task) => task.decision).slice(0, 3) ?? [];
-  const latestReviewSummary = data.latestReview?.summary_snapshot;
+  const latestDecisions = data.tasks?.items.filter((task) => task.decision).slice(0, 3) ?? [];
+  const trackedTradeStats = data.trackedTrades?.stats ?? null;
 
   return (
     <div className="page-grid">
@@ -108,8 +117,8 @@ export function DashboardPage() {
             仪表盘
           </h2>
           <p className="hero-copy">
-            这里会统一展示单股深度分析、隔夜扫描结果、次日开盘回填，以及近 60
-            个交易日的历史验证表现。
+            这里统一展示单股深度分析、隔夜扫描结果、次日开盘回填，以及从现在开始按日累计的
+            14:55 买入 / 次日 10:00 卖出跟踪表现。
           </p>
         </div>
         <div className="hero-actions">
@@ -172,7 +181,7 @@ export function DashboardPage() {
         <div className="panel-header">
           <div>
             <p className="eyebrow">隔夜推荐</p>
-            <h3>扫描、真实回填与历史验证</h3>
+            <h3>扫描、真实回填与每日跟踪</h3>
           </div>
           <Link className="table-link" to="/overnight">
             进入隔夜推荐页
@@ -222,7 +231,7 @@ export function DashboardPage() {
 
           <article className="overnight-highlight-card">
             <div className="decision-head">
-              <strong>上一条实际回填结果</strong>
+              <strong>上一条真实回填结果</strong>
               <span className="analysis-badge">
                 {data.latestValidatedScan ? "已回填" : "暂无"}
               </span>
@@ -267,49 +276,54 @@ export function DashboardPage() {
                 </div>
               </div>
             ) : (
-              <div className="empty-state compact-empty">
-                当前还没有已完成回填的扫描结果。
-              </div>
+              <div className="empty-state compact-empty">当前还没有已完成回填的扫描结果。</div>
             )}
           </article>
 
           <article className="overnight-highlight-card">
-            <OvernightExecutionStatus
-              title="最新历史验证状态"
-              kind="review"
-              status={data.latestReview?.status}
-              progressMessage={data.latestReview?.progress_message}
-              compact
-            />
-            {latestReviewSummary ? (
+            <div className="decision-head">
+              <strong>最新每日跟踪摘要</strong>
+              <span className="analysis-badge">
+                {data.latestTrackedTrade ? "已累计" : "暂无"}
+              </span>
+            </div>
+            {trackedTradeStats ? (
               <div className="analysis-estimate-list">
                 <div className="analysis-estimate-row">
-                  <span>截止日期</span>
-                  <strong>{data.latestReview?.end_trade_date}</strong>
+                  <span>记录天数</span>
+                  <strong>{trackedTradeStats.total_days}</strong>
                 </div>
                 <div className="analysis-estimate-row">
-                  <span>回看窗口</span>
-                  <strong>{latestReviewSummary.window_days} 交易日</strong>
+                  <span>已验证天数</span>
+                  <strong>{trackedTradeStats.validated_days}</strong>
                 </div>
                 <div className="analysis-estimate-row">
-                  <span>有推荐的交易日数</span>
-                  <strong>{latestReviewSummary.days_with_formal_picks}</strong>
+                  <span>待验证</span>
+                  <strong>{trackedTradeStats.pending_count}</strong>
                 </div>
                 <div className="analysis-estimate-row">
-                  <span>平均次日开盘收益</span>
-                  <strong>{formatPercent(latestReviewSummary.avg_next_open_return)}</strong>
+                  <span>平均收益</span>
+                  <strong>{formatPercent(trackedTradeStats.avg_return)}</strong>
                 </div>
                 <div className="analysis-estimate-row">
-                  <span>正收益命中率</span>
-                  <strong>{formatHitRate(latestReviewSummary.positive_pick_rate)}</strong>
+                  <span>胜率</span>
+                  <strong>{formatHitRate(trackedTradeStats.win_rate)}</strong>
                 </div>
                 <div className="analysis-estimate-row">
-                  <span>平均超额收益</span>
-                  <strong>{formatPercent(latestReviewSummary.avg_excess_return)}</strong>
+                  <span>累计收益</span>
+                  <strong>{formatPercent(trackedTradeStats.cumulative_return)}</strong>
+                </div>
+                <div className="analysis-estimate-row">
+                  <span>最新记录</span>
+                  <strong className="notranslate text-multiline" translate="no" lang="en">
+                    {data.latestTrackedTrade
+                      ? `${data.latestTrackedTrade.trade_date} / ${data.latestTrackedTrade.ticker}`
+                      : "--"}
+                  </strong>
                 </div>
               </div>
             ) : (
-              <div className="empty-state compact-empty">还没有历史验证记录。</div>
+              <div className="empty-state compact-empty">还没有每日跟踪记录。</div>
             )}
           </article>
         </div>

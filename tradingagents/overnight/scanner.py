@@ -14,7 +14,7 @@ from .config import (
 )
 from .filters import check_buy_filters, load_risk_stocks
 from .market_regime import evaluate_market_regime, load_index_snapshot
-from .models import Candidate, OvernightMode, TailMetrics
+from .models import Candidate, OvernightMode, TailMetrics, normalize_overnight_mode
 from .scoring import (
     calc_quick_score,
     calculate_total_score,
@@ -37,6 +37,18 @@ ProgressCallback = Callable[[str], None]
 
 def _today() -> str:
     return datetime.now().strftime("%Y-%m-%d")
+
+
+def _allowed_formal_qualities(mode: OvernightMode) -> set[str]:
+    if mode == "intraday_preview":
+        return {"real", "partial", "proxy"}
+    return {"real"}
+
+
+def _allowed_watchlist_qualities(mode: OvernightMode) -> set[str]:
+    if mode == "intraday_preview":
+        return {"real", "partial", "proxy"}
+    return {"real", "proxy"}
 
 
 def _summarize_tail_route(tails: dict[str, TailMetrics]) -> str:
@@ -124,6 +136,7 @@ def run_overnight_scan(
     progress: ProgressCallback | None = None,
     evaluation_config: OvernightEvaluationConfig | None = None,
 ) -> dict:
+    mode = normalize_overnight_mode(mode)
     evaluation_config = evaluation_config or get_default_evaluation_config()
     params = evaluation_config.live_scan_params
     evaluation_payload = build_evaluation_config_payload(evaluation_config)
@@ -273,10 +286,13 @@ def run_overnight_scan(
     if regime.formal_limit_cap is not None:
         formal_limit = min(formal_limit, regime.formal_limit_cap)
 
+    formal_quality_allowlist = _allowed_formal_qualities(mode)
+    watchlist_quality_allowlist = _allowed_watchlist_qualities(mode)
+
     formal_recommendations = [
         item
         for item in scored
-        if item.total_score >= formal_threshold and item.has_real_tail
+        if item.total_score >= formal_threshold and item.quality in formal_quality_allowlist
     ][:formal_limit]
     for candidate in formal_recommendations:
         candidate.selection_stage = "formal"
@@ -288,7 +304,7 @@ def run_overnight_scan(
         for item in scored
         if item.snapshot.code not in selected_codes
         and item.total_score >= watch_threshold
-        and item.quality in {"real", "proxy"}
+        and item.quality in watchlist_quality_allowlist
     ]
     watchlist = watchlist_pool[: params.watchlist_max_total]
     watchlist_codes = {item.snapshot.code for item in watchlist}
@@ -304,7 +320,7 @@ def run_overnight_scan(
         if code in watchlist_pool_codes:
             candidate.rejected_reason = "watchlist_capacity_trim"
             candidate.excluded_from_final = "watchlist_capacity_trim"
-        elif candidate.quality not in {"real", "proxy"}:
+        elif candidate.quality not in watchlist_quality_allowlist:
             candidate.rejected_reason = "tail_quality_ineligible"
             candidate.excluded_from_final = "tail_quality_ineligible"
         elif candidate.total_score < watch_threshold:
@@ -324,12 +340,17 @@ def run_overnight_scan(
 
     data_quality_status = "ok"
     data_quality_message = "Strict scan completed with live spot and minute routing."
-    if mode == "research_fallback" and quality_counts.get("proxy", 0) > 0:
-        data_quality_status = "research_fallback"
-        data_quality_message = "Research fallback introduced proxy tail data for watchlist candidates."
+    if mode == "intraday_preview":
+        data_quality_status = "intraday_preview"
+        data_quality_message = (
+            "Intraday preview completed with live intraday data and may include partial or proxy tail signals."
+        )
     elif mode == "strict" and quality_counts.get("missing", 0) > 0:
         data_quality_status = "incomplete"
         data_quality_message = "Strict scan could not obtain real tail data for part of the candidate set."
+    elif mode == "strict" and quality_counts.get("invalid", 0) > 0:
+        data_quality_status = "incomplete"
+        data_quality_message = "Strict scan could not confirm a complete tail window for part of the candidate set."
     if qveris_routes:
         data_quality_message += " QVeris fallback was used for live market data."
     if "index_daily_fallback" in bias_flags:
@@ -354,8 +375,10 @@ def run_overnight_scan(
             "status": data_quality_status,
             "message": data_quality_message,
             "real_tail_loaded": sum(1 for item in tails.values() if item.quality == "real"),
+            "partial_tail_loaded": sum(1 for item in tails.values() if item.quality == "partial"),
             "proxy_tail_loaded": sum(1 for item in tails.values() if item.quality == "proxy"),
-            "missing_tail": sum(1 for item in tails.values() if item.quality in {"missing", "invalid"}),
+            "missing_tail": sum(1 for item in tails.values() if item.quality == "missing"),
+            "invalid_tail": sum(1 for item in tails.values() if item.quality == "invalid"),
         },
         "provider_route": {
             "spot": spot_route,
@@ -378,7 +401,9 @@ def run_overnight_scan(
         "history_requested": len(history_requested_codes),
         "history_loaded": len(histories),
         "tail_requested": len(tail_requested_codes),
-        "tail_loaded": sum(1 for item in tails.values() if item.quality == "real"),
+        "tail_loaded": sum(1 for item in tails.values() if item.quality in {"real", "partial"}),
+        "tail_real": sum(1 for item in tails.values() if item.quality == "real"),
+        "tail_partial": sum(1 for item in tails.values() if item.quality == "partial"),
         "tail_proxy": sum(1 for item in tails.values() if item.quality == "proxy"),
         "formal_threshold": formal_threshold,
         "watchlist_threshold": watch_threshold,

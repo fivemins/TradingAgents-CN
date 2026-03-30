@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 import json
 import traceback
 from pathlib import Path
@@ -56,9 +57,13 @@ def run_review(review_id: str) -> None:
         ),
         encoding="utf-8",
     )
+    active_evaluation_config = replace(
+        get_default_evaluation_config(),
+        review_return_basis=review["return_basis"],
+    )
     evaluation_config_json.write_text(
         json.dumps(
-            build_evaluation_config_payload(get_default_evaluation_config()),
+            build_evaluation_config_payload(active_evaluation_config),
             indent=2,
             ensure_ascii=False,
         ),
@@ -76,6 +81,8 @@ def run_review(review_id: str) -> None:
             progress=on_progress,
             window_days=int(review["window_days"]),
             mode=review["mode"],
+            return_basis=review["return_basis"],
+            evaluation_config=active_evaluation_config,
         )
         result = clean_structure(result)
         daily_results_json.write_text(

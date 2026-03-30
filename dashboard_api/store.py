@@ -99,6 +99,37 @@ CANDIDATE_COLUMNS = [
     "updated_at",
 ]
 
+TRACKED_TRADE_COLUMNS = [
+    "trade_id",
+    "trade_date",
+    "market_region",
+    "scan_id",
+    "scan_mode",
+    "source_bucket",
+    "ticker",
+    "name",
+    "pool",
+    "quality",
+    "quick_score",
+    "total_score",
+    "factor_breakdown",
+    "tail_metrics",
+    "confirmed_at",
+    "entry_target_time",
+    "entry_price",
+    "entry_time_used",
+    "exit_target_time",
+    "exit_trade_date",
+    "exit_price",
+    "exit_time_used",
+    "strategy_return",
+    "status",
+    "last_error",
+    "last_checked_at",
+    "created_at",
+    "updated_at",
+]
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -390,6 +421,11 @@ class OvernightScanStore:
             conn.commit()
         return self.get_scan(scan_id)
 
+    def delete_scan(self, scan_id: str) -> None:
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute("DELETE FROM overnight_scans WHERE scan_id = ?", (scan_id,))
+            conn.commit()
+
     def _migrate_schema(self, conn: sqlite3.Connection) -> None:
         existing_columns = {
             row["name"]
@@ -446,7 +482,7 @@ class OvernightReviewStore:
                     market_region TEXT NOT NULL DEFAULT 'cn_a',
                     window_days INTEGER NOT NULL DEFAULT 60,
                     mode TEXT NOT NULL DEFAULT 'strict',
-                    return_basis TEXT NOT NULL DEFAULT 'next_open',
+                    return_basis TEXT NOT NULL DEFAULT 'buy_1455_sell_next_day_1000',
                     status TEXT NOT NULL,
                     progress_message TEXT NOT NULL,
                     summary_json TEXT,
@@ -474,7 +510,7 @@ class OvernightReviewStore:
             "market_region": payload["market_region"],
             "window_days": payload.get("window_days", 60),
             "mode": payload.get("mode", "strict"),
-            "return_basis": payload.get("return_basis", "next_open"),
+            "return_basis": payload.get("return_basis", "buy_1455_sell_next_day_1000"),
             "status": "queued",
             "progress_message": "Review created and waiting to start.",
             "summary_json": None,
@@ -536,6 +572,11 @@ class OvernightReviewStore:
             conn.commit()
         return self.get_review(review_id)
 
+    def delete_review(self, review_id: str) -> None:
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute("DELETE FROM overnight_reviews WHERE review_id = ?", (review_id,))
+            conn.commit()
+
     def _migrate_schema(self, conn: sqlite3.Connection) -> None:
         existing_columns = {
             row["name"]
@@ -555,7 +596,7 @@ class OvernightReviewStore:
             )
         if "return_basis" not in existing_columns:
             conn.execute(
-                "ALTER TABLE overnight_reviews ADD COLUMN return_basis TEXT NOT NULL DEFAULT 'next_open'"
+                    "ALTER TABLE overnight_reviews ADD COLUMN return_basis TEXT NOT NULL DEFAULT 'buy_1455_sell_next_day_1000'"
             )
         if "summary_json" not in existing_columns:
             conn.execute("ALTER TABLE overnight_reviews ADD COLUMN summary_json TEXT")
@@ -701,6 +742,14 @@ class OvernightCandidateStore:
             ).fetchall()
         return [self._decode_row(row) for row in rows]
 
+    def delete_scan_candidates(self, scan_id: str) -> None:
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute(
+                "DELETE FROM overnight_candidates WHERE scan_id = ?",
+                (scan_id,),
+            )
+            conn.commit()
+
     def link_task(self, scan_id: str, ticker: str, task_id: str) -> dict[str, Any] | None:
         return self.update_candidate(
             scan_id,
@@ -773,3 +822,213 @@ class OvernightCandidateStore:
             else None
         )
         return candidate
+
+
+class OvernightTrackedTradeStore:
+    def __init__(self, db_path: str | Path):
+        self.db_path = Path(db_path)
+
+    def initialize(self) -> None:
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS overnight_tracked_trades (
+                    trade_id TEXT PRIMARY KEY,
+                    trade_date TEXT NOT NULL,
+                    market_region TEXT NOT NULL DEFAULT 'cn_a',
+                    scan_id TEXT NOT NULL,
+                    scan_mode TEXT NOT NULL,
+                    source_bucket TEXT NOT NULL,
+                    ticker TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    pool TEXT NOT NULL,
+                    quality TEXT NOT NULL,
+                    quick_score REAL NOT NULL,
+                    total_score REAL NOT NULL,
+                    factor_breakdown TEXT NOT NULL,
+                    tail_metrics TEXT,
+                    confirmed_at TEXT NOT NULL,
+                    entry_target_time TEXT NOT NULL DEFAULT '14:55',
+                    entry_price REAL,
+                    entry_time_used TEXT,
+                    exit_target_time TEXT NOT NULL DEFAULT '10:00',
+                    exit_trade_date TEXT,
+                    exit_price REAL,
+                    exit_time_used TEXT,
+                    strategy_return REAL,
+                    status TEXT NOT NULL,
+                    last_error TEXT,
+                    last_checked_at TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    UNIQUE(trade_date, market_region)
+                )
+                """
+            )
+            self._migrate_schema(conn)
+            conn.commit()
+
+    def create_trade(self, payload: dict[str, Any]) -> dict[str, Any]:
+        record = {
+            "trade_id": payload["trade_id"],
+            "trade_date": payload["trade_date"],
+            "market_region": payload.get("market_region", "cn_a"),
+            "scan_id": payload["scan_id"],
+            "scan_mode": payload["scan_mode"],
+            "source_bucket": payload["source_bucket"],
+            "ticker": payload["ticker"],
+            "name": payload["name"],
+            "pool": payload["pool"],
+            "quality": payload["quality"],
+            "quick_score": payload["quick_score"],
+            "total_score": payload["total_score"],
+            "factor_breakdown": payload.get("factor_breakdown") or {},
+            "tail_metrics": payload.get("tail_metrics"),
+            "confirmed_at": payload["confirmed_at"],
+            "entry_target_time": payload.get("entry_target_time", "14:55"),
+            "entry_price": payload.get("entry_price"),
+            "entry_time_used": payload.get("entry_time_used"),
+            "exit_target_time": payload.get("exit_target_time", "10:00"),
+            "exit_trade_date": payload.get("exit_trade_date"),
+            "exit_price": payload.get("exit_price"),
+            "exit_time_used": payload.get("exit_time_used"),
+            "strategy_return": payload.get("strategy_return"),
+            "status": payload["status"],
+            "last_error": payload.get("last_error"),
+            "last_checked_at": payload.get("last_checked_at"),
+            "created_at": payload.get("created_at", utc_now()),
+            "updated_at": payload.get("updated_at", utc_now()),
+        }
+        db_record = self._encode_record(record)
+        placeholders = ", ".join("?" for _ in TRACKED_TRADE_COLUMNS)
+        with closing(_connect(self.db_path)) as conn:
+            try:
+                conn.execute(
+                    f"INSERT INTO overnight_tracked_trades ({', '.join(TRACKED_TRADE_COLUMNS)}) VALUES ({placeholders})",
+                    [db_record[column] for column in TRACKED_TRADE_COLUMNS],
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ValueError("tracked_trade_already_exists") from exc
+            conn.commit()
+        return record
+
+    def get_trade(self, trade_id: str) -> dict[str, Any] | None:
+        with closing(_connect(self.db_path)) as conn:
+            row = conn.execute(
+                "SELECT * FROM overnight_tracked_trades WHERE trade_id = ?",
+                (trade_id,),
+            ).fetchone()
+        return self._decode_row(row) if row else None
+
+    def get_trade_by_date(
+        self,
+        trade_date: str,
+        market_region: str = "cn_a",
+    ) -> dict[str, Any] | None:
+        with closing(_connect(self.db_path)) as conn:
+            row = conn.execute(
+                """
+                SELECT * FROM overnight_tracked_trades
+                WHERE trade_date = ? AND market_region = ?
+                """,
+                (trade_date, market_region),
+            ).fetchone()
+        return self._decode_row(row) if row else None
+
+    def list_trades(self) -> list[dict[str, Any]]:
+        with closing(_connect(self.db_path)) as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM overnight_tracked_trades
+                ORDER BY trade_date DESC, confirmed_at DESC
+                """
+            ).fetchall()
+        return [self._decode_row(row) for row in rows]
+
+    def list_refreshable(self) -> list[dict[str, Any]]:
+        with closing(_connect(self.db_path)) as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM overnight_tracked_trades
+                WHERE status IN ('pending_entry', 'pending_exit', 'unavailable')
+                ORDER BY trade_date ASC, confirmed_at ASC
+                """
+            ).fetchall()
+        return [self._decode_row(row) for row in rows]
+
+    def update_trade(self, trade_id: str, **fields: Any) -> dict[str, Any] | None:
+        if not fields:
+            return self.get_trade(trade_id)
+
+        encoded = self._encode_record(fields)
+        assignments = ", ".join(f"{column} = ?" for column in encoded.keys())
+        values = list(encoded.values()) + [trade_id]
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute(
+                f"""
+                UPDATE overnight_tracked_trades
+                SET {assignments}
+                WHERE trade_id = ?
+                """,
+                values,
+            )
+            conn.commit()
+        return self.get_trade(trade_id)
+
+    def delete_trade(self, trade_id: str) -> None:
+        with closing(_connect(self.db_path)) as conn:
+            conn.execute(
+                "DELETE FROM overnight_tracked_trades WHERE trade_id = ?",
+                (trade_id,),
+            )
+            conn.commit()
+
+    def _migrate_schema(self, conn: sqlite3.Connection) -> None:
+        existing_columns = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(overnight_tracked_trades)").fetchall()
+        }
+        migrations = {
+            "market_region": "ALTER TABLE overnight_tracked_trades ADD COLUMN market_region TEXT NOT NULL DEFAULT 'cn_a'",
+            "scan_mode": "ALTER TABLE overnight_tracked_trades ADD COLUMN scan_mode TEXT NOT NULL DEFAULT 'strict'",
+            "source_bucket": "ALTER TABLE overnight_tracked_trades ADD COLUMN source_bucket TEXT NOT NULL DEFAULT 'formal'",
+            "factor_breakdown": "ALTER TABLE overnight_tracked_trades ADD COLUMN factor_breakdown TEXT NOT NULL DEFAULT '{}'",
+            "tail_metrics": "ALTER TABLE overnight_tracked_trades ADD COLUMN tail_metrics TEXT",
+            "confirmed_at": "ALTER TABLE overnight_tracked_trades ADD COLUMN confirmed_at TEXT NOT NULL DEFAULT ''",
+            "entry_target_time": "ALTER TABLE overnight_tracked_trades ADD COLUMN entry_target_time TEXT NOT NULL DEFAULT '14:55'",
+            "entry_price": "ALTER TABLE overnight_tracked_trades ADD COLUMN entry_price REAL",
+            "entry_time_used": "ALTER TABLE overnight_tracked_trades ADD COLUMN entry_time_used TEXT",
+            "exit_target_time": "ALTER TABLE overnight_tracked_trades ADD COLUMN exit_target_time TEXT NOT NULL DEFAULT '10:00'",
+            "exit_trade_date": "ALTER TABLE overnight_tracked_trades ADD COLUMN exit_trade_date TEXT",
+            "exit_price": "ALTER TABLE overnight_tracked_trades ADD COLUMN exit_price REAL",
+            "exit_time_used": "ALTER TABLE overnight_tracked_trades ADD COLUMN exit_time_used TEXT",
+            "strategy_return": "ALTER TABLE overnight_tracked_trades ADD COLUMN strategy_return REAL",
+            "status": "ALTER TABLE overnight_tracked_trades ADD COLUMN status TEXT NOT NULL DEFAULT 'pending_entry'",
+            "last_error": "ALTER TABLE overnight_tracked_trades ADD COLUMN last_error TEXT",
+            "last_checked_at": "ALTER TABLE overnight_tracked_trades ADD COLUMN last_checked_at TEXT",
+            "created_at": "ALTER TABLE overnight_tracked_trades ADD COLUMN created_at TEXT NOT NULL DEFAULT ''",
+            "updated_at": "ALTER TABLE overnight_tracked_trades ADD COLUMN updated_at TEXT NOT NULL DEFAULT ''",
+        }
+        for column, statement in migrations.items():
+            if column not in existing_columns:
+                conn.execute(statement)
+
+    def _encode_record(self, record: dict[str, Any]) -> dict[str, Any]:
+        encoded: dict[str, Any] = {}
+        for key, value in record.items():
+            if key in {"factor_breakdown", "tail_metrics"}:
+                encoded[key] = json.dumps(value) if value is not None else None
+            else:
+                encoded[key] = value
+        return encoded
+
+    def _decode_row(self, row: sqlite3.Row) -> dict[str, Any]:
+        trade = dict(row)
+        trade["factor_breakdown"] = json.loads(trade["factor_breakdown"])
+        trade["tail_metrics"] = (
+            json.loads(trade["tail_metrics"])
+            if trade.get("tail_metrics")
+            else None
+        )
+        return trade

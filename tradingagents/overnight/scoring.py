@@ -286,6 +286,8 @@ def pick_tail_enrichment_list(candidates: list[Candidate], params: ScanParams) -
 def split_quality_counts(candidates: list[Candidate]) -> dict[str, int]:
     return {
         "real": sum(1 for item in candidates if item.quality == "real"),
+        "partial": sum(1 for item in candidates if item.quality == "partial"),
         "proxy": sum(1 for item in candidates if item.quality == "proxy"),
-        "missing": sum(1 for item in candidates if item.quality in {"missing", "invalid"}),
+        "missing": sum(1 for item in candidates if item.quality == "missing"),
+        "invalid": sum(1 for item in candidates if item.quality == "invalid"),
     }

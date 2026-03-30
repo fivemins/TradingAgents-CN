@@ -2,10 +2,16 @@ import type {
   EvidenceGroup,
   FactorSnapshot,
   OvernightCandidate,
+  OvernightMode,
+  OvernightQuality,
+  OvernightTrackedTrade,
+  OvernightTrackedTradeListResponse,
+  OvernightTrackedTradeStats,
   OvernightReviewExtrema,
   OvernightReviewArtifactsResponse,
   OvernightReviewDetail,
   OvernightReviewListResponse,
+  ReviewReturnBasis,
   OvernightReviewSummary,
   OvernightReviewSummarySnapshot,
   OvernightScanArtifactsResponse,
@@ -54,6 +60,52 @@ function asInteger(value: unknown, fallback = 0): number {
   return normalized === null ? fallback : Math.trunc(normalized);
 }
 
+function normalizeOvernightModeValue(value: unknown, fallback: OvernightMode = "strict"): OvernightMode {
+  if (value === "research_fallback") {
+    return "intraday_preview";
+  }
+  return value === "intraday_preview" || value === "strict" ? value : fallback;
+}
+
+function normalizeOvernightQualityValue(
+  value: unknown,
+  fallback: OvernightQuality = "missing",
+): OvernightQuality {
+  return value === "real" ||
+    value === "partial" ||
+    value === "proxy" ||
+    value === "missing" ||
+    value === "invalid"
+    ? value
+    : fallback;
+}
+
+function normalizeReviewReturnBasisValue(
+  value: unknown,
+  fallback: ReviewReturnBasis = "buy_1455_sell_next_day_1000",
+): ReviewReturnBasis {
+  return value === "next_open" || value === "buy_1455_sell_next_day_1000" ? value : fallback;
+}
+
+function normalizeTrackedTradeStatusValue(
+  value: unknown,
+  fallback: OvernightTrackedTrade["status"] = "pending_entry",
+): OvernightTrackedTrade["status"] {
+  return value === "pending_entry" ||
+    value === "pending_exit" ||
+    value === "validated" ||
+    value === "unavailable"
+    ? value
+    : fallback;
+}
+
+function normalizeTrackedTradeSourceBucketValue(
+  value: unknown,
+  fallback: OvernightTrackedTrade["source_bucket"] = "formal",
+): OvernightTrackedTrade["source_bucket"] {
+  return value === "formal" || value === "watchlist" || value === "total_score" ? value : fallback;
+}
+
 function readableName(value: unknown, fallback?: string | null): string | null {
   const text = asNullableString(value)?.trim() ?? "";
   if (text && !/^\?+$/.test(text) && text !== "????") {
@@ -84,7 +136,7 @@ function normalizeSourceContext(value: unknown, fallbackTicker?: string | null):
     type: asString(payload.type),
     scan_id: asNullableString(payload.scan_id),
     trade_date: asNullableString(payload.trade_date),
-    mode: asNullableString(payload.mode),
+    mode: payload.mode ? normalizeOvernightModeValue(payload.mode) : null,
     ticker,
     name: readableName(payload.name, ticker)
   };
@@ -97,7 +149,7 @@ function normalizeTailMetrics(value: unknown): TailMetricsSummary | null {
   }
   return {
     source: asNullableString(payload.source) ?? undefined,
-    quality: asNullableString(payload.quality) as TailMetricsSummary["quality"],
+    quality: normalizeOvernightQualityValue(payload.quality) as TailMetricsSummary["quality"],
     tail_return_pct: asNumber(payload.tail_return_pct) ?? undefined,
     tail_amount_ratio: asNumber(payload.tail_amount_ratio) ?? undefined,
     last10_return_pct: asNumber(payload.last10_return_pct) ?? undefined,
@@ -117,10 +169,10 @@ function normalizeOvernightContext(value: unknown, fallbackTicker?: string | nul
   return {
     scan_id: asNullableString(payload.scan_id) ?? undefined,
     scan_trade_date: asNullableString(payload.scan_trade_date) ?? undefined,
-    scan_mode: asNullableString(payload.scan_mode) ?? undefined,
+    scan_mode: payload.scan_mode ? normalizeOvernightModeValue(payload.scan_mode) : undefined,
     source_name: readableName(payload.source_name, fallbackTicker) ?? undefined,
     bucket: asNullableString(payload.bucket) ?? undefined,
-    quality: asNullableString(payload.quality) as OvernightTaskContext["quality"],
+    quality: normalizeOvernightQualityValue(payload.quality) as OvernightTaskContext["quality"],
     quick_score: asNumber(payload.quick_score) ?? undefined,
     total_score: asNumber(payload.total_score) ?? undefined,
     factor_breakdown: asRecord(payload.factor_breakdown) as Record<string, number>,
@@ -168,7 +220,7 @@ function normalizeCandidate(value: unknown, defaultBucket?: string | null): Over
     name: readableName(payload.name, ticker) ?? ticker,
     bucket: asNullableString(payload.bucket) ?? defaultBucket ?? null,
     pool: asString(payload.pool, "--"),
-    quality: (asNullableString(payload.quality) ?? "missing") as OvernightCandidate["quality"],
+    quality: normalizeOvernightQualityValue(payload.quality) as OvernightCandidate["quality"],
     latest: asNumber(payload.latest) ?? 0,
     pct: asNumber(payload.pct) ?? 0,
     amount: asNumber(payload.amount) ?? 0,
@@ -216,20 +268,34 @@ function normalizeReviewSummarySnapshot(value: unknown): OvernightReviewSummaryS
   if (!Object.keys(payload).length) {
     return null;
   }
+  const avgStrategyReturn = asNumber(payload.avg_strategy_return) ?? asNumber(payload.avg_next_open_return);
+  const medianStrategyReturn = asNumber(payload.median_strategy_return) ?? asNumber(payload.median_next_open_return);
+  const avgDailyStrategyReturn =
+    asNumber(payload.avg_daily_strategy_return) ?? asNumber(payload.avg_daily_equal_weight_return);
+  const avgBenchmarkReturn =
+    asNumber(payload.avg_benchmark_return) ?? asNumber(payload.avg_benchmark_next_open_return);
+  const daysWithTrade = asInteger(payload.days_with_trade, asInteger(payload.days_with_formal_picks, 0));
+  const tradeCount = asInteger(payload.trade_count, asInteger(payload.candidate_count, 0));
   return {
     end_trade_date: asString(payload.end_trade_date, ""),
     market_region: (asString(payload.market_region, "cn_a") as OvernightReviewSummarySnapshot["market_region"]),
     window_days: asInteger(payload.window_days, 60),
     mode: "strict",
-    return_basis: "next_open",
-    candidate_count: asInteger(payload.candidate_count, 0),
+    return_basis: normalizeReviewReturnBasisValue(payload.return_basis),
+    candidate_count: tradeCount,
+    trade_count: tradeCount,
     days_evaluated: asInteger(payload.days_evaluated, 0),
-    days_with_formal_picks: asInteger(payload.days_with_formal_picks, 0),
-    avg_next_open_return: asNumber(payload.avg_next_open_return),
-    median_next_open_return: asNumber(payload.median_next_open_return),
+    days_with_formal_picks: daysWithTrade,
+    days_with_trade: daysWithTrade,
+    avg_strategy_return: avgStrategyReturn,
+    median_strategy_return: medianStrategyReturn,
+    avg_daily_strategy_return: avgDailyStrategyReturn,
+    avg_benchmark_return: avgBenchmarkReturn,
+    avg_next_open_return: avgStrategyReturn,
+    median_next_open_return: medianStrategyReturn,
     positive_pick_rate: asNumber(payload.positive_pick_rate),
-    avg_daily_equal_weight_return: asNumber(payload.avg_daily_equal_weight_return),
-    avg_benchmark_next_open_return: asNumber(payload.avg_benchmark_next_open_return),
+    avg_daily_equal_weight_return: avgDailyStrategyReturn,
+    avg_benchmark_next_open_return: avgBenchmarkReturn,
     avg_excess_return: asNumber(payload.avg_excess_return),
     has_valid_samples: Boolean(payload.has_valid_samples),
     headline_message: asNullableString(payload.headline_message),
@@ -249,12 +315,97 @@ function normalizeReviewExtrema(value: unknown): OvernightReviewExtrema | null {
   if (!Object.keys(payload).length) {
     return null;
   }
+  const strategyReturn = asNumber(payload.strategy_return) ?? asNumber(payload.equal_weight_next_open_return);
+  const benchmarkReturn = asNumber(payload.benchmark_return) ?? asNumber(payload.benchmark_next_open_return);
+  const excessReturn = asNumber(payload.excess_return) ?? asNumber(payload.avg_excess_return);
+  const selectedTicker =
+    asNullableString(payload.selected_ticker) ??
+    (asArray(payload.formal_tickers).find((item): item is string => typeof item === "string") ?? null);
   return {
     trade_date: asString(payload.trade_date, ""),
-    equal_weight_next_open_return: asNumber(payload.equal_weight_next_open_return),
-    benchmark_next_open_return: asNumber(payload.benchmark_next_open_return),
-    avg_excess_return: asNumber(payload.avg_excess_return),
+    strategy_return: strategyReturn,
+    benchmark_return: benchmarkReturn,
+    excess_return: excessReturn,
+    selected_ticker: selectedTicker,
+    equal_weight_next_open_return: strategyReturn,
+    benchmark_next_open_return: benchmarkReturn,
+    avg_excess_return: excessReturn,
     formal_tickers: asArray(payload.formal_tickers).filter((item): item is string => typeof item === "string")
+  };
+}
+
+function normalizeReviewDailyResult(value: unknown): OvernightReviewArtifactsResponse["daily_results"][number] {
+  const payload = asRecord(value);
+  const strategyReturn = asNumber(payload.strategy_return) ?? asNumber(payload.equal_weight_next_open_return);
+  const benchmarkReturn = asNumber(payload.benchmark_return) ?? asNumber(payload.benchmark_next_open_return);
+  const excessReturn = asNumber(payload.excess_return) ?? asNumber(payload.avg_excess_return);
+  const selectedTicker =
+    asNullableString(payload.selected_ticker) ??
+    (asArray(payload.formal_tickers).find((item): item is string => typeof item === "string") ?? null);
+  const formalTickers = asArray(payload.formal_tickers).filter((item): item is string => typeof item === "string");
+  return {
+    trade_date: asString(payload.trade_date, ""),
+    trade_count: asInteger(payload.trade_count, strategyReturn !== null ? 1 : asInteger(payload.formal_count, 0)),
+    selected_ticker: selectedTicker,
+    selected_name: asNullableString(payload.selected_name),
+    selected_pool: asNullableString(payload.selected_pool),
+    selected_quality: normalizeOvernightQualityValue(payload.selected_quality, "missing"),
+    selected_total_score: asNumber(payload.selected_total_score),
+    formal_count: asInteger(payload.formal_count, strategyReturn !== null ? 1 : 0),
+    watchlist_count: asInteger(payload.watchlist_count, 0),
+    formal_tickers: formalTickers.length ? formalTickers : selectedTicker ? [selectedTicker] : [],
+    market_message: asString(payload.market_message, ""),
+    entry_target_time: asNullableString(payload.entry_target_time),
+    entry_time_used: asNullableString(payload.entry_time_used),
+    entry_price: asNumber(payload.entry_price),
+    exit_target_time: asNullableString(payload.exit_target_time),
+    exit_trade_date: asNullableString(payload.exit_trade_date),
+    exit_time_used: asNullableString(payload.exit_time_used),
+    exit_price: asNumber(payload.exit_price),
+    strategy_return: strategyReturn,
+    benchmark_return: benchmarkReturn,
+    excess_return: excessReturn,
+    counted_in_performance:
+      typeof payload.counted_in_performance === "boolean" ? payload.counted_in_performance : strategyReturn !== null,
+    benchmark_next_open_return: benchmarkReturn,
+    equal_weight_next_open_return: strategyReturn,
+    avg_excess_return: excessReturn,
+    tail_quality_counts: asRecord(payload.tail_quality_counts) as Record<string, number>,
+    passed_filters: asNumber(payload.passed_filters) ?? undefined,
+    failed_filters: asNumber(payload.failed_filters) ?? undefined
+  };
+}
+
+function normalizeReviewCandidateResult(value: unknown): OvernightReviewArtifactsResponse["candidate_results"][number] {
+  const payload = asRecord(value);
+  const strategyReturn = asNumber(payload.strategy_return) ?? asNumber(payload.next_open_return);
+  const benchmarkReturn = asNumber(payload.benchmark_return) ?? asNumber(payload.benchmark_next_open_return);
+  return {
+    trade_date: asString(payload.trade_date, ""),
+    category: (asString(payload.category, "selected") as OvernightReviewArtifactsResponse["candidate_results"][number]["category"]),
+    ticker: asString(payload.ticker, ""),
+    name: readableName(payload.name, asNullableString(payload.ticker)) ?? asString(payload.ticker, ""),
+    quality: normalizeOvernightQualityValue(payload.quality),
+    quick_score: asNumber(payload.quick_score) ?? 0,
+    total_score: asNumber(payload.total_score) ?? 0,
+    factor_breakdown: asRecord(payload.factor_breakdown) as Record<string, number>,
+    tail_metrics: normalizeTailMetrics(payload.tail_metrics),
+    filter_reason: asNullableString(payload.filter_reason),
+    entry_target_time: asNullableString(payload.entry_target_time),
+    entry_time_used: asNullableString(payload.entry_time_used),
+    entry_price: asNumber(payload.entry_price),
+    exit_target_time: asNullableString(payload.exit_target_time),
+    exit_time_used: asNullableString(payload.exit_time_used),
+    exit_price: asNumber(payload.exit_price),
+    strategy_return: strategyReturn,
+    benchmark_return: benchmarkReturn,
+    next_trade_date: asNullableString(payload.next_trade_date),
+    scan_close_price: asNumber(payload.scan_close_price),
+    next_open_return: strategyReturn,
+    benchmark_next_open_return: benchmarkReturn,
+    excess_return: asNumber(payload.excess_return),
+    counted_in_performance: Boolean(payload.counted_in_performance),
+    skipped_reason: asNullableString(payload.skipped_reason)
   };
 }
 
@@ -374,7 +525,7 @@ export function normalizeOvernightScanSummary(value: unknown): OvernightScanSumm
     scan_id: asString(payload.scan_id, ""),
     trade_date: asString(payload.trade_date, ""),
     market_region: "cn_a",
-    mode: (asString(payload.mode, "strict") as OvernightScanSummary["mode"]),
+    mode: normalizeOvernightModeValue(payload.mode),
     status: asString(payload.status, "queued") as OvernightScanSummary["status"],
     progress_message: asString(payload.progress_message, ""),
     market_message: asString(payload.market_message, ""),
@@ -444,6 +595,57 @@ export function normalizeOvernightScanArtifacts(value: unknown): OvernightScanAr
   };
 }
 
+export function normalizeOvernightTrackedTrade(value: unknown): OvernightTrackedTrade {
+  const payload = asRecord(value);
+  return {
+    trade_id: asString(payload.trade_id, ""),
+    trade_date: asString(payload.trade_date, ""),
+    market_region: "cn_a",
+    scan_id: asString(payload.scan_id, ""),
+    scan_mode: normalizeOvernightModeValue(payload.scan_mode),
+    source_bucket: normalizeTrackedTradeSourceBucketValue(payload.source_bucket),
+    ticker: asString(payload.ticker, ""),
+    name: readableName(payload.name, asNullableString(payload.ticker)) ?? asString(payload.ticker, ""),
+    pool: asString(payload.pool, "--"),
+    quality: normalizeOvernightQualityValue(payload.quality),
+    quick_score: asNumber(payload.quick_score) ?? 0,
+    total_score: asNumber(payload.total_score) ?? 0,
+    factor_breakdown: asRecord(payload.factor_breakdown) as Record<string, number>,
+    tail_metrics: normalizeTailMetrics(payload.tail_metrics),
+    confirmed_at: asString(payload.confirmed_at, ""),
+    entry_target_time: asString(payload.entry_target_time, "14:55"),
+    entry_price: asNumber(payload.entry_price),
+    entry_time_used: asNullableString(payload.entry_time_used),
+    exit_target_time: asString(payload.exit_target_time, "10:00"),
+    exit_trade_date: asNullableString(payload.exit_trade_date),
+    exit_price: asNumber(payload.exit_price),
+    exit_time_used: asNullableString(payload.exit_time_used),
+    strategy_return: asNumber(payload.strategy_return),
+    status: normalizeTrackedTradeStatusValue(payload.status),
+    last_error: asNullableString(payload.last_error),
+    last_checked_at: asNullableString(payload.last_checked_at),
+    created_at: asString(payload.created_at, ""),
+    updated_at: asString(payload.updated_at, "")
+  };
+}
+
+export function normalizeOvernightTrackedTradeListResponse(value: unknown): OvernightTrackedTradeListResponse {
+  const payload = asRecord(value);
+  const stats = asRecord(payload.stats);
+  return {
+    items: asArray(payload.items).map((item) => normalizeOvernightTrackedTrade(item)),
+    stats: {
+      total_days: asInteger(stats.total_days, 0),
+      validated_days: asInteger(stats.validated_days, 0),
+      pending_count: asInteger(stats.pending_count, 0),
+      unavailable_count: asInteger(stats.unavailable_count, 0),
+      avg_return: asNumber(stats.avg_return),
+      win_rate: asNumber(stats.win_rate),
+      cumulative_return: asNumber(stats.cumulative_return)
+    } as OvernightTrackedTradeStats
+  };
+}
+
 export function normalizeOvernightReviewSummary(value: unknown): OvernightReviewSummary {
   const payload = asRecord(value);
   return {
@@ -452,7 +654,7 @@ export function normalizeOvernightReviewSummary(value: unknown): OvernightReview
     market_region: "cn_a",
     window_days: asInteger(payload.window_days, 60),
     mode: "strict",
-    return_basis: "next_open",
+    return_basis: normalizeReviewReturnBasisValue(payload.return_basis),
     status: asString(payload.status, "queued") as OvernightReviewSummary["status"],
     progress_message: asString(payload.progress_message, ""),
     created_at: asString(payload.created_at, ""),
@@ -503,10 +705,16 @@ export function normalizeOvernightReviewArtifacts(value: unknown): OvernightRevi
         market_region: "cn_a",
         window_days: 60,
         mode: "strict",
-        return_basis: "next_open",
+        return_basis: "buy_1455_sell_next_day_1000",
         candidate_count: 0,
+        trade_count: 0,
         days_evaluated: 0,
         days_with_formal_picks: 0,
+        days_with_trade: 0,
+        avg_strategy_return: null,
+        median_strategy_return: null,
+        avg_daily_strategy_return: null,
+        avg_benchmark_return: null,
         avg_next_open_return: null,
         median_next_open_return: null,
         positive_pick_rate: null,
@@ -515,8 +723,8 @@ export function normalizeOvernightReviewArtifacts(value: unknown): OvernightRevi
         avg_excess_return: null,
         has_valid_samples: false,
       },
-    daily_results: asArray(payload.daily_results) as OvernightReviewArtifactsResponse["daily_results"],
-    candidate_results: asArray(payload.candidate_results) as OvernightReviewArtifactsResponse["candidate_results"],
+    daily_results: asArray(payload.daily_results).map((item) => normalizeReviewDailyResult(item)),
+    candidate_results: asArray(payload.candidate_results).map((item) => normalizeReviewCandidateResult(item)),
     audit: asRecord(payload.audit),
     downloads: asRecord(payload.downloads) as Record<string, string>
   };

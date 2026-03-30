@@ -1,8 +1,11 @@
 import type {
+  CreateOvernightTrackedTradeRequest,
   CreateOvernightReviewRequest,
   CreateOvernightScanRequest,
   CreateTaskRequest,
   CreateTaskSource,
+  OvernightTrackedTrade,
+  OvernightTrackedTradeListResponse,
   OvernightReviewArtifactsResponse,
   OvernightReviewDetail,
   OvernightReviewListResponse,
@@ -16,6 +19,8 @@ import type {
   TaskOptionsResponse
 } from "./types";
 import {
+  normalizeOvernightTrackedTrade,
+  normalizeOvernightTrackedTradeListResponse,
   normalizeOvernightReviewArtifacts,
   normalizeOvernightReviewDetail,
   normalizeOvernightReviewListResponse,
@@ -125,6 +130,11 @@ export const dashboardApi = {
       normalizeOvernightScanDetail
     );
   },
+  deleteOvernightScan(scanId: string): Promise<{ ok: boolean }> {
+    return apiFetch<{ ok: boolean }>(`/api/overnight/scans/${scanId}`, {
+      method: "DELETE"
+    });
+  },
   getOvernightArtifacts(scanId: string): Promise<OvernightScanArtifactsResponse> {
     return apiFetch<OvernightScanArtifactsResponse>(
       `/api/overnight/scans/${scanId}/artifacts`
@@ -141,6 +151,32 @@ export const dashboardApi = {
       method: "POST"
     }).then(normalizeOvernightScanDetail);
   },
+  getOvernightTrackedTrades(): Promise<OvernightTrackedTradeListResponse> {
+    return apiFetch<OvernightTrackedTradeListResponse>("/api/overnight/trades").then(
+      normalizeOvernightTrackedTradeListResponse
+    );
+  },
+  getOvernightTrackedTrade(tradeId: string): Promise<OvernightTrackedTrade> {
+    return apiFetch<OvernightTrackedTrade>(`/api/overnight/trades/${tradeId}`).then(
+      normalizeOvernightTrackedTrade
+    );
+  },
+  createOvernightTrackedTrade(payload: CreateOvernightTrackedTradeRequest): Promise<OvernightTrackedTrade> {
+    return apiFetch<OvernightTrackedTrade>("/api/overnight/trades", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }).then(normalizeOvernightTrackedTrade);
+  },
+  refreshPendingOvernightTrackedTrades(): Promise<OvernightTrackedTradeListResponse> {
+    return apiFetch<OvernightTrackedTradeListResponse>("/api/overnight/trades/refresh-pending", {
+      method: "POST"
+    }).then(normalizeOvernightTrackedTradeListResponse);
+  },
+  deleteOvernightTrackedTrade(tradeId: string): Promise<{ ok: boolean }> {
+    return apiFetch<{ ok: boolean }>(`/api/overnight/trades/${tradeId}`, {
+      method: "DELETE"
+    });
+  },
   getOvernightReviews(): Promise<OvernightReviewListResponse> {
     return apiFetch<OvernightReviewListResponse>("/api/overnight/reviews").then(
       normalizeOvernightReviewListResponse
@@ -150,6 +186,11 @@ export const dashboardApi = {
     return apiFetch<OvernightReviewDetail>(`/api/overnight/reviews/${reviewId}`).then(
       normalizeOvernightReviewDetail
     );
+  },
+  deleteOvernightReview(reviewId: string): Promise<{ ok: boolean }> {
+    return apiFetch<{ ok: boolean }>(`/api/overnight/reviews/${reviewId}`, {
+      method: "DELETE"
+    });
   },
   getOvernightReviewArtifacts(reviewId: string): Promise<OvernightReviewArtifactsResponse> {
     return apiFetch<OvernightReviewArtifactsResponse>(

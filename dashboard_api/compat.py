@@ -3,10 +3,15 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from tradingagents.overnight.models import (
+    normalize_overnight_mode,
+    normalize_review_return_basis,
+    normalize_tail_quality,
+)
 from tradingagents.text_cleaning import clean_source_name, clean_structure, clean_text
 
 
-VALID_OVERNIGHT_QUALITIES = {"real", "proxy", "missing", "invalid"}
+VALID_OVERNIGHT_QUALITIES = {"real", "partial", "proxy", "missing", "invalid"}
 VALID_SELECTION_STAGES = {"preliminary", "scored", "formal", "watchlist", "rejected"}
 DEFAULT_SCAN_DATA_QUALITY = {
     "status": "unknown",
@@ -74,6 +79,9 @@ def normalize_source_context(
     payload = _as_dict(value)
     ticker = clean_text(payload.get("ticker")) or fallback_ticker
     payload["ticker"] = ticker
+    mode = clean_text(payload.get("mode"))
+    if mode:
+        payload["mode"] = normalize_overnight_mode(mode)
     payload["name"] = clean_source_name(payload.get("name"), ticker)
     return payload
 
@@ -89,6 +97,18 @@ def normalize_overnight_context(
         payload.get("source_name"),
         fallback_ticker or clean_text(payload.get("ticker")),
     )
+    scan_mode = clean_text(payload.get("scan_mode"))
+    if scan_mode:
+        payload["scan_mode"] = normalize_overnight_mode(scan_mode)
+    quality = clean_text(payload.get("quality"))
+    if quality:
+        payload["quality"] = normalize_tail_quality(quality)
+    if isinstance(payload.get("tail_metrics"), dict):
+        tail_metrics = _as_dict(payload.get("tail_metrics"))
+        tail_quality = clean_text(tail_metrics.get("quality"))
+        if tail_quality:
+            tail_metrics["quality"] = normalize_tail_quality(tail_quality)
+        payload["tail_metrics"] = tail_metrics
     payload["factor_breakdown"] = _as_dict(payload.get("factor_breakdown"))
     payload["tail_metrics"] = _as_dict(payload.get("tail_metrics")) or None
     payload["provider_route"] = _as_dict(payload.get("provider_route")) or None
@@ -143,8 +163,7 @@ def normalize_candidate(value: Any, default_bucket: str | None = None) -> dict[s
     ticker = clean_text(payload.get("ticker"))
     if not ticker:
         return None
-    quality = payload.get("quality")
-    normalized_quality = quality if quality in VALID_OVERNIGHT_QUALITIES else "missing"
+    normalized_quality = normalize_tail_quality(clean_text(payload.get("quality")))
     selection_stage = clean_text(payload.get("selection_stage"))
     normalized = {
         **payload,
@@ -224,6 +243,7 @@ def normalize_scan_summary_snapshot(
     default_top_formal_tickers: list[str] | None = None,
 ) -> dict[str, Any]:
     payload = _as_dict(value)
+    payload["mode"] = normalize_overnight_mode(clean_text(payload.get("mode")))
     top_formal_tickers = _as_string_list(payload.get("top_formal_tickers"))
     if not top_formal_tickers and default_top_formal_tickers:
         top_formal_tickers = [item for item in default_top_formal_tickers if item]
@@ -252,6 +272,7 @@ def normalize_scan_record(
     payload["market_message"] = clean_text(payload.get("market_message")) or ""
     payload["progress_message"] = clean_text(payload.get("progress_message")) or ""
     payload["error_message"] = clean_text(payload.get("error_message"))
+    payload["mode"] = normalize_overnight_mode(clean_text(payload.get("mode")))
     payload["formal_count"] = _as_int(payload.get("formal_count"), 0)
     payload["watchlist_count"] = _as_int(payload.get("watchlist_count"), 0)
     payload["summary_json"] = normalize_scan_summary_snapshot(
@@ -292,6 +313,28 @@ def normalize_scan_artifact_payload(payload: dict[str, Any]) -> dict[str, Any]:
 
 def normalize_review_summary_snapshot(value: Any) -> dict[str, Any]:
     payload = _as_dict(value)
+    payload["return_basis"] = normalize_review_return_basis(clean_text(payload.get("return_basis")))
+    payload["trade_count"] = _as_int(payload.get("trade_count"), _as_int(payload.get("candidate_count"), 0))
+    payload["days_with_trade"] = _as_int(
+        payload.get("days_with_trade"),
+        _as_int(payload.get("days_with_formal_picks"), 0),
+    )
+    payload["avg_strategy_return"] = _as_float(
+        payload.get("avg_strategy_return"),
+        _as_float(payload.get("avg_next_open_return")),
+    )
+    payload["median_strategy_return"] = _as_float(
+        payload.get("median_strategy_return"),
+        _as_float(payload.get("median_next_open_return")),
+    )
+    payload["avg_daily_strategy_return"] = _as_float(
+        payload.get("avg_daily_strategy_return"),
+        _as_float(payload.get("avg_daily_equal_weight_return")),
+    )
+    payload["avg_benchmark_return"] = _as_float(
+        payload.get("avg_benchmark_return"),
+        _as_float(payload.get("avg_benchmark_next_open_return")),
+    )
     payload["data_quality"] = _as_dict(payload.get("data_quality")) or dict(DEFAULT_REVIEW_DATA_QUALITY)
     payload["provider_route"] = _as_dict(payload.get("provider_route"))
     payload["bias_flags"] = _as_string_list(payload.get("bias_flags"))
@@ -310,7 +353,14 @@ def normalize_review_record(review: dict[str, Any]) -> dict[str, Any]:
     payload = clean_structure(dict(review))
     payload["progress_message"] = clean_text(payload.get("progress_message")) or ""
     payload["error_message"] = clean_text(payload.get("error_message"))
-    payload["summary_json"] = normalize_review_summary_snapshot(payload.get("summary_json"))
+    raw_summary = _as_dict(payload.get("summary_json"))
+    summary_return_basis = clean_text(raw_summary.get("return_basis"))
+    payload["return_basis"] = normalize_review_return_basis(
+        summary_return_basis or clean_text(payload.get("return_basis"))
+    )
+    payload["summary_json"] = normalize_review_summary_snapshot(raw_summary)
+    if summary_return_basis:
+        payload["summary_json"]["return_basis"] = payload["return_basis"]
     return payload
 
 

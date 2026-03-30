@@ -115,6 +115,44 @@ function Test-DirectoryWritable {
     }
 }
 
+function Get-DashboardBackendProcesses {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RootPath
+    )
+
+    Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.Name -eq "python.exe" -and
+            $_.CommandLine -and
+            $_.CommandLine -match [regex]::Escape($RootPath) -and
+            $_.CommandLine -match "dashboard_api\.app"
+        }
+}
+
+function Stop-DashboardBackendProcesses {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RootPath,
+        [Parameter(Mandatory = $true)]
+        [string]$PidFile
+    )
+
+    $processes = Get-DashboardBackendProcesses -RootPath $RootPath |
+        Sort-Object ProcessId -Unique
+
+    foreach ($processInfo in $processes) {
+        try {
+            Stop-Process -Id $processInfo.ProcessId -Force -ErrorAction Stop
+            Write-Host "Stopped dashboard backend process $($processInfo.ProcessId)."
+        } catch {
+            Write-Warning "Could not stop PID $($processInfo.ProcessId): $($_.Exception.Message)"
+        }
+    }
+
+    Remove-Item $PidFile -ErrorAction SilentlyContinue
+}
+
 $root = Split-Path -Parent $PSScriptRoot
 $frontendRoot = Join-Path $root "dashboard-ui"
 $pythonExe = Join-Path $root "venv\Scripts\python.exe"
@@ -196,6 +234,12 @@ $buildInputs = @(
     (Join-Path $frontendRoot "tsconfig.json"),
     (Join-Path $frontendRoot "tsconfig.node.json")
 )
+$backendInputs = @(
+    (Join-Path $root "dashboard_api"),
+    (Join-Path $root "tradingagents"),
+    (Join-Path $root "pyproject.toml"),
+    (Join-Path $root "requirements.txt")
+)
 $needsBuild = -not (Test-Path $distIndex)
 
 if (-not $needsBuild) {
@@ -225,9 +269,22 @@ if ($needsBuild) {
 }
 
 if (Test-DashboardHealth -Url $healthUrl) {
-    Write-Host "Dashboard is already running with the latest frontend build. Opening browser..."
-    Start-Process $dashboardUrl | Out-Null
-    exit 0
+    $backendNeedsRestart = $false
+    if (Test-Path $pidFile) {
+        $latestBackendInput = Get-LatestWriteTimeUtc -Paths $backendInputs
+        $backendMarkerTime = (Get-Item $pidFile).LastWriteTimeUtc
+        $backendNeedsRestart = $latestBackendInput -gt $backendMarkerTime
+    }
+
+    if (-not $backendNeedsRestart) {
+        Write-Host "Dashboard is already running with the latest frontend build. Opening browser..."
+        Start-Process $dashboardUrl | Out-Null
+        exit 0
+    }
+
+    Write-Host "Backend source changed. Restarting dashboard backend..."
+    Stop-DashboardBackendProcesses -RootPath $root -PidFile $pidFile
+    Start-Sleep -Seconds 2
 }
 
 New-Item -ItemType Directory -Force -Path $logsDir | Out-Null

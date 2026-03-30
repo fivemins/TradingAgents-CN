@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import akshare as ak
 import pandas as pd
@@ -123,6 +123,47 @@ def _normalize_intraday_df(frame: pd.DataFrame | None) -> pd.DataFrame:
     return working.sort_values("dt").reset_index(drop=True)
 
 
+def normalize_intraday_minute_df(frame: pd.DataFrame | None) -> pd.DataFrame:
+    return _normalize_intraday_df(frame)
+
+
+def pick_intraday_price_near_time(
+    frame: pd.DataFrame | None,
+    trade_date: str,
+    target_time: str,
+    prefer_on_tie: Literal["before", "after"] = "before",
+) -> tuple[float | None, str | None]:
+    normalized = _normalize_intraday_df(frame)
+    if normalized.empty:
+        return None, None
+
+    target_dt = pd.Timestamp(f"{trade_date} {target_time}")
+    deltas = (normalized["dt"] - target_dt).abs()
+    min_delta = deltas.min()
+    candidates = normalized.loc[deltas == min_delta].copy()
+    if candidates.empty:
+        return None, None
+
+    if len(candidates) > 1:
+        if prefer_on_tie == "before":
+            preferred = candidates[candidates["dt"] <= target_dt]
+            if preferred.empty:
+                preferred = candidates
+            selected = preferred.sort_values("dt").iloc[-1]
+        else:
+            preferred = candidates[candidates["dt"] >= target_dt]
+            if preferred.empty:
+                preferred = candidates
+            selected = preferred.sort_values("dt").iloc[0]
+    else:
+        selected = candidates.iloc[0]
+
+    price = pd.to_numeric(selected.get("price"), errors="coerce")
+    if pd.isna(price):
+        return None, None
+    return float(price), pd.Timestamp(selected["dt"]).strftime("%H:%M")
+
+
 def _load_intraday_minute_df(
     profile: SecurityProfile,
     trade_date: str,
@@ -183,6 +224,24 @@ def _load_intraday_minute_df(
         except Exception as exc:
             logger.debug("A-share minute source akshare_intraday_sina failed: %s", exc)
     return pd.DataFrame(), "no_tail_source"
+
+
+def load_intraday_minute_frame(
+    profile: SecurityProfile,
+    trade_date: str,
+    cache_root: Path,
+) -> tuple[pd.DataFrame, str]:
+    cache_path = _tail_cache_path(cache_root, profile, trade_date)
+    if cache_path.exists():
+        cached = pd.read_csv(cache_path)
+        normalized = _normalize_intraday_df(cached)
+        if not normalized.empty:
+            return normalized, f"disk_cache:{trade_date}"
+
+    frame, source = _load_intraday_minute_df(profile, trade_date)
+    if not frame.empty:
+        frame.to_csv(cache_path, index=False, encoding="utf-8-sig")
+    return frame, source
 
 
 def _qveris_symbol(profile: SecurityProfile) -> str:
@@ -323,6 +382,7 @@ def calc_tail_metrics_from_minute_df(
     trade_date: str,
     tail_start_time: str,
     tail_last_window_minutes: int,
+    mode: OvernightMode,
 ) -> TailMetrics:
     normalized = _normalize_intraday_df(frame)
     if normalized.empty:
@@ -344,14 +404,15 @@ def calc_tail_metrics_from_minute_df(
         )
 
     max_time = tail_df["dt"].max().strftime("%H:%M")
-    if _market_close_reached(trade_date) and max_time < "14:57":
+    market_closed = _market_close_reached(trade_date)
+    if market_closed and max_time < "14:57":
         return TailMetrics(
             has_real_tail_data=False,
             rows=len(normalized),
             note=f"incomplete_tail_window:{max_time}",
             quality="invalid",
         )
-    if not _market_close_reached(trade_date):
+    if not market_closed and mode == "strict":
         return TailMetrics(
             has_real_tail_data=False,
             rows=len(normalized),
@@ -387,7 +448,7 @@ def calc_tail_metrics_from_minute_df(
         close_at_high_ratio=round(close_at_high_ratio, 4),
         auction_strength=round(auction_strength, 4),
         rows=len(normalized),
-        quality="real",
+        quality="real" if market_closed else "partial",
     )
 
 
@@ -401,19 +462,26 @@ def load_tail_metrics(
     tail_last_window_minutes: int,
 ) -> TailMetrics:
     cache_path = _tail_cache_path(cache_root, profile, trade_date)
+    refresh_intraday_cache = (
+        mode == "intraday_preview"
+        and trade_date == datetime.now().strftime("%Y-%m-%d")
+        and not _market_close_reached(trade_date)
+    )
+    cached_tail: TailMetrics | None = None
     if cache_path.exists():
         cached = pd.read_csv(cache_path)
-        tail = calc_tail_metrics_from_minute_df(
+        cached_tail = calc_tail_metrics_from_minute_df(
             cached,
             snapshot,
             trade_date,
             tail_start_time,
             tail_last_window_minutes,
+            mode,
         )
-        if tail.has_real_tail_data:
-            tail.source = f"disk_cache:{trade_date}"
-            tail.provider_chain = ["disk_cache"]
-            return tail
+        if cached_tail.has_real_tail_data and not refresh_intraday_cache:
+            cached_tail.source = f"disk_cache:{trade_date}"
+            cached_tail.provider_chain = ["disk_cache"]
+            return cached_tail
 
     frame, source = _load_intraday_minute_df(profile, trade_date)
     if not frame.empty:
@@ -424,13 +492,19 @@ def load_tail_metrics(
             trade_date,
             tail_start_time,
             tail_last_window_minutes,
+            mode,
         )
         tail.source = source
         tail.provider_chain = [source]
         if tail.has_real_tail_data:
             return tail
 
-    if mode == "research_fallback":
+    if cached_tail and cached_tail.has_real_tail_data:
+        cached_tail.source = f"disk_cache:{trade_date}"
+        cached_tail.provider_chain = ["disk_cache"]
+        return cached_tail
+
+    if mode == "intraday_preview":
         proxy = calc_proxy_tail_metrics(snapshot)
         proxy.note = f"proxy_after:{source}"
         proxy.provider_chain = [source, "snapshot_proxy"]
@@ -462,7 +536,7 @@ def load_tail_metrics_batch(
             snapshot.profile,
             snapshot,
             trade_date,
-            "strict",
+            mode,
             cache_root,
             tail_start_time,
             tail_last_window_minutes,
@@ -487,6 +561,7 @@ def load_tail_metrics_batch(
                 trade_date,
                 tail_start_time,
                 tail_last_window_minutes,
+                mode,
             )
             tail.source = qveris_route
             tail.provider_chain = [tails[snapshot.code].source, qveris_route]
@@ -495,7 +570,7 @@ def load_tail_metrics_batch(
                 frame.to_csv(cache_path, index=False, encoding="utf-8-sig")
                 tails[snapshot.code] = tail
 
-    if mode == "research_fallback":
+    if mode == "intraday_preview":
         for snapshot in snapshots:
             tail = tails[snapshot.code]
             if tail.has_real_tail_data or tail.quality == "proxy":

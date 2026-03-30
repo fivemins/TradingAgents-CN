@@ -1661,14 +1661,14 @@ button {
 }
 
 .scan-chip {
-  display: grid;
-  gap: 4px;
+  position: relative;
+  display: block;
   min-width: 170px;
   padding: 14px 16px;
+  padding-right: 88px;
   border-radius: 18px;
   background: rgba(24, 38, 63, 0.04);
   color: #20314d;
-  cursor: pointer;
   border: 1px solid transparent;
   transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
@@ -1684,9 +1684,49 @@ button {
   color: #17304a;
 }
 
+.scan-chip-main {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .scan-chip span {
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.scan-chip-delete {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(216, 79, 88, 0.12);
+  color: #b42836;
+  border: 1px solid rgba(216, 79, 88, 0.18);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: background 0.18s ease, opacity 0.18s ease;
+}
+
+.scan-chip-delete:hover {
+  background: rgba(216, 79, 88, 0.18);
+}
+
+.scan-chip-delete:disabled,
+.scan-chip-main:disabled {
+  opacity: 0.6;
+  cursor: progress;
 }
 
 .scan-chip .badge {

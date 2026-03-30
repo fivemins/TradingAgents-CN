@@ -35,7 +35,7 @@ def make_snapshot(code: str, name: str, pool: str) -> OvernightSnapshot:
 
 
 class OvernightScannerTests(unittest.TestCase):
-    def test_proxy_tail_can_only_enter_watchlist(self) -> None:
+    def test_strict_proxy_tail_can_only_enter_watchlist(self) -> None:
         real_snapshot = make_snapshot("600519", "贵州茅台", "main")
         proxy_snapshot = make_snapshot("300750", "宁德时代", "gem")
         raw_spot = pd.DataFrame({"代码": ["600519", "300750"]})
@@ -127,7 +127,7 @@ class OvernightScannerTests(unittest.TestCase):
             ):
                 result = run_overnight_scan(
                     trade_date="2025-03-20",
-                    mode="research_fallback",
+                    mode="strict",
                     data_dir=Path(tempdir),
                 )
 
@@ -136,7 +136,6 @@ class OvernightScannerTests(unittest.TestCase):
         scored = result["total_score_candidates"]
         watchlist = result["watchlist"]
         rejected = result["rejected_candidates"]
-        self.assertEqual(result["summary"]["data_quality"]["status"], "research_fallback")
         self.assertEqual(result["summary"]["provider_route"]["spot"], "akshare:spot")
         self.assertEqual(result["summary"]["universe_snapshot_date"], "2025-03-20")
         self.assertEqual(result["summary"]["scored_count"], 2)
@@ -154,6 +153,109 @@ class OvernightScannerTests(unittest.TestCase):
         self.assertEqual(watchlist[0]["ticker"], "300750.SZ")
         self.assertEqual(watchlist[0]["quality"], "proxy")
         self.assertEqual(rejected, [])
+
+    def test_intraday_preview_partial_and_proxy_can_enter_formal_recommendations(self) -> None:
+        partial_snapshot = make_snapshot("600519", "贵州茅台", "main")
+        proxy_snapshot = make_snapshot("300750", "宁德时代", "gem")
+        raw_spot = pd.DataFrame({"代码": ["600519", "300750"]})
+        raw_spot.attrs["provider_route"] = "akshare:spot"
+
+        def fake_tail_batch(snapshots, _trade_date, *_args, **_kwargs):
+            metrics: dict[str, TailMetrics] = {}
+            for snapshot in snapshots:
+                if snapshot.code == partial_snapshot.code:
+                    metrics[snapshot.code] = TailMetrics(
+                        has_real_tail_data=True,
+                        source="unit-test",
+                        quality="partial",
+                        tail_return_pct=0.52,
+                        tail_amount_ratio=0.14,
+                    )
+                else:
+                    metrics[snapshot.code] = TailMetrics(
+                        has_real_tail_data=False,
+                        source="unit-test",
+                        quality="proxy",
+                        tail_return_pct=0.36,
+                        tail_amount_ratio=0.11,
+                    )
+            return metrics
+
+        def fake_score(snapshot, *_args, **_kwargs):
+            if snapshot.code == partial_snapshot.code:
+                return 84.0, {"trend_strength": 22.0}
+            return 79.0, {"trend_strength": 20.0}
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with (
+                patch(
+                    "tradingagents.overnight.scanner.load_index_snapshot",
+                    return_value=IndexSnapshotResult(
+                        values={"上证指数": 0.8},
+                        provider_route="akshare_index_spot_sina",
+                    ),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.evaluate_market_regime",
+                    return_value=MarketRegime(
+                        market_ok=True,
+                        market_message="市场正常，可执行标准阈值。",
+                        benchmark_pct=0.8,
+                    ),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.load_market_spot_table",
+                    return_value=raw_spot,
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.build_dynamic_pool_from_frame",
+                    return_value=pd.DataFrame({"代码": ["600519", "300750"]}),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.build_snapshots_from_pool_frame",
+                    return_value=[partial_snapshot, proxy_snapshot],
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.load_risk_stocks",
+                    return_value=(set(), {"matched_events": 0, "risk_codes": 0, "scanned_days": 0}),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.check_buy_filters",
+                    return_value=(True, ""),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.pick_history_enrichment_list",
+                    return_value=[partial_snapshot.code, proxy_snapshot.code],
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.load_history_frame",
+                    return_value=pd.DataFrame({"close": [1, 2, 3]}),
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.pick_tail_enrichment_list",
+                    return_value=[partial_snapshot.code, proxy_snapshot.code],
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.load_tail_metrics_batch",
+                    side_effect=fake_tail_batch,
+                ),
+                patch(
+                    "tradingagents.overnight.scanner.calculate_total_score",
+                    side_effect=fake_score,
+                ),
+            ):
+                result = run_overnight_scan(
+                    trade_date="2025-03-20",
+                    mode="intraday_preview",
+                    data_dir=Path(tempdir),
+                )
+
+        formal = result["formal_recommendations"]
+        watchlist = result["watchlist"]
+        self.assertEqual(result["summary"]["data_quality"]["status"], "intraday_preview")
+        self.assertEqual(len(formal), 2)
+        self.assertEqual([item["quality"] for item in formal], ["partial", "proxy"])
+        self.assertEqual(watchlist, [])
 
 
 if __name__ == "__main__":
